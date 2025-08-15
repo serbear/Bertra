@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Bertra</string>
+    <string name="home_screen_title">Home screen</string>
+    <string name="no_last_train">There is no the last train.</string>
+    <string name="no_any_trains">There are no any trains.</string>
+    <string name="add_train">Add Train</string>
+    <string name="continue_train">Continue Train</string>
+    <string name="choose_train">Choose Train</string>
+</resources>

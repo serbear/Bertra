@@ -8,7 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +33,21 @@ object HomeScreenDestination : INavigationDestination {
     override val titleRes: Int get() = R.string.home_screen_title
 }
 
+/**
+ * The screen which is showed after the loading process of the application
+ * or after activating the "Home Screen" menu item through the application main menu.
+ *
+ * The screen displays various components depending on information in the database.
+ * There are three cases:
+ *
+ * - There is no any data on trainings in the database.
+ *   The screen displays the message and the "Add New Train" button.
+ * - There is one or more records on trainings in the database, but no information about the last
+ *   training. The screen displays the corresponding message and the "Choose Train" button.
+ * - There is one or more records on trainings in the database, and information about the last
+ *   training exists too. The screen displays the last train information
+ *   and the "Continue Train" button.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -43,8 +57,7 @@ fun HomeScreen(
 ) {
 //    val currentLastTrainStrategyState by viewModel.currentLastTrainStrategyState.collectAsState()
 
-    val currentStrategy = viewModel.getLastTrainStrategy()
-
+    val currentDisplayStrategy = viewModel.getLastTrainStrategy()
 
     Scaffold(
         topBar = {
@@ -54,27 +67,31 @@ fun HomeScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = openDrawer) {
-                        Icon(Icons.Default.Menu, contentDescription = "Открыть меню")
+                        Icon(
+                            Icons.Default.Menu,
+                            contentDescription = "Open the Main Menu"
+                        )
                     }
                 }
             )
         },
     ) { innerPadding ->
         LastTrainComponent(
-            currentStrategy,
+            currentDisplayStrategy,
             modifier = Modifier.padding(innerPadding)
         )
     }
 }
 
-
+/**
+ * Displays a message text and an action button whose text and action are depending on
+ * the Home Screen display strategy [currentStrategy].
+ */
 @Composable
 fun LastTrainComponent(
     currentStrategy: IActiveTrainStrategy,
     modifier: Modifier
 ) {
-
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -84,12 +101,15 @@ fun LastTrainComponent(
         TrainStatusText(currentStrategy, Modifier)
         TrainButton(currentStrategy, Modifier)
     }
-
 }
 
+/**
+ * Displays a text depending on the Home Screen display strategy [currentStrategy].
+ *
+ * The text for the element is provided by [currentStrategy].
+ */
 @Composable
 fun TrainStatusText(currentStrategy: IActiveTrainStrategy, modifier: Modifier) {
-
     val trainStatusText = if (currentStrategy is CurrentTrainStrategy) {
         currentStrategy.getDisplayText()
     } else {
@@ -103,6 +123,10 @@ fun TrainStatusText(currentStrategy: IActiveTrainStrategy, modifier: Modifier) {
     )
 }
 
+/**
+ * Represents the action button whose label and click action depending on the Home Screen
+ * display strategy.
+ */
 @Composable
 fun TrainButton(currentStrategy: IActiveTrainStrategy, modifier: Modifier) {
     Button(

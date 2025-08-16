@@ -10,10 +10,20 @@ import com.marsof.bertra.ui.screens.HomeScreenDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-val navigationItems = listOf<INavigationDestination>(
+/**
+ * The list of the destination points for the Navigation Host.
+ */
+val navigationDestinations = listOf<INavigationDestination>(
     HomeScreenDestination,
 )
 
+/**
+ * Manages navigation between the application screens.
+ *
+ * @param navController the navController for this host.
+ * @param scope CoroutineScope for running coroutines (used for opening the drawer).
+ * @param drawerState the state of the side menu of the application.
+ */
 @Composable
 fun NavigationHost(
     navController: NavHostController,

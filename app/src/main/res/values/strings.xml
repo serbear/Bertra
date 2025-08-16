@@ -6,4 +6,5 @@
     <string name="add_train">Add Train</string>
     <string name="continue_train">Continue Train</string>
     <string name="choose_train">Choose Train</string>
+    <string name="main_menu_name">Main Menu</string>
 </resources>

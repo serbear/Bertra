@@ -85,7 +85,7 @@ fun DrawerWithNavigation() {
                                 launchSingleTop = true
                             }
                         },
-                        shape =RoundedCornerShape(0.dp)
+                        shape = RoundedCornerShape(0.dp)
                     )
                 }
             }

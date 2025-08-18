@@ -7,4 +7,8 @@
     <string name="continue_train">Continue Train</string>
     <string name="choose_train">Choose Train</string>
     <string name="main_menu_name">Main Menu</string>
+    <string name="train_list_screen_title">Train List</string>
+    <string name="new_exercise_screen_title">New Exercise</string>
+    <string name="train_exercises_screen_title">Train Exercises</string>
+    <string name="new_train_screen_title">New Train</string>
 </resources>

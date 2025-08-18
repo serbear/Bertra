@@ -7,14 +7,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.marsof.bertra.ui.screens.HomeScreen
 import com.marsof.bertra.ui.screens.HomeScreenDestination
+import com.marsof.bertra.ui.screens.TrainListScreen
+import com.marsof.bertra.ui.screens.TrainListScreenDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /**
  * The list of the destination points for the Navigation Host.
  */
-val navigationDestinations = listOf<INavigationDestination>(
+val navigationDestinations = listOf(
     HomeScreenDestination,
+    TrainListScreenDestination,
 )
 
 /**
@@ -36,18 +39,16 @@ fun NavigationHost(
     ) {
         composable(route = HomeScreenDestination.route) {
             HomeScreen(
-                navigateToTaskForm = {
-//                    navController.navigate(TaskFormDestination.route)
-                },
-                openDrawer = { scope.launch { drawerState.open() } }
+                openDrawer = { scope.launch { drawerState.open() } },
+                navigateToTaskListScreen = {
+                    navController.navigate(TrainListScreenDestination.route)
+                }
             )
         }
-//        composable(route = TaskFormDestination.route) {
-//            TaskFormScreen(
-//                navigateUp = {
-//                    navController.navigateUp()
-//                }
-//            )
-//        }
+        composable(route = TrainListScreenDestination.route) {
+            TrainListScreen(
+                openDrawer = { scope.launch { drawerState.open() } },
+            )
+        }
     }
 }

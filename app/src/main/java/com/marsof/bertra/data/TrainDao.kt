@@ -1,0 +1,26 @@
+package com.marsof.bertra.data
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface TrainDao {
+    @Query("select * from trains")
+    fun getAllTrains(): Flow<List<Train>>
+
+    @Query("select * from trains where id = :id")
+    fun getTrain(id: Int): Flow<Train>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(item: Train)
+
+    @Update
+    suspend fun update(item: Train)
+
+    @Delete
+    suspend fun delete(item: Train)
+}

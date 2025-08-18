@@ -1,15 +1,32 @@
 package com.marsof.bertra.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
+import com.marsof.bertra.data.Train
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
 import com.marsof.bertra.ui.navigation.INavigationDestination
@@ -26,6 +43,7 @@ fun TrainListScreen(
     viewModel: TrainListScreenViewModel = viewModel(factory = ViewModelProvider.Factory),
     openDrawer: () -> Unit
 ) {
+    val trainListState by viewModel.trainListUiState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -35,10 +53,68 @@ fun TrainListScreen(
             )
         },
     ) { innerPadding ->
-        Text(
-            text = "Train List",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(innerPadding)
+        TrainList(
+            trainList = trainListState.taskList,
+            modifier = Modifier.padding(innerPadding),
         )
+        Button(
+            onClick = {},
+            modifier = Modifier,
+            shape = RoundedCornerShape(0.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.new_train_button_label),
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
+    }
+}
+
+@Composable
+fun TrainList(trainList: List<Train>, modifier: Modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (trainList.isEmpty()) {
+            Text(
+                text = stringResource(R.string.train_list_is_empty),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge
+            )
+        } else {
+            LazyColumn {
+                items(items = trainList, key = { it.id }) { train ->
+                    SingleTrain(train = train)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SingleTrain(train: Train) {
+    Card(
+        modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(dimensionResource(id = R.dimen.padding_large))
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(
+                dimensionResource(id = R.dimen.padding_small)
+            )
+        ) {
+            Text(
+                text = train.id.toString(),
+                style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = train.name,
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
     }
 }

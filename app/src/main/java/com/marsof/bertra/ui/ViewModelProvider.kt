@@ -18,7 +18,7 @@ object ViewModelProvider {
             HomeScreenViewModel()
         }
         initializer {
-            TrainListScreenViewModel()
+            TrainListScreenViewModel(tasklyApplication().container.trainDao)
         }
     }
 }

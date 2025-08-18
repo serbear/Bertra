@@ -11,4 +11,6 @@
     <string name="new_exercise_screen_title">New Exercise</string>
     <string name="train_exercises_screen_title">Train Exercises</string>
     <string name="new_train_screen_title">New Train</string>
+    <string name="new_train_button_label">New Train</string>
+    <string name="train_list_is_empty">The train list is empty.</string>
 </resources>

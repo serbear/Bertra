@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [Train::class],
-    version = 1,
+    version = 3,
     exportSchema = false
 )
 abstract class BertraDatabase : RoomDatabase() {

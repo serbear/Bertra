@@ -13,4 +13,7 @@
     <string name="new_train_screen_title">New Train</string>
     <string name="new_train_button_label">New Train</string>
     <string name="train_list_is_empty">The train list is empty.</string>
+    <string name="go_train_exercise">Exercises</string>
+    <string name="train_name_label">Train Name:</string>
+    <string name="train_description">Train Description:</string>
 </resources>

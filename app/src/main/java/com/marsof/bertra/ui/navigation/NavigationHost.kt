@@ -7,6 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.marsof.bertra.ui.screens.HomeScreen
 import com.marsof.bertra.ui.screens.HomeScreenDestination
+import com.marsof.bertra.ui.screens.NewTrainScreen
+import com.marsof.bertra.ui.screens.NewTrainScreenDestination
+import com.marsof.bertra.ui.screens.TrainExercisesScreen
+import com.marsof.bertra.ui.screens.TrainExercisesScreenDestination
 import com.marsof.bertra.ui.screens.TrainListScreen
 import com.marsof.bertra.ui.screens.TrainListScreenDestination
 import kotlinx.coroutines.CoroutineScope
@@ -18,6 +22,7 @@ import kotlinx.coroutines.launch
 val navigationDestinations = listOf(
     HomeScreenDestination,
     TrainListScreenDestination,
+    NewTrainScreenDestination,
 )
 
 /**
@@ -45,9 +50,26 @@ fun NavigationHost(
                 }
             )
         }
+        composable(route = TrainExercisesScreenDestination.route) {
+            TrainExercisesScreen(
+                openDrawer = { scope.launch { drawerState.open() } },
+                navigateToScreen = {}
+            )
+        }
+        composable(route = NewTrainScreenDestination.route) {
+            NewTrainScreen(
+                openDrawer = { scope.launch { drawerState.open() } },
+                navigateToTrainExercisesScreen = {
+                    navController.navigate(TrainExercisesScreenDestination.route)
+                }
+            )
+        }
         composable(route = TrainListScreenDestination.route) {
             TrainListScreen(
                 openDrawer = { scope.launch { drawerState.open() } },
+                navigateToNewTrainScreen = {
+                    navController.navigate(NewTrainScreenDestination.route)
+                }
             )
         }
     }

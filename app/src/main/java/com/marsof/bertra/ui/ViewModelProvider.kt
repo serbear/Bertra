@@ -6,11 +6,12 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.marsof.bertra.BertraApplication
 import com.marsof.bertra.ui.viewmodels.HomeScreenViewModel
+import com.marsof.bertra.ui.viewmodels.NewTrainScreenViewModel
+import com.marsof.bertra.ui.viewmodels.TrainExercisesScreenViewModel
 import com.marsof.bertra.ui.viewmodels.TrainListScreenViewModel
 
-fun CreationExtras.tasklyApplication(): BertraApplication =
+fun CreationExtras.bertraApplication(): BertraApplication =
     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as BertraApplication)
-
 
 object ViewModelProvider {
     val Factory = viewModelFactory {
@@ -18,7 +19,13 @@ object ViewModelProvider {
             HomeScreenViewModel()
         }
         initializer {
-            TrainListScreenViewModel(tasklyApplication().container.trainDao)
+            TrainListScreenViewModel(bertraApplication().container.trainDao)
+        }
+        initializer {
+            NewTrainScreenViewModel(bertraApplication().container.trainDao)
+        }
+        initializer {
+            TrainExercisesScreenViewModel()
         }
     }
 }

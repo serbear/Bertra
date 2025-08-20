@@ -29,30 +29,30 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
-import com.marsof.bertra.data.Train
+import com.marsof.bertra.data.Exercise
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
 import com.marsof.bertra.ui.navigation.INavigationDestination
-import com.marsof.bertra.ui.viewmodels.TrainListScreenViewModel
+import com.marsof.bertra.ui.viewmodels.ExerciseListScreenViewModel
 
-object TrainListScreenDestination : INavigationDestination {
-    override val route: String get() = "train_list"
-    override val titleRes: Int get() = R.string.train_list_screen_title
+object ExerciseListScreenDestination : INavigationDestination {
+    override val route: String get() = "exercise_list"
+    override val titleRes: Int get() = R.string.exercise_list_screen_title
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrainListScreen(
-    navigateToNewTrainScreen: () -> Unit,
-    viewModel: TrainListScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider),
-    openDrawer: () -> Unit,
+fun ExerciseListScreen(
+    navigateToNewExerciseScreen: () -> Unit,
+    viewModel: ExerciseListScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider),
+    openDrawer: () -> Unit
 ) {
-    val trainListState by viewModel.trainListUiState.collectAsState()
+    val exerciseListState by viewModel.exerciseListUiState.collectAsState()
 
     Scaffold(
         topBar = {
             ApplicationTopBar(
-                title = stringResource(TrainListScreenDestination.titleRes),
+                title = stringResource(ExerciseListScreenDestination.titleRes),
                 onNavigationClick = openDrawer
             )
         },
@@ -61,21 +61,21 @@ fun TrainListScreen(
             modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TrainList(
-                trainList = trainListState.trainList,
+            ExerciseList(
+                exerciseList = exerciseListState.exerciseList,
                 modifier = Modifier.padding(innerPadding),
             )
             Button(
-                onClick = navigateToNewTrainScreen,
+                onClick = navigateToNewExerciseScreen,
                 modifier = Modifier,
                 shape = RoundedCornerShape(0.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.new_train_button_label),
+                    contentDescription = stringResource(R.string.new_exercise_button_label),
                 )
                 Text(
-                    text = stringResource(R.string.new_train_button_label),
+                    text = stringResource(R.string.new_exercise_button_label),
                 )
             }
         }
@@ -83,21 +83,21 @@ fun TrainListScreen(
 }
 
 @Composable
-fun TrainList(trainList: List<Train>, modifier: Modifier) {
+fun ExerciseList(exerciseList: List<Exercise>, modifier: Modifier) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (trainList.isEmpty()) {
+        if (exerciseList.isEmpty()) {
             Text(
-                text = stringResource(R.string.train_list_is_empty),
+                text = stringResource(R.string.exercise_list_is_empty),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge
             )
         } else {
             LazyColumn {
-                items(items = trainList, key = { it.id }) { train ->
-                    SingleTrain(train = train)
+                items(items = exerciseList, key = { it.id }) { exercise ->
+                    SingleExercise(exercise= exercise)
                 }
             }
         }
@@ -105,7 +105,7 @@ fun TrainList(trainList: List<Train>, modifier: Modifier) {
 }
 
 @Composable
-fun SingleTrain(train: Train) {
+fun SingleExercise(exercise: Exercise) {
     Card(
         modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -119,12 +119,12 @@ fun SingleTrain(train: Train) {
             )
         ) {
             Text(
-                text = train.id.toString(),
+                text = exercise.id.toString(),
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(Modifier.weight(1f))
             Text(
-                text = train.name,
+                text = exercise.name,
                 style = MaterialTheme.typography.titleMedium
             )
         }

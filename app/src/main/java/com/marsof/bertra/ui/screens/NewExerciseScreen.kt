@@ -23,7 +23,7 @@ object NewExerciseScreenDestination : INavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewExerciseScreen(
-    navigateToScreen: () -> Unit,
+    navigateToExerciseListScreen: () -> Unit,
     viewModel: NewExerciseScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider),
     openDrawer: () -> Unit
 ) {

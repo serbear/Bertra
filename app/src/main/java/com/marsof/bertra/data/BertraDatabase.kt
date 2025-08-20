@@ -7,12 +7,16 @@ import androidx.room.RoomDatabase
 
 
 @Database(
-    entities = [Train::class],
-    version = 3,
+    entities = [
+        Train::class,
+        Exercise::class
+    ],
+    version = 4,
     exportSchema = false
 )
 abstract class BertraDatabase : RoomDatabase() {
     abstract fun trainDao(): TrainDao
+    abstract fun exerciseDao(): ExerciseDao
 
     companion object {
         @Volatile

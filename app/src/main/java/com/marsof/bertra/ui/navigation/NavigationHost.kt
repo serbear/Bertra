@@ -5,8 +5,12 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.marsof.bertra.ui.screens.ExerciseListScreen
+import com.marsof.bertra.ui.screens.ExerciseListScreenDestination
 import com.marsof.bertra.ui.screens.HomeScreen
 import com.marsof.bertra.ui.screens.HomeScreenDestination
+import com.marsof.bertra.ui.screens.NewExerciseScreen
+import com.marsof.bertra.ui.screens.NewExerciseScreenDestination
 import com.marsof.bertra.ui.screens.NewTrainScreen
 import com.marsof.bertra.ui.screens.NewTrainScreenDestination
 import com.marsof.bertra.ui.screens.TrainExercisesScreen
@@ -17,12 +21,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /**
- * The list of the destination points for the Navigation Host.
+ * The list of the destination points for the Side Menu.
  */
-val navigationDestinations = listOf(
+val sideMenuDestinations = listOf(
     HomeScreenDestination,
     TrainListScreenDestination,
     NewTrainScreenDestination,
+    ExerciseListScreenDestination
 )
 
 /**
@@ -47,6 +52,22 @@ fun NavigationHost(
                 openDrawer = { scope.launch { drawerState.open() } },
                 navigateToTaskListScreen = {
                     navController.navigate(TrainListScreenDestination.route)
+                }
+            )
+        }
+        composable(route = NewExerciseScreenDestination.route) {
+            NewExerciseScreen(
+                openDrawer = { scope.launch { drawerState.open() } },
+                navigateToExerciseListScreen = {
+                    navController.navigate(ExerciseListScreenDestination.route)
+                }
+            )
+        }
+        composable(route = ExerciseListScreenDestination.route) {
+            ExerciseListScreen(
+                openDrawer = { scope.launch { drawerState.open() } },
+                navigateToNewExerciseScreen = {
+                    navController.navigate(NewExerciseScreenDestination.route)
                 }
             )
         }

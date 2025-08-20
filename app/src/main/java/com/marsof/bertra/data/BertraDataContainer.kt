@@ -6,4 +6,7 @@ class BertraDataContainer(private val context: Context) {
     val trainDao: TrainDao by lazy {
         BertraDatabase.getDatabase(context).trainDao()
     }
+    val exerciseDao: ExerciseDao by lazy {
+        BertraDatabase.getDatabase(context).exerciseDao()
+    }
 }

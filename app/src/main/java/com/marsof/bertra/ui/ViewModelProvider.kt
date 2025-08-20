@@ -5,6 +5,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.marsof.bertra.BertraApplication
+import com.marsof.bertra.ui.viewmodels.ExerciseListScreenViewModel
 import com.marsof.bertra.ui.viewmodels.HomeScreenViewModel
 import com.marsof.bertra.ui.viewmodels.NewExerciseScreenViewModel
 import com.marsof.bertra.ui.viewmodels.NewTrainScreenViewModel
@@ -24,6 +25,7 @@ object ViewModelProvider {
             NewTrainScreenViewModel(bertraApplication().container.trainDao)
         }
         initializer { TrainExercisesScreenViewModel() }
-        initializer { NewExerciseScreenViewModel() }
+        initializer { NewExerciseScreenViewModel(bertraApplication().container.exerciseDao) }
+        initializer { ExerciseListScreenViewModel(bertraApplication().container.exerciseDao) }
     }
 }

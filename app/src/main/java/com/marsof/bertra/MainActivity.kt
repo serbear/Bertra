@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.marsof.bertra.ui.navigation.NavigationHost
-import com.marsof.bertra.ui.navigation.navigationDestinations
+import com.marsof.bertra.ui.navigation.sideMenuDestinations
 import com.marsof.bertra.ui.theme.BertraTheme
 import kotlinx.coroutines.launch
 
@@ -69,7 +69,7 @@ fun DrawerWithNavigation() {
                 //
                 // Menu elements.
                 //
-                navigationDestinations.forEach { item ->
+                sideMenuDestinations.forEach { item ->
                     NavigationDrawerItem(
                         label = {
                             Text(

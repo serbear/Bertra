@@ -43,7 +43,7 @@ object TrainListScreenDestination : INavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainListScreen(
-    viewModel: TrainListScreenViewModel = viewModel(factory = ViewModelProvider.Factory),
+    viewModel: TrainListScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider),
     openDrawer: () -> Unit,
     navigateToNewTrainScreen: () -> Unit,
 ) {

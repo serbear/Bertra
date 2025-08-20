@@ -24,7 +24,7 @@ object NewExerciseScreenDestination : INavigationDestination {
 @Composable
 fun NewExerciseScreen(
     navigateToScreen: () -> Unit,
-    viewModel: NewExerciseScreenViewModel = viewModel(factory = ViewModelProvider.Factory),
+    viewModel: NewExerciseScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider),
     openDrawer: () -> Unit
 ) {
     Scaffold(

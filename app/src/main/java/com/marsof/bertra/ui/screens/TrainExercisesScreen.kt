@@ -24,7 +24,7 @@ object TrainExercisesScreenDestination : INavigationDestination {
 @Composable
 fun TrainExercisesScreen(
     navigateToScreen: () -> Unit,
-    viewModel: TrainExercisesScreenViewModel = viewModel(factory = ViewModelProvider.Factory),
+    viewModel: TrainExercisesScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider),
     openDrawer: () -> Unit
 ) {
     Scaffold(

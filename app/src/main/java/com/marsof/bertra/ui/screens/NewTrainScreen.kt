@@ -39,7 +39,7 @@ object NewTrainScreenDestination : INavigationDestination {
 @Composable
 fun NewTrainScreen(
     navigateToTrainExercisesScreen: () -> Unit,
-    viewModel: NewTrainScreenViewModel = viewModel(factory = ViewModelProvider.Factory),
+    viewModel: NewTrainScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider),
     openDrawer: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()

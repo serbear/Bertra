@@ -48,7 +48,7 @@ object HomeScreenDestination : INavigationDestination {
 @Composable
 fun HomeScreen(
     navigateToTaskListScreen: () -> Unit,
-    viewModel: HomeScreenViewModel = viewModel(factory = ViewModelProvider.Factory),
+    viewModel: HomeScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider),
     openDrawer: () -> Unit
 ) {
 //    val currentLastTrainStrategyState by viewModel.currentLastTrainStrategyState.collectAsState()

@@ -15,14 +15,14 @@ import com.marsof.bertra.ui.elements.ApplicationTopBar
 import com.marsof.bertra.ui.navigation.INavigationDestination
 import com.marsof.bertra.ui.viewmodels.NewExerciseScreenViewModel
 
-object NewExcerciseScreenDestination : INavigationDestination {
+object NewExerciseScreenDestination : INavigationDestination {
     override val route: String get() = "new_exercise"
     override val titleRes: Int get() = R.string.new_exercise_screen_title
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewExcerciseScreen(
+fun NewExerciseScreen(
     navigateToScreen: () -> Unit,
     viewModel: NewExerciseScreenViewModel = viewModel(factory = ViewModelProvider.Factory),
     openDrawer: () -> Unit

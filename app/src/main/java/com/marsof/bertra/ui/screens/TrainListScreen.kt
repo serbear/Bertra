@@ -62,7 +62,7 @@ fun TrainListScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TrainList(
-                trainList = trainListState.taskList,
+                trainList = trainListState.trainList,
                 modifier = Modifier.padding(innerPadding),
             )
             Button(

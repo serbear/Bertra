@@ -53,7 +53,7 @@ fun HomeScreen(
 ) {
 //    val currentLastTrainStrategyState by viewModel.currentLastTrainStrategyState.collectAsState()
 
-    val currentDisplayStrategy = viewModel.getLastTrainStrategy()
+    val currentDisplayStrategy = viewModel.getActiveTrainStrategy()
 
     Scaffold(
         topBar = {

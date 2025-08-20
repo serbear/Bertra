@@ -1,4 +1,5 @@
 package com.marsof.bertra.data
+
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -23,4 +24,7 @@ interface TrainDao {
 
     @Delete
     suspend fun delete(item: Train)
+
+    @Query("SELECT * FROM trains WHERE lastDate IS NOT NULL ORDER BY lastDate DESC LIMIT 1")
+    fun getLastTrain(): Flow<Train?>
 }

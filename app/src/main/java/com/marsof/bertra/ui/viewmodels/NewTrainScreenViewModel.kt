@@ -4,8 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.marsof.bertra.data.Train
-import com.marsof.bertra.data.TrainDao
+import com.marsof.bertra.data.entites.Train
+import com.marsof.bertra.data.dao.TrainDao
 
 data class TrainFormUiState(
     val train: Train = Train(

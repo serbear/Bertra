@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
-import com.marsof.bertra.data.Train
+import com.marsof.bertra.data.entites.Train
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
 import com.marsof.bertra.ui.navigation.INavigationDestination

@@ -4,6 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.marsof.bertra.data.dao.ExerciseDao
+import com.marsof.bertra.data.dao.TrainDao
+import com.marsof.bertra.data.entites.Exercise
+import com.marsof.bertra.data.entites.Train
 
 
 @Database(

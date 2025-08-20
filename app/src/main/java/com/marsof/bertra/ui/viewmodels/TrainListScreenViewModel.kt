@@ -2,8 +2,8 @@ package com.marsof.bertra.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.marsof.bertra.data.Train
-import com.marsof.bertra.data.TrainDao
+import com.marsof.bertra.data.entites.Train
+import com.marsof.bertra.data.dao.TrainDao
 import com.marsof.bertra.ui.viewmodels.activetrainstrategies.CurrentTrainStrategy
 import com.marsof.bertra.ui.viewmodels.activetrainstrategies.NoActiveTrainStrategy
 import com.marsof.bertra.ui.viewmodels.activetrainstrategies.NoTrainsStrategy

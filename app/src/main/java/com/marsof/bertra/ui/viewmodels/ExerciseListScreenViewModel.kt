@@ -2,8 +2,8 @@ package com.marsof.bertra.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.marsof.bertra.data.Exercise
-import com.marsof.bertra.data.ExerciseDao
+import com.marsof.bertra.data.entites.Exercise
+import com.marsof.bertra.data.dao.ExerciseDao
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map

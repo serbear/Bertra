@@ -1,4 +1,4 @@
-package com.marsof.bertra.data
+package com.marsof.bertra.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.marsof.bertra.data.entites.Train
 import kotlinx.coroutines.flow.Flow
 
 @Dao

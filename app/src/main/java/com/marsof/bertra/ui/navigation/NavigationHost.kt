@@ -13,6 +13,8 @@ import com.marsof.bertra.ui.screens.MeasurementUnitListScreen
 import com.marsof.bertra.ui.screens.MeasurementUnitListScreenDestination
 import com.marsof.bertra.ui.screens.NewExerciseScreen
 import com.marsof.bertra.ui.screens.NewExerciseScreenDestination
+import com.marsof.bertra.ui.screens.NewMeasurementUnitScreen
+import com.marsof.bertra.ui.screens.NewMeasurementUnitScreenDestination
 import com.marsof.bertra.ui.screens.NewTrainScreen
 import com.marsof.bertra.ui.screens.NewTrainScreenDestination
 import com.marsof.bertra.ui.screens.TrainExercisesScreen
@@ -30,7 +32,8 @@ val sideMenuDestinations = listOf(
     TrainListScreenDestination,
     NewTrainScreenDestination,
     ExerciseListScreenDestination,
-    MeasurementUnitListScreenDestination
+    MeasurementUnitListScreenDestination,
+    NewMeasurementUnitScreenDestination
 )
 
 /**
@@ -96,11 +99,19 @@ fun NavigationHost(
                 }
             )
         }
+        composable(route = NewMeasurementUnitScreenDestination.route) {
+            NewMeasurementUnitScreen(
+                openDrawer = { scope.launch { drawerState.open() } },
+                navigateToMeasurementUnitListScreen = {
+                    navController.navigate(MeasurementUnitListScreenDestination.route)
+                }
+            )
+        }
         composable(route = MeasurementUnitListScreenDestination.route) {
             MeasurementUnitListScreen(
                 openDrawer = { scope.launch { drawerState.open() } },
                 navigateToNewMeasurementUnitScreen = {
-//                    navController.navigate(NewMeasurementUnitScreenDestination.route)
+                    navController.navigate(NewMeasurementUnitScreenDestination.route)
                 }
             )
         }

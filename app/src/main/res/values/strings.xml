@@ -24,4 +24,7 @@
     <string name="measurement_unit_list_screen_title">Measurement Unit List</string>
     <string name="measurement_unit_list_is_empty">The measurement unit list is empty.</string>
     <string name="new_measurement_unit_button_label">New Measurement Unit</string>
+    <string name="new_measurement_unit_screen_title">New Measurement Unit</string>
+    <string name="save_measurement_unit">Save Measurement Unit</string>
+    <string name="measurement_unit_name_label">Measurement Unit Name:</string>
 </resources>

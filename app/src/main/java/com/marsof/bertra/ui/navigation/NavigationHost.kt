@@ -13,8 +13,6 @@ import com.marsof.bertra.ui.screens.MeasurementUnitListScreen
 import com.marsof.bertra.ui.screens.MeasurementUnitListScreenDestination
 import com.marsof.bertra.ui.screens.NewExerciseScreen
 import com.marsof.bertra.ui.screens.NewExerciseScreenDestination
-import com.marsof.bertra.ui.screens.NewMeasurementUnitScreen
-import com.marsof.bertra.ui.screens.NewMeasureUnitScreenDestination
 import com.marsof.bertra.ui.screens.NewTrainScreen
 import com.marsof.bertra.ui.screens.NewTrainScreenDestination
 import com.marsof.bertra.ui.screens.TrainExercisesScreen
@@ -72,22 +70,6 @@ fun NavigationHost(
             ExerciseListScreen(
                 openDrawer = { scope.launch { drawerState.open() } },
                 navigateToNewExerciseScreen = {
-                    navController.navigate(NewExerciseScreenDestination.route)
-                }
-            )
-        }
-        composable(route = NewMeasureUnitScreenDestination.route) {
-            NewMeasurementUnitScreen(
-                openDrawer = { scope.launch { drawerState.open() } },
-                navigateToMeasurementUnitListScreen = {
-                    navController.navigate(MeasurementUnitListScreenDestination.route)
-                }
-            )
-        }
-        composable(route = MeasurementUnitListScreenDestination.route) {
-            MeasurementUnitListScreen(
-                openDrawer = { scope.launch { drawerState.open() } },
-                navigateToNewMeasurementUnitScreen = {
                     navController.navigate(NewExerciseScreenDestination.route)
                 }
             )

@@ -54,7 +54,7 @@ fun NewTrainScreen(
     Scaffold(
         topBar = {
             ApplicationTopBar(
-                title = stringResource(TrainListScreenDestination.titleRes),
+                title = stringResource(NewTrainScreenDestination.titleRes),
                 onNavigationClick = openDrawer
             )
         },

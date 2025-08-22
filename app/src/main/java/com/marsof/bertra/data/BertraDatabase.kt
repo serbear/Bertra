@@ -5,22 +5,25 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.marsof.bertra.data.dao.ExerciseDao
+import com.marsof.bertra.data.dao.MeasurementUnitDao
 import com.marsof.bertra.data.dao.TrainDao
 import com.marsof.bertra.data.entites.Exercise
+import com.marsof.bertra.data.entites.MeasurementUnit
 import com.marsof.bertra.data.entites.Train
-
 
 @Database(
     entities = [
         Train::class,
-        Exercise::class
+        Exercise::class,
+        MeasurementUnit::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class BertraDatabase : RoomDatabase() {
     abstract fun trainDao(): TrainDao
     abstract fun exerciseDao(): ExerciseDao
+    abstract fun measurementUnitDao(): MeasurementUnitDao
 
     companion object {
         @Volatile

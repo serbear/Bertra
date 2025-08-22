@@ -30,7 +30,7 @@ fun TrainExercisesScreen(
     Scaffold(
         topBar = {
             ApplicationTopBar(
-                title = stringResource(TrainListScreenDestination.titleRes),
+                title = stringResource(TrainExercisesScreenDestination.titleRes),
                 onNavigationClick = openDrawer
             )
         },

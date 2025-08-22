@@ -21,4 +21,7 @@
     <string name="exercise_list_is_empty">The exercise list is empty.</string>
     <string name="exercise_name_label">Exercise Name:</string>
     <string name="save_exercise">Save Exercise</string>
+    <string name="measurement_unit_list_screen_title">Measurement Unit List</string>
+    <string name="measurement_unit_list_is_empty">The measurement unit list is empty.</string>
+    <string name="new_measurement_unit_button_label">New Measurement Unit</string>
 </resources>

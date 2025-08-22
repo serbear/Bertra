@@ -47,7 +47,7 @@ fun NewExerciseScreen(
     Scaffold(
         topBar = {
             ApplicationTopBar(
-                title = stringResource(TrainListScreenDestination.titleRes),
+                title = stringResource(NewExerciseScreenDestination.titleRes),
                 onNavigationClick = openDrawer
             )
         },

@@ -2,5 +2,5 @@ package com.marsof.bertra.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 
-class TrainExercisesScreenViewModel : ViewModel() {
+class TrainExercisesListScreenViewModel : ViewModel() {
 }

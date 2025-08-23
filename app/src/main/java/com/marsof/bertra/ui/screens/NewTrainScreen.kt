@@ -38,7 +38,7 @@ object NewTrainScreenDestination : INavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewTrainScreen(
-    navigateToTrainExercisesScreen: () -> Unit,
+    navigateToTrainExercisesListScreen: () -> Unit,
     viewModel: NewTrainScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider),
     openDrawer: () -> Unit
 ) {
@@ -47,7 +47,7 @@ fun NewTrainScreen(
     val onSaveClick: () -> Unit = {
         coroutineScope.launch {
             viewModel.saveTrain()
-            navigateToTrainExercisesScreen()
+            navigateToTrainExercisesListScreen()
         }
     }
 

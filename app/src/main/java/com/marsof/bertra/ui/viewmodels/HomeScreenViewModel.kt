@@ -10,7 +10,9 @@ import com.marsof.bertra.ui.ViewModelProvider
 class HomeScreenViewModel() : ViewModel() {
     @Composable
     fun getActiveTrainStrategy(
-        viewModel: TrainListScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider)
+        viewModel: TrainListScreenViewModel = viewModel(
+            factory = ViewModelProvider.AppViewModelProvider
+        )
     ): IActiveTrainStrategy {
         return viewModel.activeTrainStrategy.collectAsState().value
     }

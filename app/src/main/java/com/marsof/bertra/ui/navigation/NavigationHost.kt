@@ -17,8 +17,8 @@ import com.marsof.bertra.ui.screens.NewMeasurementUnitScreen
 import com.marsof.bertra.ui.screens.NewMeasurementUnitScreenDestination
 import com.marsof.bertra.ui.screens.NewTrainScreen
 import com.marsof.bertra.ui.screens.NewTrainScreenDestination
-import com.marsof.bertra.ui.screens.TrainExercisesScreen
-import com.marsof.bertra.ui.screens.TrainExercisesScreenDestination
+import com.marsof.bertra.ui.screens.TrainExercisesListScreen
+import com.marsof.bertra.ui.screens.TrainExercisesListScreenDestination
 import com.marsof.bertra.ui.screens.TrainListScreen
 import com.marsof.bertra.ui.screens.TrainListScreenDestination
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +33,6 @@ val sideMenuDestinations = listOf(
     NewTrainScreenDestination,
     ExerciseListScreenDestination,
     MeasurementUnitListScreenDestination,
-    NewMeasurementUnitScreenDestination
 )
 
 /**
@@ -77,8 +76,8 @@ fun NavigationHost(
                 }
             )
         }
-        composable(route = TrainExercisesScreenDestination.route) {
-            TrainExercisesScreen(
+        composable(route = TrainExercisesListScreenDestination.route) {
+            TrainExercisesListScreen(
                 openDrawer = { scope.launch { drawerState.open() } },
                 navigateToScreen = {}
             )
@@ -86,8 +85,8 @@ fun NavigationHost(
         composable(route = NewTrainScreenDestination.route) {
             NewTrainScreen(
                 openDrawer = { scope.launch { drawerState.open() } },
-                navigateToTrainExercisesScreen = {
-                    navController.navigate(TrainExercisesScreenDestination.route)
+                navigateToTrainExercisesListScreen = {
+                    navController.navigate(TrainExercisesListScreenDestination.route)
                 }
             )
         }

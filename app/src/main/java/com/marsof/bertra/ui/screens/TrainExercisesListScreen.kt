@@ -1,5 +1,9 @@
 package com.marsof.bertra.ui.screens
 
+/**
+ * Screen that displays a list of exercises for a workout.
+ */
+
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -13,24 +17,26 @@ import com.marsof.bertra.R
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
 import com.marsof.bertra.ui.navigation.INavigationDestination
-import com.marsof.bertra.ui.viewmodels.TrainExercisesScreenViewModel
+import com.marsof.bertra.ui.viewmodels.TrainExercisesListScreenViewModel
 
-object TrainExercisesScreenDestination : INavigationDestination {
+object TrainExercisesListScreenDestination : INavigationDestination {
     override val route: String get() = "train_exercises"
     override val titleRes: Int get() = R.string.train_exercises_screen_title
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrainExercisesScreen(
+fun TrainExercisesListScreen(
     navigateToScreen: () -> Unit,
-    viewModel: TrainExercisesScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider),
+    viewModel: TrainExercisesListScreenViewModel = viewModel(
+        factory = ViewModelProvider.AppViewModelProvider
+    ),
     openDrawer: () -> Unit
 ) {
     Scaffold(
         topBar = {
             ApplicationTopBar(
-                title = stringResource(TrainExercisesScreenDestination.titleRes),
+                title = stringResource(TrainExercisesListScreenDestination.titleRes),
                 onNavigationClick = openDrawer
             )
         },

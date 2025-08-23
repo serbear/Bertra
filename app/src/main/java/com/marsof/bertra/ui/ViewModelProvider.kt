@@ -11,7 +11,7 @@ import com.marsof.bertra.ui.viewmodels.MeasurementUnitListScreenViewModel
 import com.marsof.bertra.ui.viewmodels.NewExerciseScreenViewModel
 import com.marsof.bertra.ui.viewmodels.NewMeasurementUnitScreenViewModel
 import com.marsof.bertra.ui.viewmodels.NewTrainScreenViewModel
-import com.marsof.bertra.ui.viewmodels.TrainExercisesScreenViewModel
+import com.marsof.bertra.ui.viewmodels.TrainExercisesListScreenViewModel
 import com.marsof.bertra.ui.viewmodels.TrainListScreenViewModel
 
 fun CreationExtras.bertraApplication(): BertraApplication =
@@ -29,7 +29,7 @@ object ViewModelProvider {
             NewTrainScreenViewModel(bertraApplication().container.trainDao)
         }
         initializer {
-            TrainExercisesScreenViewModel()
+            TrainExercisesListScreenViewModel()
         }
         initializer {
             NewExerciseScreenViewModel(bertraApplication().container.exerciseDao)

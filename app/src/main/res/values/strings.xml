@@ -27,4 +27,7 @@
     <string name="new_measurement_unit_screen_title">New Measurement Unit</string>
     <string name="save_measurement_unit">Save Measurement Unit</string>
     <string name="measurement_unit_name_label">Measurement Unit Name:</string>
+    <string name="save_new_train_exercise_button_label">Save Exercise</string>
+    <string name="new_train_exercise_button_label">Add Exercise</string>
+    <string name="train_exercise_list_is_empty">The train has no any exercises.</string>
 </resources>

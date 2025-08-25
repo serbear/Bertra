@@ -4,6 +4,7 @@ import android.content.Context
 import com.marsof.bertra.data.dao.ExerciseDao
 import com.marsof.bertra.data.dao.MeasurementUnitDao
 import com.marsof.bertra.data.dao.TrainDao
+import com.marsof.bertra.data.dao.TrainExerciseDao
 
 class BertraDataContainer(private val context: Context) {
     val trainDao: TrainDao by lazy {
@@ -14,5 +15,8 @@ class BertraDataContainer(private val context: Context) {
     }
     val measurementUnitDao: MeasurementUnitDao by lazy {
         BertraDatabase.getDatabase(context).measurementUnitDao()
+    }
+    val trainExerciseDao: TrainExerciseDao by lazy {
+        BertraDatabase.getDatabase(context).trainExerciseDao()
     }
 }

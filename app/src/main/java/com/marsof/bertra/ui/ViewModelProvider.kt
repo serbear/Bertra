@@ -29,7 +29,7 @@ object ViewModelProvider {
             NewTrainScreenViewModel(bertraApplication().container.trainDao)
         }
         initializer {
-            TrainExercisesListScreenViewModel()
+            TrainExercisesListScreenViewModel(bertraApplication().container.trainExerciseDao)
         }
         initializer {
             NewExerciseScreenViewModel(bertraApplication().container.exerciseDao)

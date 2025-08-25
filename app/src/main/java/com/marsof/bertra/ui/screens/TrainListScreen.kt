@@ -44,7 +44,9 @@ object TrainListScreenDestination : INavigationDestination {
 @Composable
 fun TrainListScreen(
     navigateToNewTrainScreen: () -> Unit,
-    viewModel: TrainListScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider),
+    viewModel: TrainListScreenViewModel = viewModel(
+        factory = ViewModelProvider.AppViewModelProvider
+    ),
     openDrawer: () -> Unit,
 ) {
     val trainListState by viewModel.trainListUiState.collectAsState()

@@ -1,19 +1,34 @@
 package com.marsof.bertra.ui.screens
-
-/**
- * Screen that displays a list of exercises for a workout.
- */
-
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
+import com.marsof.bertra.data.entites.TrainExercise
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
 import com.marsof.bertra.ui.navigation.INavigationDestination
@@ -24,15 +39,20 @@ object TrainExercisesListScreenDestination : INavigationDestination {
     override val titleRes: Int get() = R.string.train_exercises_screen_title
 }
 
+/**
+ * Screen that displays a list of exercises for a workout.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainExercisesListScreen(
-    navigateToScreen: () -> Unit,
+    navigateToNewTrainExerciseScreen: () -> Unit,
     viewModel: TrainExercisesListScreenViewModel = viewModel(
         factory = ViewModelProvider.AppViewModelProvider
     ),
     openDrawer: () -> Unit
 ) {
+    val trainExerciseListState by viewModel.trainExerciseListUiState.collectAsState()
+
     Scaffold(
         topBar = {
             ApplicationTopBar(
@@ -41,10 +61,101 @@ fun TrainExercisesListScreen(
             )
         },
     ) { innerPadding ->
-        Text(
-            text = "Train Exercises List",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(innerPadding)
-        )
+        Column(
+            modifier = Modifier,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TrainExerciseList(
+                trainExerciseList = trainExerciseListState.trainExerciseList,
+                modifier = Modifier.padding(innerPadding)
+            )
+            Button(
+                onClick = navigateToNewTrainExerciseScreen,
+                modifier = Modifier,
+                shape = RoundedCornerShape(0.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(
+                        R.string.new_train_exercise_button_label
+                    ),
+                )
+                Text(
+                    text = stringResource(R.string.new_train_exercise_button_label),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun TrainExerciseList(
+    trainExerciseList: List<TrainExercise>,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (trainExerciseList.isEmpty()) {
+            Text(
+                text = stringResource(R.string.train_exercise_list_is_empty),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleLarge
+            )
+        } else {
+            LazyColumn {
+                items(items = trainExerciseList, key = { it.id }) { trainExercise ->
+                    SingleTrainExercise(trainExercise = trainExercise)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SingleTrainExercise(trainExercise: TrainExercise) {
+    Card(
+        modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(dimensionResource(id = R.dimen.padding_large))
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(
+                dimensionResource(id = R.dimen.padding_small)
+            )
+        ) {
+            Text(
+                text = "Train Exercise ID: " + trainExercise.id.toString(),
+                style = MaterialTheme.typography.titleLarge
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = "Train ID: " + trainExercise.trainId,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = "Exercise ID: " + trainExercise.exerciseId,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = "Repetitions: " + trainExercise.repetitionsNumber,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = "Measurement Unit ID: " + trainExercise.measurementUnitId,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = "Initial weight: ::TODO::",
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
     }
 }

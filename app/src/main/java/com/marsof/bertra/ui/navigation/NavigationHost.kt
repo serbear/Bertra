@@ -79,7 +79,7 @@ fun NavigationHost(
         composable(route = TrainExercisesListScreenDestination.route) {
             TrainExercisesListScreen(
                 openDrawer = { scope.launch { drawerState.open() } },
-                navigateToScreen = {}
+                navigateToNewTrainExerciseScreen = {}
             )
         }
         composable(route = NewTrainScreenDestination.route) {

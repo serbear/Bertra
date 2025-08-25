@@ -30,4 +30,7 @@
     <string name="save_new_train_exercise_button_label">Save Exercise</string>
     <string name="new_train_exercise_button_label">Add Exercise</string>
     <string name="train_exercise_list_is_empty">The train has no any exercises.</string>
+    <string name="new_train_exercise_screen_title">Add Train Exercise</string>
+    <string name="save_train_exercise">Save Train Exercise</string>
+    <string name="go_back_button_label">Back</string>
 </resources>

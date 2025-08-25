@@ -45,7 +45,7 @@ object TrainExercisesListScreenDestination : INavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainExercisesListScreen(
-    navigateToNewTrainExerciseScreen: () -> Unit,
+    navigateToAddTrainExerciseScreen: () -> Unit,
     viewModel: TrainExercisesListScreenViewModel = viewModel(
         factory = ViewModelProvider.AppViewModelProvider
     ),
@@ -70,7 +70,7 @@ fun TrainExercisesListScreen(
                 modifier = Modifier.padding(innerPadding)
             )
             Button(
-                onClick = navigateToNewTrainExerciseScreen,
+                onClick = navigateToAddTrainExerciseScreen,
                 modifier = Modifier,
                 shape = RoundedCornerShape(0.dp)
             ) {

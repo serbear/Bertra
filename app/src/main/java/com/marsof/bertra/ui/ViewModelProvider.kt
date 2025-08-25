@@ -5,6 +5,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.marsof.bertra.BertraApplication
+import com.marsof.bertra.ui.viewmodels.AddTrainExerciseScreenViewModel
 import com.marsof.bertra.ui.viewmodels.ExerciseListScreenViewModel
 import com.marsof.bertra.ui.viewmodels.HomeScreenViewModel
 import com.marsof.bertra.ui.viewmodels.MeasurementUnitListScreenViewModel
@@ -42,6 +43,9 @@ object ViewModelProvider {
         }
         initializer {
             NewMeasurementUnitScreenViewModel(bertraApplication().container.measurementUnitDao)
+        }
+        initializer {
+            AddTrainExerciseScreenViewModel(bertraApplication().container.trainExerciseDao)
         }
     }
 }

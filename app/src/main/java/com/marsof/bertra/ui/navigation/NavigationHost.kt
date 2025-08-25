@@ -15,6 +15,8 @@ import com.marsof.bertra.ui.screens.NewExerciseScreen
 import com.marsof.bertra.ui.screens.NewExerciseScreenDestination
 import com.marsof.bertra.ui.screens.NewMeasurementUnitScreen
 import com.marsof.bertra.ui.screens.NewMeasurementUnitScreenDestination
+import com.marsof.bertra.ui.screens.AddTrainExerciseScreen
+import com.marsof.bertra.ui.screens.AddTrainExerciseScreenDestination
 import com.marsof.bertra.ui.screens.NewTrainScreen
 import com.marsof.bertra.ui.screens.NewTrainScreenDestination
 import com.marsof.bertra.ui.screens.TrainExercisesListScreen
@@ -76,10 +78,20 @@ fun NavigationHost(
                 }
             )
         }
+        composable(route = AddTrainExerciseScreenDestination.route) {
+            AddTrainExerciseScreen(
+                openDrawer = { scope.launch { drawerState.open() } },
+                navigateToScreen = {
+                    // todo: вернуться на предыдущий экран.
+                }
+            )
+        }
         composable(route = TrainExercisesListScreenDestination.route) {
             TrainExercisesListScreen(
                 openDrawer = { scope.launch { drawerState.open() } },
-                navigateToNewTrainExerciseScreen = {}
+                navigateToAddTrainExerciseScreen = {
+                    navController.navigate(AddTrainExerciseScreenDestination.route)
+                }
             )
         }
         composable(route = NewTrainScreenDestination.route) {

@@ -15,7 +15,7 @@ data class TrainExerciseFormUiState(
         repetitionsNumber = 1,
         measurementUnitId = 0
     ),
-    val isEntryValid: Boolean = false
+    val isEntryValid: Boolean = true
 )
 
 class AddTrainExerciseScreenViewModel(

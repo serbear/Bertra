@@ -28,14 +28,14 @@ class NewTrainScreenViewModel(private val trainDao: TrainDao) : ViewModel() {
         )
     }
 
-    suspend fun saveTrain() {
+    suspend fun saveTrain(): Long {
         if (validateInput()) {
-            trainDao.insert(trainFormUiState.train)
+            return trainDao.insert(trainFormUiState.train)
         }
+        return -1
     }
 
     private fun validateInput(task: Train = trainFormUiState.train): Boolean {
         return task.name.isNotBlank()
     }
-
 }

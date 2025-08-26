@@ -3,8 +3,12 @@ package com.marsof.bertra.ui.navigation
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.marsof.bertra.ui.screens.AddTrainExerciseScreen
+import com.marsof.bertra.ui.screens.AddTrainExerciseScreenDestination
 import com.marsof.bertra.ui.screens.ExerciseListScreen
 import com.marsof.bertra.ui.screens.ExerciseListScreenDestination
 import com.marsof.bertra.ui.screens.HomeScreen
@@ -15,8 +19,6 @@ import com.marsof.bertra.ui.screens.NewExerciseScreen
 import com.marsof.bertra.ui.screens.NewExerciseScreenDestination
 import com.marsof.bertra.ui.screens.NewMeasurementUnitScreen
 import com.marsof.bertra.ui.screens.NewMeasurementUnitScreenDestination
-import com.marsof.bertra.ui.screens.AddTrainExerciseScreen
-import com.marsof.bertra.ui.screens.AddTrainExerciseScreenDestination
 import com.marsof.bertra.ui.screens.NewTrainScreen
 import com.marsof.bertra.ui.screens.NewTrainScreenDestination
 import com.marsof.bertra.ui.screens.TrainExercisesListScreen
@@ -78,27 +80,47 @@ fun NavigationHost(
                 }
             )
         }
-        composable(route = AddTrainExerciseScreenDestination.route) {
-            AddTrainExerciseScreen(
-                openDrawer = { scope.launch { drawerState.open() } },
-                navigateToScreen = {
-                    // todo: вернуться на предыдущий экран.
+        composable(
+            route = AddTrainExerciseScreenDestination.route,
+            arguments = listOf(
+                navArgument("trainId") {
+                    type = NavType.LongType
                 }
             )
+        ) { entry ->
+            val trainId = entry.arguments?.getLong("trainId") ?: -1
+
+            AddTrainExerciseScreen(
+                openDrawer = { scope.launch { drawerState.open() } },
+                navigateToScreen = { navController.popBackStack() },
+                trainId = trainId,
+            )
         }
-        composable(route = TrainExercisesListScreenDestination.route) {
+        composable(
+            route = TrainExercisesListScreenDestination.route,
+            arguments = listOf(
+                navArgument("trainId") {
+                    type = NavType.LongType
+                }
+            )
+        ) { entry ->
+            val trainId = entry.arguments?.getLong("trainId") ?: -1
+            val navigateToAddTrainExerciseScreenLambda: (Long) -> Unit = { trainIdParam ->
+                val route = AddTrainExerciseScreenDestination.createRoute(trainIdParam)
+                navController.navigate(route)
+            }
             TrainExercisesListScreen(
                 openDrawer = { scope.launch { drawerState.open() } },
-                navigateToAddTrainExerciseScreen = {
-                    navController.navigate(AddTrainExerciseScreenDestination.route)
-                }
+                navigateToAddTrainExerciseScreen = navigateToAddTrainExerciseScreenLambda,
+                trainId = trainId
             )
         }
         composable(route = NewTrainScreenDestination.route) {
             NewTrainScreen(
                 openDrawer = { scope.launch { drawerState.open() } },
-                navigateToTrainExercisesListScreen = {
-                    navController.navigate(TrainExercisesListScreenDestination.route)
+                navigateToTrainExercisesListScreen = { trainId ->
+                    val route = TrainExercisesListScreenDestination.createRoute(trainId)
+                    navController.navigate(route)
                 }
             )
         }

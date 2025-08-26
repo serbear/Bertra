@@ -38,16 +38,18 @@ object NewTrainScreenDestination : INavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewTrainScreen(
-    navigateToTrainExercisesListScreen: () -> Unit,
-    viewModel: NewTrainScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider),
+    navigateToTrainExercisesListScreen: (trainId: Long) -> Unit,
+    viewModel: NewTrainScreenViewModel = viewModel(
+        factory = ViewModelProvider.AppViewModelProvider
+    ),
     openDrawer: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
     val trainFormUiState = viewModel.trainFormUiState
     val onSaveClick: () -> Unit = {
         coroutineScope.launch {
-            viewModel.saveTrain()
-            navigateToTrainExercisesListScreen()
+            val newTrainId = viewModel.saveTrain()
+            navigateToTrainExercisesListScreen(newTrainId)
         }
     }
 
@@ -97,7 +99,6 @@ fun TrainInputForm(
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
-
         NumberStepper(
             value = trainDetails.circles,
             onValueChange = { onValueChange(trainDetails.copy(circles = it)) },
@@ -106,8 +107,6 @@ fun TrainInputForm(
             maxValue = 100,
             step = 1
         )
-
-
         OutlinedTextField(
             value = trainDetails.description,
             onValueChange = { onValueChange(trainDetails.copy(description = it)) },

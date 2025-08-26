@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.toString
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,8 +25,12 @@ import com.marsof.bertra.ui.viewmodels.AddTrainExerciseScreenViewModel
 import kotlinx.coroutines.launch
 
 object AddTrainExerciseScreenDestination : INavigationDestination {
-    override val route: String get() = "add_train_exercise"
+    override val route: String get() = "add_train_exercise/{trainId}"
     override val titleRes: Int get() = R.string.new_train_exercise_screen_title
+
+    fun createRoute(trainId: Long): String {
+        return "add_train_exercise/$trainId"
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +40,8 @@ fun AddTrainExerciseScreen(
     viewModel: AddTrainExerciseScreenViewModel = viewModel(
         factory = ViewModelProvider.AppViewModelProvider
     ),
-    openDrawer: () -> Unit
+    openDrawer: () -> Unit,
+    trainId: Long,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val trainExerciseUiState = viewModel.trainExerciseUiState
@@ -58,7 +66,8 @@ fun AddTrainExerciseScreen(
             TrainExerciseInputForm(
                 trainExerciseDetails = trainExerciseUiState.trainExercise,
                 onValueChange = viewModel::updateUiState,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                trainId = trainId
             )
             Row {
                 Button(
@@ -84,14 +93,20 @@ fun AddTrainExerciseScreen(
 fun TrainExerciseInputForm(
     trainExerciseDetails: TrainExercise,
     onValueChange: (TrainExercise) -> Unit = {},
-    modifier: Modifier
+    modifier: Modifier,
+    trainId: Long
 ) {
     Column(
         modifier = modifier,
     ) {
-        Text(text = "Train id:")
-        Text(text = "exercise id:")
-        Text(text = "Repetitions")
-        Text(text = "Measurement unit")
+        TextField (
+            value = "Train id: $trainId",
+            onValueChange = { onValueChange(trainExerciseDetails.copy(trainId = trainId.toInt())) },
+            modifier= Modifier,
+            singleLine = true
+        )
+//        Text(text = "Exercise id:")
+//        Text(text = "Repetitions")
+//        Text(text = "Measurement unit")
     }
 }

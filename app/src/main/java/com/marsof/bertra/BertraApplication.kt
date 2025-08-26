@@ -9,6 +9,5 @@ class BertraApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         container = BertraDataContainer(this)
-
     }
 }

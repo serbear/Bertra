@@ -1,4 +1,5 @@
 package com.marsof.bertra.ui.screens
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,8 +36,12 @@ import com.marsof.bertra.ui.navigation.INavigationDestination
 import com.marsof.bertra.ui.viewmodels.TrainExercisesListScreenViewModel
 
 object TrainExercisesListScreenDestination : INavigationDestination {
-    override val route: String get() = "train_exercises"
+    override val route: String get() = "train_exercises/{trainId}"
     override val titleRes: Int get() = R.string.train_exercises_screen_title
+
+    fun createRoute(trainId: Long): String {
+        return "train_exercises/$trainId"
+    }
 }
 
 /**
@@ -45,11 +50,12 @@ object TrainExercisesListScreenDestination : INavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainExercisesListScreen(
-    navigateToAddTrainExerciseScreen: () -> Unit,
+    navigateToAddTrainExerciseScreen: (trainId: Long) -> Unit,
     viewModel: TrainExercisesListScreenViewModel = viewModel(
         factory = ViewModelProvider.AppViewModelProvider
     ),
-    openDrawer: () -> Unit
+    openDrawer: () -> Unit,
+    trainId: Long
 ) {
     val trainExerciseListState by viewModel.trainExerciseListUiState.collectAsState()
 
@@ -65,12 +71,16 @@ fun TrainExercisesListScreen(
             modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+                text = "Train ID: $trainId",
+                modifier = Modifier.padding(innerPadding)
+            )
             TrainExerciseList(
                 trainExerciseList = trainExerciseListState.trainExerciseList,
                 modifier = Modifier.padding(innerPadding)
             )
             Button(
-                onClick = navigateToAddTrainExerciseScreen,
+                onClick = { navigateToAddTrainExerciseScreen(trainId) },
                 modifier = Modifier,
                 shape = RoundedCornerShape(0.dp)
             ) {

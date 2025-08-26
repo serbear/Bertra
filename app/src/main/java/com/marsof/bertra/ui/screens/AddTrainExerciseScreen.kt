@@ -1,18 +1,31 @@
 package com.marsof.bertra.ui.screens
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
 import com.marsof.bertra.data.entites.TrainExercise
@@ -97,14 +110,49 @@ fun TrainExerciseInputForm(
     Column(
         modifier = modifier,
     ) {
-        TextField (
+        TextField(
             value = "Train id: $trainId",
             onValueChange = { onValueChange(trainExerciseDetails.copy(trainId = trainId.toInt())) },
-            modifier= Modifier,
+            modifier = Modifier,
             singleLine = true
         )
-//        Text(text = "Exercise id:")
+        Text(text = "Exercise id:")
+        MinimalDropdownMenu()
 //        Text(text = "Repetitions")
 //        Text(text = "Measurement unit")
+    }
+}
+
+@Composable
+fun MinimalDropdownMenu() {
+    var expanded by remember { mutableStateOf(false) }
+    Box(
+        modifier = Modifier
+            .padding(16.dp)
+    ) {
+        Button(
+            onClick = { expanded = !expanded },
+            modifier = Modifier,
+            shape = RoundedCornerShape(0.dp)
+        ) {
+            Icon(
+                Icons.Default.MoreVert,
+                contentDescription = "Exercise List"
+            )
+            Text("Exercise List")
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text("Option 1") },
+                onClick = { /* Do something... */ }
+            )
+            DropdownMenuItem(
+                text = { Text("Option 2") },
+                onClick = { /* Do something... */ }
+            )
+        }
     }
 }

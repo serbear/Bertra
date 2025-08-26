@@ -13,7 +13,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -26,8 +25,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
+import com.marsof.bertra.data.entites.Exercise
 import com.marsof.bertra.data.entites.TrainExercise
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
@@ -63,6 +64,12 @@ fun AddTrainExerciseScreen(
         }
     }
 
+// Собираем StateFlow и преобразуем его в State
+    // collectAsStateWithLifecycle рекомендуется для безопасного сбора Flow в Compose UI
+    val exercises by viewModel.allExercises.collectAsStateWithLifecycle()
+
+
+
     Scaffold(
         topBar = {
             ApplicationTopBar(
@@ -78,7 +85,8 @@ fun AddTrainExerciseScreen(
                 trainExerciseDetails = trainExerciseUiState.trainExercise,
                 onValueChange = viewModel::updateUiState,
                 modifier = Modifier.fillMaxWidth(),
-                trainId = trainId
+                trainId = trainId,
+                exercises
             )
             Row {
                 Button(
@@ -105,7 +113,8 @@ fun TrainExerciseInputForm(
     trainExerciseDetails: TrainExercise,
     onValueChange: (TrainExercise) -> Unit = {},
     modifier: Modifier,
-    trainId: Long
+    trainId: Long,
+    exercises: List<Exercise>,
 ) {
     Column(
         modifier = modifier,
@@ -117,21 +126,30 @@ fun TrainExerciseInputForm(
             singleLine = true
         )
         Text(text = "Exercise id:")
-        MinimalDropdownMenu()
+        MinimalDropdownMenu(
+            exercises = exercises,
+            onExerciseSelected = { selectedExerciseId ->
+                onValueChange(trainExerciseDetails.copy(exerciseId = selectedExerciseId.toInt()))
+            }
+        )
 //        Text(text = "Repetitions")
 //        Text(text = "Measurement unit")
     }
 }
 
 @Composable
-fun MinimalDropdownMenu() {
-    var expanded by remember { mutableStateOf(false) }
+fun MinimalDropdownMenu(
+    exercises: List<Exercise>,
+    onExerciseSelected: (Long) -> Unit,
+) {
+    var menuIsExpanded by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .padding(16.dp)
     ) {
         Button(
-            onClick = { expanded = !expanded },
+            onClick = { menuIsExpanded = !menuIsExpanded },
             modifier = Modifier,
             shape = RoundedCornerShape(0.dp)
         ) {
@@ -142,17 +160,21 @@ fun MinimalDropdownMenu() {
             Text("Exercise List")
         }
         DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
+            expanded = menuIsExpanded,
+            onDismissRequest = { menuIsExpanded = false }
         ) {
-            DropdownMenuItem(
-                text = { Text("Option 1") },
-                onClick = { /* Do something... */ }
-            )
-            DropdownMenuItem(
-                text = { Text("Option 2") },
-                onClick = { /* Do something... */ }
-            )
+            exercises.forEach { exercise ->
+                DropdownMenuItem(
+                    text = { Text(exercise.name) },
+                    onClick = {
+
+                        onExerciseSelected(exercise.id.toLong())
+
+                        // Закрываем меню после выбора
+                        menuIsExpanded = false
+                    }
+                )
+            }
         }
     }
 }

@@ -25,28 +25,45 @@ object ViewModelProvider {
             HomeScreenViewModel()
         }
         initializer {
-            TrainListScreenViewModel(bertraApplication().container.trainDao)
+            TrainListScreenViewModel(
+                bertraApplication().container.trainDao
+            )
         }
         initializer {
-            NewTrainScreenViewModel(bertraApplication().container.trainDao)
+            NewTrainScreenViewModel(
+                bertraApplication().container.trainDao
+            )
         }
         initializer {
-            TrainExercisesListScreenViewModel(bertraApplication().container.trainExerciseDao)
+            TrainExercisesListScreenViewModel(
+                bertraApplication().container.trainExerciseDao
+            )
         }
         initializer {
-            NewExerciseScreenViewModel(bertraApplication().container.exerciseDao)
+            NewExerciseScreenViewModel(
+                bertraApplication().container.exerciseDao
+            )
         }
         initializer {
-            ExerciseListScreenViewModel(bertraApplication().container.exerciseDao)
+            ExerciseListScreenViewModel(
+                bertraApplication().container.exerciseDao
+            )
         }
         initializer {
-            MeasurementUnitListScreenViewModel(bertraApplication().container.measurementUnitDao)
+            MeasurementUnitListScreenViewModel(
+                bertraApplication().container.measurementUnitDao
+            )
         }
         initializer {
-            NewMeasurementUnitScreenViewModel(bertraApplication().container.measurementUnitDao)
+            NewMeasurementUnitScreenViewModel(
+                bertraApplication().container.measurementUnitDao
+            )
         }
         initializer {
-            AddTrainExerciseScreenViewModel(bertraApplication().container.trainExerciseDao)
+            AddTrainExerciseScreenViewModel(
+                bertraApplication().container.trainExerciseDao,
+                bertraApplication().container.exerciseDao
+            )
         }
     }
 }

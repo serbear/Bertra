@@ -44,7 +44,9 @@ object ExerciseListScreenDestination : INavigationDestination {
 @Composable
 fun ExerciseListScreen(
     navigateToNewExerciseScreen: () -> Unit,
-    viewModel: ExerciseListScreenViewModel = viewModel(factory = ViewModelProvider.AppViewModelProvider),
+    viewModel: ExerciseListScreenViewModel = viewModel(
+        factory = ViewModelProvider.AppViewModelProvider
+    ),
     openDrawer: () -> Unit
 ) {
     val exerciseListState by viewModel.exerciseListUiState.collectAsState()
@@ -97,7 +99,7 @@ fun ExerciseList(exerciseList: List<Exercise>, modifier: Modifier) {
         } else {
             LazyColumn {
                 items(items = exerciseList, key = { it.id }) { exercise ->
-                    SingleExercise(exercise= exercise)
+                    SingleExercise(exercise = exercise)
                 }
             }
         }

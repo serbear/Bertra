@@ -38,4 +38,5 @@
     <string name="move_repetition_up_button_label">Move Repetition Up</string>
     <string name="move_repetition_down_button_label">Move Repetition Down</string>
     <string name="measurement_unit_list_button_label">Measurement Unit</string>
+    <string name="measurement_unit_is_not_selected">Measurement unit not selected.</string>
 </resources>

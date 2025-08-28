@@ -164,7 +164,6 @@ fun TrainExerciseInputForm(
     }
 }
 
-
 @Composable
 fun ExercisesDropdownMenu(
     exercises: List<Exercise>,
@@ -353,7 +352,5 @@ fun MeasurementUnitDropdownMenu(
             }
         }
     }
-    Text(
-        text = selectedUnit?.name ?: "Measurement unit not selected"
-    )
+    Text(text = selectedUnit?.name ?: stringResource(R.string.measurement_unit_is_not_selected))
 }

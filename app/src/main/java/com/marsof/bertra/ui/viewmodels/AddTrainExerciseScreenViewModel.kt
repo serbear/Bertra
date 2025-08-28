@@ -48,7 +48,7 @@ class AddTrainExerciseScreenViewModel(
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000), // Начать сбор, когда UI подписан, с задержкой 5с
-            initialValue = emptyList() // Начальное значение, пока данные не загрузятся
+            initialValue = emptyList()
         )
 
     val allMeasurementUnits: StateFlow<List<MeasurementUnit>> =
@@ -56,7 +56,7 @@ class AddTrainExerciseScreenViewModel(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000), // Начать сбор, когда UI подписан, с задержкой 5с
-                initialValue = emptyList() // Начальное значение, пока данные не загрузятся
+                initialValue = emptyList()
             )
 
     fun updateUiState(trainExercise: TrainExercise) {
@@ -99,11 +99,9 @@ class AddTrainExerciseScreenViewModel(
         val currentList = _repetitionList.value.toMutableList()
 
         if (index < 0 || index >= currentList.size) {
-            throw IndexOutOfBoundsException(
-                "Index $index is out of bounds for list size ${currentList.size}"
-            )
+            val errorMessage = "Index $index is out of bounds for list size ${currentList.size}"
+            throw IndexOutOfBoundsException(errorMessage)
         }
-
         viewModelScope.launch {
             currentList[index] = value
             _repetitionList.value = currentList

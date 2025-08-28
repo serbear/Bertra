@@ -23,7 +23,6 @@ data class TrainExerciseFormUiState(
         id = 0,
         trainId = 0,
         exerciseId = 0,
-        repetitionsNumber = 1,
         measurementUnitId = 0
     ),
     val isEntryValid: Boolean = true
@@ -35,12 +34,8 @@ class AddTrainExerciseScreenViewModel(
     measurementUnitDao: MeasurementUnitDao
 ) : ViewModel() {
     var trainExerciseUiState by mutableStateOf(TrainExerciseFormUiState())
-    private val _repetitionList = MutableStateFlow<List<Int>>(emptyList())
-
-    /**
-     * The list of an exercise repetition. Their order and weight or weight number.
-     */
-    val repetitionList: StateFlow<List<Int>> = _repetitionList.asStateFlow()
+    private val _setList = MutableStateFlow<List<Int>>(emptyList())
+    val setList: StateFlow<List<Int>> = _setList.asStateFlow()
 
     // Преобразуем Flow<List<Exercise>> в StateFlow<List<Exercise>>
     // Это рекомендуется для предоставления состояния UI
@@ -80,31 +75,31 @@ class AddTrainExerciseScreenViewModel(
 //        return trainExercise.name.isNotBlank()
     }
 
-    fun addRepetition() {
+    fun addSet() {
         viewModelScope.launch {
-            val currentList = _repetitionList.value.toMutableList()
+            val currentList = _setList.value.toMutableList()
             val newElement = if (currentList.isEmpty()) 1 else currentList.last() + 1
             currentList.add(newElement)
-            _repetitionList.value = currentList
+            _setList.value = currentList
         }
     }
 
-    fun clearRepetitionsList() {
+    fun clearSetList() {
         viewModelScope.launch {
-            _repetitionList.value = emptyList()
+            _setList.value = emptyList()
         }
     }
 
-    fun updateRepetitionValue(index: Int, value: Int) {
-        val currentList = _repetitionList.value.toMutableList()
+    fun updateSetWeight(setIndex: Int, weightOrWeightNumber: Int) {
+        val currentList = _setList.value.toMutableList()
 
-        if (index < 0 || index >= currentList.size) {
-            val errorMessage = "Index $index is out of bounds for list size ${currentList.size}"
+        if (setIndex < 0 || setIndex >= currentList.size) {
+            val errorMessage = "Index $setIndex is out of bounds for list size ${currentList.size}"
             throw IndexOutOfBoundsException(errorMessage)
         }
         viewModelScope.launch {
-            currentList[index] = value
-            _repetitionList.value = currentList
+            currentList[setIndex] = weightOrWeightNumber
+            _setList.value = currentList
         }
     }
 }

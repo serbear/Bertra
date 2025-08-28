@@ -8,19 +8,22 @@ import com.marsof.bertra.data.dao.ExerciseDao
 import com.marsof.bertra.data.dao.MeasurementUnitDao
 import com.marsof.bertra.data.dao.TrainDao
 import com.marsof.bertra.data.dao.TrainExerciseDao
+import com.marsof.bertra.data.dao.TrainExerciseRepetitionsDao
 import com.marsof.bertra.data.entites.Exercise
 import com.marsof.bertra.data.entites.MeasurementUnit
 import com.marsof.bertra.data.entites.Train
 import com.marsof.bertra.data.entites.TrainExercise
+import com.marsof.bertra.data.entites.TrainExerciseRepetitions
 
 @Database(
     entities = [
         Train::class,
         Exercise::class,
         MeasurementUnit::class,
-        TrainExercise::class
+        TrainExercise::class,
+        TrainExerciseRepetitions::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 abstract class BertraDatabase : RoomDatabase() {
@@ -28,6 +31,7 @@ abstract class BertraDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
     abstract fun measurementUnitDao(): MeasurementUnitDao
     abstract fun trainExerciseDao(): TrainExerciseDao
+    abstract fun trainExerciseRepetitionsDao(): TrainExerciseRepetitionsDao
 
     companion object {
         @Volatile

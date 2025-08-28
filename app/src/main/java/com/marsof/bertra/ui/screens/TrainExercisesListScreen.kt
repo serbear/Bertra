@@ -152,10 +152,10 @@ fun SingleTrainExercise(trainExercise: TrainExercise) {
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(Modifier.weight(1f))
-            Text(
-                text = "Repetitions: " + trainExercise.repetitionsNumber,
-                style = MaterialTheme.typography.titleMedium
-            )
+//            Text(
+//                text = "Repetitions: " + trainExercise.repetitionsNumber,
+//                style = MaterialTheme.typography.titleMedium
+//            )
             Spacer(Modifier.weight(1f))
             Text(
                 text = "Measurement Unit ID: " + trainExercise.measurementUnitId,

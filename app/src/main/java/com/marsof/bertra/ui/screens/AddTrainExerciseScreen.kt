@@ -71,6 +71,10 @@ fun AddTrainExerciseScreen(
     val onSaveClick: () -> Unit = {
         coroutineScope.launch {
             viewModel.saveTrainExercise()
+
+
+
+
             navigateToScreen()
         }
     }
@@ -98,9 +102,9 @@ fun AddTrainExerciseScreen(
                 trainId = trainId,
                 exercises = exercises,
                 measurementUnits = measurementUnits,
-                repetitionList = viewModel.repetitionList.collectAsState().value,
-                onRepetitionAdd = viewModel::addRepetition,
-                onRepetitionValueChange = viewModel::updateRepetitionValue,
+                setList = viewModel.setList.collectAsState().value,
+                onSetAdd = viewModel::addSet,
+                onSetWeightChange = viewModel::updateSetWeight,
             )
             Row {
                 Button(
@@ -130,16 +134,16 @@ fun TrainExerciseInputForm(
     trainId: Long,
     exercises: List<Exercise>,
     measurementUnits: List<MeasurementUnit>,
-    repetitionList: List<Int>,
-    onRepetitionAdd: () -> Unit,
-    onRepetitionValueChange: (Int, Int) -> Unit,
+    setList: List<Int>,
+    onSetAdd: () -> Unit,
+    onSetWeightChange: (Int, Int) -> Unit,
 ) {
     Column(
         modifier = modifier,
     ) {
         TextField(
             value = "Train id: $trainId",
-            onValueChange = { onValueChange(trainExerciseDetails.copy(trainId = trainId.toInt())) },
+            onValueChange = { onValueChange(trainExerciseDetails.copy(trainId = trainId)) },
             modifier = Modifier,
             singleLine = true
         )
@@ -147,16 +151,16 @@ fun TrainExerciseInputForm(
         ExercisesDropdownMenu(
             exercises = exercises,
             onExerciseSelected = { selectedExerciseId ->
-                onValueChange(trainExerciseDetails.copy(exerciseId = selectedExerciseId.toInt()))
+                onValueChange(trainExerciseDetails.copy(exerciseId = selectedExerciseId))
             }
         )
-        RepetitionsList(repetitionList, onRepetitionAdd, onRepetitionValueChange)
+        SetList(setList, onSetAdd, onSetWeightChange)
         MeasurementUnitDropdownMenu(
             measurementUnits = measurementUnits,
             onMeasureUnitSelected = { selectedMeasurementUnitId ->
                 onValueChange(
                     trainExerciseDetails.copy(
-                        measurementUnitId = selectedMeasurementUnitId.toInt()
+                        measurementUnitId = selectedMeasurementUnitId
                     )
                 )
             }
@@ -194,7 +198,7 @@ fun ExercisesDropdownMenu(
                 DropdownMenuItem(
                     text = { Text(exercise.name) },
                     onClick = {
-                        onExerciseSelected(exercise.id.toLong())  // toLong remove after db schema change.
+                        onExerciseSelected(exercise.id)
                         menuIsExpanded = false // Close menu after the choosing.
                     }
                 )
@@ -204,10 +208,10 @@ fun ExercisesDropdownMenu(
 }
 
 @Composable
-fun RepetitionsList(
-    repetitionList: List<Int>,
-    onRepetitionAdd: () -> Unit,
-    onRepetitionValueChange: (Int, Int) -> Unit
+fun SetList(
+    setList: List<Int>,
+    onSetAdd: () -> Unit,
+    onSetWeightChange: (Int, Int) -> Unit
 ) {
     Column(
         modifier = Modifier,
@@ -216,15 +220,15 @@ fun RepetitionsList(
         //
         // The list of repetitions
         //
-        if (repetitionList.isNotEmpty()) {
+        if (setList.isNotEmpty()) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
 //                    .weight(1f),
 //                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                itemsIndexed(repetitionList) { index, value ->
-                    RepetitionListItem(index, repetitionList, onRepetitionValueChange)
+                itemsIndexed(setList) { index, value ->
+                    SetListItem(index, setList, onSetWeightChange)
                 }
             }
         } else {
@@ -236,10 +240,10 @@ fun RepetitionsList(
         }
 
         //
-        // The button for adding a new repetition.
+        // The button for adding a new set.
         //
         Button(
-            onClick = { onRepetitionAdd() },
+            onClick = { onSetAdd() },
             modifier = Modifier,
             shape = RoundedCornerShape(0.dp)
         ) {
@@ -253,12 +257,12 @@ fun RepetitionsList(
 }
 
 @Composable
-fun RepetitionListItem(
+fun SetListItem(
     index: Int,
-    repetitionList: List<Int>,
-    onRepetitionValueChange: (Int, Int) -> Unit
+    setList: List<Int>,
+    onSetWeightChange: (Int, Int) -> Unit
 ) {
-    val value = repetitionList[index]
+    val value = setList[index]
 
     Card(
         modifier = Modifier
@@ -280,14 +284,14 @@ fun RepetitionListItem(
             NumberStepper(
                 value = value,
                 onValueChange = { newValue ->
-                    onRepetitionValueChange(index, newValue)
+                    onSetWeightChange(index, newValue)
                 },
                 minValue = 1,
                 maxValue = 999,
                 step = 1
             )
             //
-            // Repetition order buttons
+            // Set order buttons
             //
             Button(
                 onClick = { },
@@ -345,7 +349,7 @@ fun MeasurementUnitDropdownMenu(
                     text = { Text(measurementUnit.name) },
                     onClick = {
                         selectedUnit = measurementUnit // Сохраняем выбранную единицу
-                        onMeasureUnitSelected(measurementUnit.id.toLong())  // toLong remove after db schema change.
+                        onMeasureUnitSelected(measurementUnit.id)
                         menuIsExpanded = false // Close menu after the choosing.
                     }
                 )

@@ -9,6 +9,6 @@ import androidx.room.PrimaryKey
  */
 @Entity(tableName = "measurement_units")
 data class MeasurementUnit(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
 )

@@ -1,14 +1,21 @@
 package com.marsof.bertra.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,11 +24,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,11 +46,12 @@ import com.marsof.bertra.ui.viewmodels.AddTrainExerciseScreenViewModel
 import kotlinx.coroutines.launch
 
 object AddTrainExerciseScreenDestination : INavigationDestination {
-    override val route: String get() = "add_train_exercise/{trainId}"
+    const val ROUTE_NAME = "add_train_exercise"
+    override val route: String get() = "$ROUTE_NAME/{trainId}"
     override val titleRes: Int get() = R.string.new_train_exercise_screen_title
 
     fun createRoute(trainId: Long): String {
-        return "add_train_exercise/$trainId"
+        return "$ROUTE_NAME/$trainId"
     }
 }
 
@@ -64,11 +74,9 @@ fun AddTrainExerciseScreen(
         }
     }
 
-// Собираем StateFlow и преобразуем его в State
+    // Собираем StateFlow и преобразуем его в State
     // collectAsStateWithLifecycle рекомендуется для безопасного сбора Flow в Compose UI
     val exercises by viewModel.allExercises.collectAsStateWithLifecycle()
-
-
 
     Scaffold(
         topBar = {
@@ -86,7 +94,10 @@ fun AddTrainExerciseScreen(
                 onValueChange = viewModel::updateUiState,
                 modifier = Modifier.fillMaxWidth(),
                 trainId = trainId,
-                exercises
+                exercises = exercises,
+                repetitionList = viewModel.repetitionList.collectAsState().value,
+                onRepetitionAdd = viewModel::addRepetition,
+                onRepetitionValueChange = viewModel::updateRepetitionValue,
             )
             Row {
                 Button(
@@ -115,6 +126,10 @@ fun TrainExerciseInputForm(
     modifier: Modifier,
     trainId: Long,
     exercises: List<Exercise>,
+    repetitionList: List<Int>,
+    onRepetitionAdd: () -> Unit,
+    onRepetitionValueChange: (Int, Int) -> Unit
+
 ) {
     Column(
         modifier = modifier,
@@ -132,7 +147,7 @@ fun TrainExerciseInputForm(
                 onValueChange(trainExerciseDetails.copy(exerciseId = selectedExerciseId.toInt()))
             }
         )
-//        Text(text = "Repetitions")
+        RepetitionsList(repetitionList, onRepetitionAdd, onRepetitionValueChange)
 //        Text(text = "Measurement unit")
     }
 }
@@ -155,9 +170,9 @@ fun MinimalDropdownMenu(
         ) {
             Icon(
                 Icons.Default.MoreVert,
-                contentDescription = "Exercise List"
+                contentDescription = stringResource(R.string.exercise_list_button_label)
             )
-            Text("Exercise List")
+            Text(stringResource(R.string.exercise_list_button_label))
         }
         DropdownMenu(
             expanded = menuIsExpanded,
@@ -167,12 +182,119 @@ fun MinimalDropdownMenu(
                 DropdownMenuItem(
                     text = { Text(exercise.name) },
                     onClick = {
-
-                        onExerciseSelected(exercise.id.toLong())
-
-                        // Закрываем меню после выбора
-                        menuIsExpanded = false
+                        onExerciseSelected(exercise.id.toLong())  // toLong remove after db schema change.
+                        menuIsExpanded = false // Close menu after the choosing.
                     }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun RepetitionsList(
+    repetitionList: List<Int>,
+    onRepetitionAdd: () -> Unit,
+    onRepetitionValueChange: (Int, Int) -> Unit
+) {
+    Column(
+        modifier = Modifier,
+    ) {
+
+        //
+        // The list of repetitions
+        //
+        if (repetitionList.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .weight(1f),
+//                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                itemsIndexed(repetitionList) { index, value ->
+                    RepetitionListItem(index, repetitionList, onRepetitionValueChange)
+                }
+            }
+        } else {
+            Text(
+                text = "List is empty. Press the button to add a new one.",
+//                style = MaterialTheme.typography.bodyMedium,
+//                modifier = Modifier.weight(1f),
+            )
+        }
+
+        //
+        // The button for adding a new repetition.
+        //
+        Button(
+            onClick = { onRepetitionAdd() },
+            modifier = Modifier,
+            shape = RoundedCornerShape(0.dp)
+        ) {
+            Icon(
+                Icons.Default.Add,
+                contentDescription = stringResource(R.string.add_repetition_button_label)
+            )
+            Text(stringResource(R.string.add_repetition_button_label))
+        }
+    }
+}
+
+@Composable
+fun RepetitionListItem(
+    index: Int,
+    repetitionList: List<Int>,
+    onRepetitionValueChange: (Int, Int) -> Unit
+) {
+    val value = repetitionList[index]
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "$index: $value",
+            )
+            //
+            // Number stepper
+            //
+            NumberStepper(
+                value = value,
+                onValueChange = { newValue ->
+                    onRepetitionValueChange(index, newValue)
+                },
+                minValue = 1,
+                maxValue = 999,
+                step = 1
+            )
+            //
+            // Repetition order buttons
+            //
+            Button(
+                onClick = { },
+                modifier = Modifier,
+                shape = RoundedCornerShape(0.dp)
+            ) {
+                Icon(
+                    Icons.Default.ArrowDropUp,
+                    contentDescription = stringResource(R.string.move_repetition_up_button_label)
+                )
+            }
+            Button(
+                onClick = { },
+                modifier = Modifier,
+                shape = RoundedCornerShape(0.dp)
+            ) {
+                Icon(
+                    Icons.Default.ArrowDropDown,
+                    contentDescription = stringResource(R.string.move_repetition_down_button_label)
                 )
             }
         }

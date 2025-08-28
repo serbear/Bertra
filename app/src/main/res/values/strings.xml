@@ -33,4 +33,8 @@
     <string name="new_train_exercise_screen_title">Add Train Exercise</string>
     <string name="save_train_exercise">Save Train Exercise</string>
     <string name="go_back_button_label">Back</string>
+    <string name="add_repetition_button_label">Add Repetition</string>
+    <string name="exercise_list_button_label">Exercise List</string>
+    <string name="move_repetition_up_button_label">Move Repetition Up</string>
+    <string name="move_repetition_down_button_label">Move Repetition Down</string>
 </resources>

@@ -38,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
 import com.marsof.bertra.data.entites.Exercise
+import com.marsof.bertra.data.entites.MeasurementUnit
 import com.marsof.bertra.data.entites.TrainExercise
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
@@ -77,6 +78,7 @@ fun AddTrainExerciseScreen(
     // Собираем StateFlow и преобразуем его в State
     // collectAsStateWithLifecycle рекомендуется для безопасного сбора Flow в Compose UI
     val exercises by viewModel.allExercises.collectAsStateWithLifecycle()
+    val measurementUnits by viewModel.allMeasurementUnits.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
@@ -95,6 +97,7 @@ fun AddTrainExerciseScreen(
                 modifier = Modifier.fillMaxWidth(),
                 trainId = trainId,
                 exercises = exercises,
+                measurementUnits = measurementUnits,
                 repetitionList = viewModel.repetitionList.collectAsState().value,
                 onRepetitionAdd = viewModel::addRepetition,
                 onRepetitionValueChange = viewModel::updateRepetitionValue,
@@ -126,10 +129,10 @@ fun TrainExerciseInputForm(
     modifier: Modifier,
     trainId: Long,
     exercises: List<Exercise>,
+    measurementUnits: List<MeasurementUnit>,
     repetitionList: List<Int>,
     onRepetitionAdd: () -> Unit,
-    onRepetitionValueChange: (Int, Int) -> Unit
-
+    onRepetitionValueChange: (Int, Int) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -141,19 +144,29 @@ fun TrainExerciseInputForm(
             singleLine = true
         )
         Text(text = "Exercise id:")
-        MinimalDropdownMenu(
+        ExercisesDropdownMenu(
             exercises = exercises,
             onExerciseSelected = { selectedExerciseId ->
                 onValueChange(trainExerciseDetails.copy(exerciseId = selectedExerciseId.toInt()))
             }
         )
         RepetitionsList(repetitionList, onRepetitionAdd, onRepetitionValueChange)
-//        Text(text = "Measurement unit")
+        MeasurementUnitDropdownMenu(
+            measurementUnits = measurementUnits,
+            onMeasureUnitSelected = { selectedMeasurementUnitId ->
+                onValueChange(
+                    trainExerciseDetails.copy(
+                        measurementUnitId = selectedMeasurementUnitId.toInt()
+                    )
+                )
+            }
+        )
     }
 }
 
+
 @Composable
-fun MinimalDropdownMenu(
+fun ExercisesDropdownMenu(
     exercises: List<Exercise>,
     onExerciseSelected: (Long) -> Unit,
 ) {
@@ -299,4 +312,48 @@ fun RepetitionListItem(
             }
         }
     }
+}
+
+@Composable
+fun MeasurementUnitDropdownMenu(
+    measurementUnits: List<MeasurementUnit>,
+    onMeasureUnitSelected: (Long) -> Unit
+) {
+    var menuIsExpanded by remember { mutableStateOf(false) }
+    var selectedUnit by remember { mutableStateOf<MeasurementUnit?>(null) }
+
+    Box(
+        modifier = Modifier
+            .padding(16.dp)
+    ) {
+        Button(
+            onClick = { menuIsExpanded = !menuIsExpanded },
+            modifier = Modifier,
+            shape = RoundedCornerShape(0.dp)
+        ) {
+            Icon(
+                Icons.Default.MoreVert,
+                contentDescription = stringResource(R.string.measurement_unit_list_button_label)
+            )
+            Text(stringResource(R.string.measurement_unit_list_button_label))
+        }
+        DropdownMenu(
+            expanded = menuIsExpanded,
+            onDismissRequest = { menuIsExpanded = false }
+        ) {
+            measurementUnits.forEach { measurementUnit ->
+                DropdownMenuItem(
+                    text = { Text(measurementUnit.name) },
+                    onClick = {
+                        selectedUnit = measurementUnit // Сохраняем выбранную единицу
+                        onMeasureUnitSelected(measurementUnit.id.toLong())  // toLong remove after db schema change.
+                        menuIsExpanded = false // Close menu after the choosing.
+                    }
+                )
+            }
+        }
+    }
+    Text(
+        text = selectedUnit?.name ?: "Measurement unit not selected"
+    )
 }

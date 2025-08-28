@@ -37,4 +37,5 @@
     <string name="exercise_list_button_label">Exercise List</string>
     <string name="move_repetition_up_button_label">Move Repetition Up</string>
     <string name="move_repetition_down_button_label">Move Repetition Down</string>
+    <string name="measurement_unit_list_button_label">Measurement Unit</string>
 </resources>

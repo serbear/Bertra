@@ -6,8 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.marsof.bertra.data.dao.ExerciseDao
+import com.marsof.bertra.data.dao.MeasurementUnitDao
 import com.marsof.bertra.data.dao.TrainExerciseDao
 import com.marsof.bertra.data.entites.Exercise
+import com.marsof.bertra.data.entites.MeasurementUnit
 import com.marsof.bertra.data.entites.TrainExercise
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,12 +29,14 @@ data class TrainExerciseFormUiState(
     val isEntryValid: Boolean = true
 )
 
-class AddTrainExerciseScreenViewModel (
+class AddTrainExerciseScreenViewModel(
     private val trainExerciseDao: TrainExerciseDao,
     exerciseDao: ExerciseDao,
+    measurementUnitDao: MeasurementUnitDao
 ) : ViewModel() {
     var trainExerciseUiState by mutableStateOf(TrainExerciseFormUiState())
     private val _repetitionList = MutableStateFlow<List<Int>>(emptyList())
+
     /**
      * The list of an exercise repetition. Their order and weight or weight number.
      */
@@ -46,6 +50,14 @@ class AddTrainExerciseScreenViewModel (
             started = SharingStarted.WhileSubscribed(5000), // Начать сбор, когда UI подписан, с задержкой 5с
             initialValue = emptyList() // Начальное значение, пока данные не загрузятся
         )
+
+    val allMeasurementUnits: StateFlow<List<MeasurementUnit>> =
+        measurementUnitDao.getAllMeasurementUnits()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000), // Начать сбор, когда UI подписан, с задержкой 5с
+                initialValue = emptyList() // Начальное значение, пока данные не загрузятся
+            )
 
     fun updateUiState(trainExercise: TrainExercise) {
         trainExerciseUiState = TrainExerciseFormUiState(
@@ -83,7 +95,7 @@ class AddTrainExerciseScreenViewModel (
         }
     }
 
-    fun updateRepetitionValue(index: Int, value : Int){
+    fun updateRepetitionValue(index: Int, value: Int) {
         val currentList = _repetitionList.value.toMutableList()
 
         if (index < 0 || index >= currentList.size) {

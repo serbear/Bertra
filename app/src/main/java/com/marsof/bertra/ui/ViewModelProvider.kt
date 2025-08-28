@@ -62,7 +62,8 @@ object ViewModelProvider {
         initializer {
             AddTrainExerciseScreenViewModel(
                 bertraApplication().container.trainExerciseDao,
-                bertraApplication().container.exerciseDao
+                bertraApplication().container.exerciseDao,
+                bertraApplication().container.measurementUnitDao
             )
         }
     }

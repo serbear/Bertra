@@ -63,7 +63,8 @@ object ViewModelProvider {
             AddTrainExerciseScreenViewModel(
                 bertraApplication().container.trainExerciseDao,
                 bertraApplication().container.exerciseDao,
-                bertraApplication().container.measurementUnitDao
+                bertraApplication().container.measurementUnitDao,
+                bertraApplication().container.trainExerciseRepetitionsDao
             )
         }
     }

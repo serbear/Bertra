@@ -25,4 +25,5 @@ interface TrainExerciseDao {
 
     @Delete
     suspend fun delete(item: TrainExercise)
+
 }

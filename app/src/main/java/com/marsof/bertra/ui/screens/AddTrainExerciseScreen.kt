@@ -24,7 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -67,14 +66,15 @@ fun AddTrainExerciseScreen(
     trainId: Long,
 ) {
     val coroutineScope = rememberCoroutineScope()
+
     val trainExerciseUiState = viewModel.trainExerciseUiState
+
+    val trainExerciseSetList by viewModel.setList.collectAsStateWithLifecycle()
+
+
     val onSaveClick: () -> Unit = {
         coroutineScope.launch {
             viewModel.saveTrainExercise()
-
-
-
-
             navigateToScreen()
         }
     }
@@ -97,14 +97,15 @@ fun AddTrainExerciseScreen(
         ) {
             TrainExerciseInputForm(
                 trainExerciseDetails = trainExerciseUiState.trainExercise,
+                exerciseSetDetails = trainExerciseSetList,
                 onValueChange = viewModel::updateUiState,
-                modifier = Modifier.fillMaxWidth(),
                 trainId = trainId,
                 exercises = exercises,
                 measurementUnits = measurementUnits,
-                setList = viewModel.setList.collectAsState().value,
+//                setList = viewModel.setList.collectAsState().value,
                 onSetAdd = viewModel::addSet,
                 onSetWeightChange = viewModel::updateSetWeight,
+                modifier = Modifier.fillMaxWidth(),
             )
             Row {
                 Button(
@@ -134,9 +135,10 @@ fun TrainExerciseInputForm(
     trainId: Long,
     exercises: List<Exercise>,
     measurementUnits: List<MeasurementUnit>,
-    setList: List<Int>,
-    onSetAdd: () -> Unit,
-    onSetWeightChange: (Int, Int) -> Unit,
+//    setList: List<List<Int>>,
+    onSetWeightChange: (Int, List<Int>) -> Unit,
+    exerciseSetDetails: List<List<Int>>,
+    onSetAdd: (Int, Int) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -154,7 +156,7 @@ fun TrainExerciseInputForm(
                 onValueChange(trainExerciseDetails.copy(exerciseId = selectedExerciseId))
             }
         )
-        SetList(setList, onSetAdd, onSetWeightChange)
+        SetList(exerciseSetDetails, onSetAdd, onSetWeightChange)
         MeasurementUnitDropdownMenu(
             measurementUnits = measurementUnits,
             onMeasureUnitSelected = { selectedMeasurementUnitId ->
@@ -209,9 +211,9 @@ fun ExercisesDropdownMenu(
 
 @Composable
 fun SetList(
-    setList: List<Int>,
-    onSetAdd: () -> Unit,
-    onSetWeightChange: (Int, Int) -> Unit
+    exerciseSetDetails: List<List<Int>>,
+    onSetAdd: (Int, Int) -> Unit,
+    onSetWeightChange: (Int, List<Int>) -> Unit,
 ) {
     Column(
         modifier = Modifier,
@@ -220,15 +222,19 @@ fun SetList(
         //
         // The list of repetitions
         //
-        if (setList.isNotEmpty()) {
+        if (exerciseSetDetails.isNotEmpty()) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
 //                    .weight(1f),
 //                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                itemsIndexed(setList) { index, value ->
-                    SetListItem(index, setList, onSetWeightChange)
+                itemsIndexed(exerciseSetDetails) { index, setData ->
+                    SetListItem(
+                        index = index,
+                        setData,
+                        onSetWeightChange
+                    )
                 }
             }
         } else {
@@ -243,7 +249,11 @@ fun SetList(
         // The button for adding a new set.
         //
         Button(
-            onClick = { onSetAdd() },
+            onClick = {
+                // weight, repetitions
+                // Default values: 0, 1
+                onSetAdd(0, 1)
+            },
             modifier = Modifier,
             shape = RoundedCornerShape(0.dp)
         ) {
@@ -259,10 +269,10 @@ fun SetList(
 @Composable
 fun SetListItem(
     index: Int,
-    setList: List<Int>,
-    onSetWeightChange: (Int, Int) -> Unit
+    setData: List<Int>,
+    onSetWeightChange: (Int, List<Int>) -> Unit
 ) {
-    val value = setList[index]
+
 
     Card(
         modifier = Modifier
@@ -275,16 +285,34 @@ fun SetListItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "$index: $value",
+            Text(text = "# $index")
+            //
+            // Weight or Weight Number
+            //
+            Text(text = "Weight:")
+            NumberStepper(
+                value = setData[0],
+                onValueChange = { newWeightValue ->
+                    onSetWeightChange(
+                        index,
+                        listOf(newWeightValue, setData[1])
+                    )
+                },
+                minValue = 1,
+                maxValue = 999,
+                step = 1
             )
             //
-            // Number stepper
+            // Set repetition number.
             //
+            Text(text = "Reps:")
             NumberStepper(
-                value = value,
-                onValueChange = { newValue ->
-                    onSetWeightChange(index, newValue)
+                value = setData[1],
+                onValueChange = { newRepetitionsValue ->
+                    onSetWeightChange(
+                        index,
+                        listOf(setData[0], newRepetitionsValue)
+                    )
                 },
                 minValue = 1,
                 maxValue = 999,

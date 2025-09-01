@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.marsof.bertra.data.dao.ExerciseDao
 import com.marsof.bertra.data.dao.MeasurementUnitDao
 import com.marsof.bertra.data.dao.TrainDao
@@ -26,6 +27,7 @@ import com.marsof.bertra.data.entites.TrainExerciseRepetitions
     version = 7,
     exportSchema = false
 )
+@TypeConverters(DataConverter::class)
 abstract class BertraDatabase : RoomDatabase() {
     abstract fun trainDao(): TrainDao
     abstract fun exerciseDao(): ExerciseDao

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.marsof.bertra.data.dao.ExerciseDao
 import com.marsof.bertra.data.dao.MeasurementUnitDao
 import com.marsof.bertra.data.dao.TrainExerciseDao
+import com.marsof.bertra.data.dao.TrainExerciseRepetitionsDao
 import com.marsof.bertra.data.entites.Exercise
 import com.marsof.bertra.data.entites.MeasurementUnit
 import com.marsof.bertra.data.entites.TrainExercise
@@ -28,14 +29,21 @@ data class TrainExerciseFormUiState(
     val isEntryValid: Boolean = true
 )
 
+
 class AddTrainExerciseScreenViewModel(
     private val trainExerciseDao: TrainExerciseDao,
     exerciseDao: ExerciseDao,
-    measurementUnitDao: MeasurementUnitDao
+    measurementUnitDao: MeasurementUnitDao,
+    trainExerciseRepetitionsDao: TrainExerciseRepetitionsDao
 ) : ViewModel() {
     var trainExerciseUiState by mutableStateOf(TrainExerciseFormUiState())
-    private val _setList = MutableStateFlow<List<Int>>(emptyList())
-    val setList: StateFlow<List<Int>> = _setList.asStateFlow()
+    private val _setList = MutableStateFlow<List<List<Int>>>(emptyList())
+
+    /**
+     * The list of the exercise's sets with their weights and repetition number.
+     */
+    val setList: StateFlow<List<List<Int>>> = _setList.asStateFlow()
+
 
     // Преобразуем Flow<List<Exercise>> в StateFlow<List<Exercise>>
     // Это рекомендуется для предоставления состояния UI
@@ -65,6 +73,9 @@ class AddTrainExerciseScreenViewModel(
         if (validateInput()) {
             trainExerciseDao.insert(trainExerciseUiState.trainExercise)
         }
+
+
+        // todo: Добавить повторения в таблицу для сета.
     }
 
     private fun validateInput(
@@ -75,10 +86,10 @@ class AddTrainExerciseScreenViewModel(
 //        return trainExercise.name.isNotBlank()
     }
 
-    fun addSet() {
+    fun addSet(weightOrWeightNumber: Int, repetitions: Int) {
         viewModelScope.launch {
             val currentList = _setList.value.toMutableList()
-            val newElement = if (currentList.isEmpty()) 1 else currentList.last() + 1
+            val newElement = listOf(weightOrWeightNumber, repetitions)
             currentList.add(newElement)
             _setList.value = currentList
         }
@@ -90,7 +101,16 @@ class AddTrainExerciseScreenViewModel(
         }
     }
 
-    fun updateSetWeight(setIndex: Int, weightOrWeightNumber: Int) {
+    /**
+     * Updates the information about the set at the given index in the list of the exercise's set.
+     *
+     * @param setIndex The index of the set to be updated.
+     * @param setData A list containing the new weight (or weight number) and repetitions for the
+     * set. The first element is the weight/weight number, and the second is the repetitions.
+     * @throws IndexOutOfBoundsException if `setIndex` is out of bounds for the current list of
+     * sets.
+     */
+    fun updateSetWeight(setIndex: Int, setData: List<Int>) {
         val currentList = _setList.value.toMutableList()
 
         if (setIndex < 0 || setIndex >= currentList.size) {
@@ -98,7 +118,7 @@ class AddTrainExerciseScreenViewModel(
             throw IndexOutOfBoundsException(errorMessage)
         }
         viewModelScope.launch {
-            currentList[setIndex] = weightOrWeightNumber
+            currentList[setIndex] = setData
             _setList.value = currentList
         }
     }

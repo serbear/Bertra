@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.room.ColumnInfo
 import com.marsof.bertra.data.dao.ExerciseDao
 import com.marsof.bertra.data.dao.MeasurementUnitDao
 import com.marsof.bertra.data.dao.TrainExerciseDao
@@ -12,12 +13,14 @@ import com.marsof.bertra.data.dao.TrainExerciseRepetitionsDao
 import com.marsof.bertra.data.entites.Exercise
 import com.marsof.bertra.data.entites.MeasurementUnit
 import com.marsof.bertra.data.entites.TrainExercise
+import com.marsof.bertra.data.entites.TrainExerciseRepetitions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Date
 
 data class TrainExerciseFormUiState(
     val trainExercise: TrainExercise = TrainExercise(
@@ -29,13 +32,24 @@ data class TrainExerciseFormUiState(
     val isEntryValid: Boolean = true
 )
 
+data class TrainExerciseRepetitionsUiState(
+    val repetition: TrainExerciseRepetitions = TrainExerciseRepetitions(
+        trainExerciseId = -1,
+        setNumber = -1,
+        weightOrNumber = -1,
+        repetitionsNumber = -1,
+        date = null
+    )
+)
+
 
 class AddTrainExerciseScreenViewModel(
     private val trainExerciseDao: TrainExerciseDao,
     exerciseDao: ExerciseDao,
     measurementUnitDao: MeasurementUnitDao,
-    trainExerciseRepetitionsDao: TrainExerciseRepetitionsDao
+    private val trainExerciseRepetitionsDao: TrainExerciseRepetitionsDao
 ) : ViewModel() {
+
     var trainExerciseUiState by mutableStateOf(TrainExerciseFormUiState())
     private val _setList = MutableStateFlow<List<List<Int>>>(emptyList())
 
@@ -71,11 +85,27 @@ class AddTrainExerciseScreenViewModel(
 
     suspend fun saveTrainExercise() {
         if (validateInput()) {
-            trainExerciseDao.insert(trainExerciseUiState.trainExercise)
+            //
+            // exercise info
+            //
+            val newExerciseId = trainExerciseDao.insert(trainExerciseUiState.trainExercise)
+            //
+            // set info
+            //
+            _setList.value.forEachIndexed { index, set ->
+                val idx = index + 1
+                val newRepetition = TrainExerciseRepetitions(
+                    trainExerciseId = newExerciseId,
+                    setNumber = idx,
+                    weightOrNumber = set[0],
+                    repetitionsNumber = set[1],
+                    date = null
+                )
+                trainExerciseRepetitionsDao.insert(newRepetition)
+            }
+            // Clear the list.
+            _setList.value = emptyList()
         }
-
-
-        // todo: Добавить повторения в таблицу для сета.
     }
 
     private fun validateInput(

@@ -102,7 +102,6 @@ fun AddTrainExerciseScreen(
                 trainId = trainId,
                 exercises = exercises,
                 measurementUnits = measurementUnits,
-//                setList = viewModel.setList.collectAsState().value,
                 onSetAdd = viewModel::addSet,
                 onSetWeightChange = viewModel::updateSetWeight,
                 modifier = Modifier.fillMaxWidth(),
@@ -135,11 +134,14 @@ fun TrainExerciseInputForm(
     trainId: Long,
     exercises: List<Exercise>,
     measurementUnits: List<MeasurementUnit>,
-//    setList: List<List<Int>>,
     onSetWeightChange: (Int, List<Int>) -> Unit,
     exerciseSetDetails: List<List<Int>>,
     onSetAdd: (Int, Int) -> Unit,
 ) {
+
+    var selectedExerciseId by remember { mutableStateOf<String?>(null) }
+
+
     Column(
         modifier = modifier,
     ) {
@@ -149,11 +151,12 @@ fun TrainExerciseInputForm(
             modifier = Modifier,
             singleLine = true
         )
-        Text(text = "Exercise id:")
+        Text(text = "Exercise ID: $selectedExerciseId")
         ExercisesDropdownMenu(
             exercises = exercises,
-            onExerciseSelected = { selectedExerciseId ->
-                onValueChange(trainExerciseDetails.copy(exerciseId = selectedExerciseId))
+            onExerciseSelected = { id ->
+                selectedExerciseId = id.toString()
+                onValueChange(trainExerciseDetails.copy(exerciseId = id))
             }
         )
         SetList(exerciseSetDetails, onSetAdd, onSetWeightChange)
@@ -218,7 +221,7 @@ fun SetList(
     Column(
         modifier = Modifier,
     ) {
-
+        Text("Sets:")
         //
         // The list of repetitions
         //
@@ -321,6 +324,7 @@ fun SetListItem(
             //
             // Set order buttons
             //
+            // todo: Implement sets order changing functionality.
             Button(
                 onClick = { },
                 modifier = Modifier,

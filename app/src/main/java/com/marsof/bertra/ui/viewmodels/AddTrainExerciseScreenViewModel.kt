@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.ColumnInfo
 import com.marsof.bertra.data.dao.ExerciseDao
 import com.marsof.bertra.data.dao.MeasurementUnitDao
 import com.marsof.bertra.data.dao.TrainExerciseDao
@@ -20,7 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Date
 
 data class TrainExerciseFormUiState(
     val trainExercise: TrainExercise = TrainExercise(
@@ -30,16 +28,6 @@ data class TrainExerciseFormUiState(
         measurementUnitId = 0
     ),
     val isEntryValid: Boolean = true
-)
-
-data class TrainExerciseRepetitionsUiState(
-    val repetition: TrainExerciseRepetitions = TrainExerciseRepetitions(
-        trainExerciseId = -1,
-        setNumber = -1,
-        weightOrNumber = -1,
-        repetitionsNumber = -1,
-        date = null
-    )
 )
 
 
@@ -104,7 +92,7 @@ class AddTrainExerciseScreenViewModel(
                 trainExerciseRepetitionsDao.insert(newRepetition)
             }
             // Clear the list.
-            _setList.value = emptyList()
+            clearSetList()
         }
     }
 

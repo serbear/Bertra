@@ -66,12 +66,8 @@ fun AddTrainExerciseScreen(
     trainId: Long,
 ) {
     val coroutineScope = rememberCoroutineScope()
-
     val trainExerciseUiState = viewModel.trainExerciseUiState
-
     val trainExerciseSetList by viewModel.setList.collectAsStateWithLifecycle()
-
-
     val onSaveClick: () -> Unit = {
         coroutineScope.launch {
             viewModel.saveTrainExercise()
@@ -112,46 +108,55 @@ fun AddTrainExerciseScreen(
                     enabled = true,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(stringResource(R.string.go_back_button_label))
+                    Text(
+                        text = stringResource(R.string.go_back_button_label)
+                    )
                 }
                 Button(
                     onClick = onSaveClick,
                     enabled = trainExerciseUiState.isEntryValid,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(stringResource(R.string.save_train_exercise))
+                    Text(
+                        text = stringResource(R.string.save_train_exercise)
+                    )
                 }
             }
         }
     }
 }
 
+/**
+ * Represents the input form for a new workout exercise.
+ */
 @Composable
 fun TrainExerciseInputForm(
-    trainExerciseDetails: TrainExercise,
-    onValueChange: (TrainExercise) -> Unit = {},
-    modifier: Modifier,
     trainId: Long,
-    exercises: List<Exercise>,
-    measurementUnits: List<MeasurementUnit>,
-    onSetWeightChange: (Int, List<Int>) -> Unit,
+    trainExerciseDetails: TrainExercise,
     exerciseSetDetails: List<List<Int>>,
+    measurementUnits: List<MeasurementUnit>,
+    exercises: List<Exercise>,
+    onSetWeightChange: (Int, List<Int>) -> Unit,
+    onValueChange: (TrainExercise) -> Unit = {},
     onSetAdd: (Int, Int) -> Unit,
+    modifier: Modifier,
 ) {
-
     var selectedExerciseId by remember { mutableStateOf<String?>(null) }
 
+    trainExerciseDetails.trainId = trainId
 
     Column(
         modifier = modifier,
     ) {
         TextField(
             value = "Train id: $trainId",
-            onValueChange = { onValueChange(trainExerciseDetails.copy(trainId = trainId)) },
+            onValueChange = {},
             modifier = Modifier,
             singleLine = true
         )
-        Text(text = "Exercise ID: $selectedExerciseId")
+        Text(
+            text = "Exercise ID: $selectedExerciseId"
+        )
         ExercisesDropdownMenu(
             exercises = exercises,
             onExerciseSelected = { id ->
@@ -159,7 +164,11 @@ fun TrainExerciseInputForm(
                 onValueChange(trainExerciseDetails.copy(exerciseId = id))
             }
         )
-        SetList(exerciseSetDetails, onSetAdd, onSetWeightChange)
+        SetList(
+            exerciseSetDetails,
+            onSetAdd,
+            onSetWeightChange
+        )
         MeasurementUnitDropdownMenu(
             measurementUnits = measurementUnits,
             onMeasureUnitSelected = { selectedMeasurementUnitId ->
@@ -173,6 +182,9 @@ fun TrainExerciseInputForm(
     }
 }
 
+/**
+ * Represents a dropdown menu for selecting exercises.
+ */
 @Composable
 fun ExercisesDropdownMenu(
     exercises: List<Exercise>,
@@ -193,7 +205,9 @@ fun ExercisesDropdownMenu(
                 Icons.Default.MoreVert,
                 contentDescription = stringResource(R.string.exercise_list_button_label)
             )
-            Text(stringResource(R.string.exercise_list_button_label))
+            Text(
+                text = stringResource(R.string.exercise_list_button_label)
+            )
         }
         DropdownMenu(
             expanded = menuIsExpanded,
@@ -201,7 +215,9 @@ fun ExercisesDropdownMenu(
         ) {
             exercises.forEach { exercise ->
                 DropdownMenuItem(
-                    text = { Text(exercise.name) },
+                    text = {
+                        Text(exercise.name)
+                    },
                     onClick = {
                         onExerciseSelected(exercise.id)
                         menuIsExpanded = false // Close menu after the choosing.
@@ -212,6 +228,9 @@ fun ExercisesDropdownMenu(
     }
 }
 
+/**
+ * Represents a list of sets for an exercise.
+ */
 @Composable
 fun SetList(
     exerciseSetDetails: List<List<Int>>,
@@ -269,14 +288,15 @@ fun SetList(
     }
 }
 
+/**
+ * Represents a single set item in the set list.
+ */
 @Composable
 fun SetListItem(
     index: Int,
     setData: List<Int>,
     onSetWeightChange: (Int, List<Int>) -> Unit
 ) {
-
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -288,11 +308,15 @@ fun SetListItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "# $index")
+            Text(
+                text = "# $index"
+            )
             //
             // Weight or Weight Number
             //
-            Text(text = "Weight:")
+            Text(
+                text = "Weight:"
+            )
             NumberStepper(
                 value = setData[0],
                 onValueChange = { newWeightValue ->
@@ -349,6 +373,10 @@ fun SetListItem(
     }
 }
 
+/**
+ * Represents a dropdown menu for selecting measurement units
+ * used to denote weight or weight number.
+ */
 @Composable
 fun MeasurementUnitDropdownMenu(
     measurementUnits: List<MeasurementUnit>,
@@ -362,7 +390,9 @@ fun MeasurementUnitDropdownMenu(
             .padding(16.dp)
     ) {
         Button(
-            onClick = { menuIsExpanded = !menuIsExpanded },
+            onClick = {
+                menuIsExpanded = !menuIsExpanded
+            },
             modifier = Modifier,
             shape = RoundedCornerShape(0.dp)
         ) {
@@ -370,19 +400,25 @@ fun MeasurementUnitDropdownMenu(
                 Icons.Default.MoreVert,
                 contentDescription = stringResource(R.string.measurement_unit_list_button_label)
             )
-            Text(stringResource(R.string.measurement_unit_list_button_label))
+            Text(
+                text = stringResource(R.string.measurement_unit_list_button_label)
+            )
         }
         DropdownMenu(
             expanded = menuIsExpanded,
-            onDismissRequest = { menuIsExpanded = false }
+            onDismissRequest = {
+                menuIsExpanded = false
+            }
         ) {
             measurementUnits.forEach { measurementUnit ->
                 DropdownMenuItem(
-                    text = { Text(measurementUnit.name) },
+                    text = {
+                        Text(measurementUnit.name)
+                    },
                     onClick = {
-                        selectedUnit = measurementUnit // Сохраняем выбранную единицу
+                        selectedUnit = measurementUnit
                         onMeasureUnitSelected(measurementUnit.id)
-                        menuIsExpanded = false // Close menu after the choosing.
+                        menuIsExpanded = false
                     }
                 )
             }

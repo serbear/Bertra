@@ -12,7 +12,7 @@ data class TrainExercise (
     /**
      * Id of the train to which the exercise belongs.
      */
-    val trainId: Long,
+    var trainId: Long,
     /**
      * Id of the exercise.
      * From the table "exercises".

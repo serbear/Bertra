@@ -30,6 +30,11 @@ data class TrainExerciseFormUiState(
     val isEntryValid: Boolean = true
 )
 
+data class SetData(
+    var weightOrWeightNumber: Int = 0,
+    var repetitions: Int = 0,
+    var type: Int = -1
+)
 
 class AddTrainExerciseScreenViewModel(
     private val trainExerciseDao: TrainExerciseDao,
@@ -39,12 +44,14 @@ class AddTrainExerciseScreenViewModel(
 ) : ViewModel() {
 
     var trainExerciseUiState by mutableStateOf(TrainExerciseFormUiState())
-    private val _setList = MutableStateFlow<List<List<Int>>>(emptyList())
+    private val _setList =
+        MutableStateFlow<List<SetData>>(emptyList()) //    private val _setList = MutableStateFlow<List<List<Int>>>(emptyList())
 
     /**
      * The list of the exercise's sets with their weights and repetition number.
      */
-    val setList: StateFlow<List<List<Int>>> = _setList.asStateFlow()
+    val setList: StateFlow<List<SetData>> =
+        _setList.asStateFlow() //    val setList: StateFlow<List<List<Int>>> = _setList.asStateFlow()
 
 
     // Преобразуем Flow<List<Exercise>> в StateFlow<List<Exercise>>
@@ -85,10 +92,10 @@ class AddTrainExerciseScreenViewModel(
                 val newRepetition = TrainExerciseRepetitions(
                     trainExerciseId = newExerciseId,
                     setNumber = idx,
-                    weightOrNumber = set[0],
-                    repetitionsNumber = set[1],
+                    weightOrNumber = set.weightOrWeightNumber,
+                    repetitionsNumber = set.repetitions,
                     date = null,
-                    setCategory = null
+                    setCategory = set.type
                 )
                 trainExerciseRepetitionsDao.insert(newRepetition)
             }
@@ -105,10 +112,18 @@ class AddTrainExerciseScreenViewModel(
 //        return trainExercise.name.isNotBlank()
     }
 
-    fun addSet(weightOrWeightNumber: Int, repetitions: Int) {
+    fun addSet(
+        weightOrWeightNumber: Int,
+        repetitions: Int,
+        setType: Int
+    ) {
         viewModelScope.launch {
             val currentList = _setList.value.toMutableList()
-            val newElement = listOf(weightOrWeightNumber, repetitions)
+            val newElement = SetData(
+                weightOrWeightNumber,
+                repetitions,
+                setType,
+            ) //            val newElement = listOf(weightOrWeightNumber, repetitions)
             currentList.add(newElement)
             _setList.value = currentList
         }
@@ -129,7 +144,7 @@ class AddTrainExerciseScreenViewModel(
      * @throws IndexOutOfBoundsException if `setIndex` is out of bounds for the current list of
      * sets.
      */
-    fun updateSetWeight(setIndex: Int, setData: List<Int>) {
+    fun updateSetWeight(setIndex: Int, setData: SetData) { //        fun updateSetWeight(setIndex: Int, setData: List<Int>) {
         val currentList = _setList.value.toMutableList()
 
         if (setIndex < 0 || setIndex >= currentList.size) {
@@ -143,7 +158,7 @@ class AddTrainExerciseScreenViewModel(
         }
     }
 
-    fun updateSetType(setIndex: Int, setType: Int) {
+    fun updateSetType(setIndex: Int, setData: SetData) {
 
     }
 }

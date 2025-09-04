@@ -47,6 +47,7 @@ import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
 import com.marsof.bertra.ui.navigation.INavigationDestination
 import com.marsof.bertra.ui.viewmodels.AddTrainExerciseScreenViewModel
+import com.marsof.bertra.ui.viewmodels.SetData
 import kotlinx.coroutines.launch
 
 object AddTrainExerciseScreenDestination : INavigationDestination {
@@ -137,12 +138,12 @@ fun AddTrainExerciseScreen(
 fun TrainExerciseInputForm(
     trainId: Long,
     trainExerciseDetails: TrainExercise,
-    exerciseSetDetails: List<List<Int>>,
+    exerciseSetDetails: List<SetData>, // exerciseSetDetails: List<List<Int>>,
     measurementUnits: List<MeasurementUnit>,
     exercises: List<Exercise>,
-    onSetWeightChange: (Int, List<Int>) -> Unit,
+    onSetWeightChange: (Int, SetData ) -> Unit, // onSetWeightChange: (Int, List<Int>) -> Unit,
     onValueChange: (TrainExercise) -> Unit = {},
-    onSetAdd: (Int, Int) -> Unit,
+    onSetAdd: (Int, Int, Int) -> Unit,
     modifier: Modifier,
 ) {
     var selectedExerciseId by remember { mutableStateOf<String?>(null) }
@@ -237,9 +238,12 @@ fun ExercisesDropdownMenu(
  */
 @Composable
 fun SetList(
-    exerciseSetDetails: List<List<Int>>,
-    onSetAdd: (Int, Int) -> Unit,
-    onSetWeightChange: (Int, List<Int>) -> Unit,
+    exerciseSetDetails: List<SetData>,
+    onSetAdd: (Int, Int, Int) -> Unit,
+    onSetWeightChange: (Int, SetData) -> Unit,
+//    exerciseSetDetails: List<List<Int>>,
+//    onSetAdd: (Int, Int) -> Unit,
+//    onSetWeightChange: (Int, List<Int>) -> Unit,
 ) {
     Column(
         modifier = Modifier,
@@ -284,8 +288,8 @@ fun SetList(
         Button(
             onClick = {
                 // weight, repetitions
-                // Default values: 0, 1
-                onSetAdd(0, 1)
+                // Default values: 0, 1, 0
+                onSetAdd(0, 1, -1)
             },
             modifier = Modifier,
             shape = RoundedCornerShape(0.dp)
@@ -305,8 +309,10 @@ fun SetList(
 @Composable
 fun SetListItem(
     index: Int,
-    setData: List<Int>,
-    onSetWeightChange: (Int, List<Int>) -> Unit
+    setData: SetData,
+    onSetWeightChange: (Int, SetData) -> Unit
+//    setData: List<Int>,
+//    onSetWeightChange: (Int, List<Int>) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -329,11 +335,11 @@ fun SetListItem(
                 text = "Weight:"
             )
             NumberStepper(
-                value = setData[0],
+                value = setData.weightOrWeightNumber,
                 onValueChange = { newWeightValue ->
                     onSetWeightChange(
                         index,
-                        listOf(newWeightValue, setData[1])
+                        SetData(newWeightValue, setData.repetitions, setData.type) // listOf(newWeightValue, setData[1])
                     )
                 },
                 minValue = 1,
@@ -345,11 +351,11 @@ fun SetListItem(
             //
             Text(text = "Reps:")
             NumberStepper(
-                value = setData[1],
+                value = setData.repetitions,
                 onValueChange = { newRepetitionsValue ->
                     onSetWeightChange(
                         index,
-                        listOf(setData[0], newRepetitionsValue)
+                        SetData(setData.weightOrWeightNumber, newRepetitionsValue, setData.type) // listOf(setData[0], newRepetitionsValue)
                     )
                 },
                 minValue = 1,

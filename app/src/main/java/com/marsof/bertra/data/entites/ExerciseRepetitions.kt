@@ -36,5 +36,5 @@ data class TrainExerciseRepetitions(
      * The type of set: warm-up or working.
      */
     @ColumnInfo(name = "set_category")
-    val setCategory: String? = null
+    val setCategory: Int
 )

@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -20,6 +22,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -32,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -152,7 +156,7 @@ fun TrainExerciseInputForm(
             value = "Train id: $trainId",
             onValueChange = {},
             modifier = Modifier,
-            singleLine = true
+            singleLine = true,
         )
         Text(
             text = "Exercise ID: $selectedExerciseId"
@@ -255,7 +259,14 @@ fun SetList(
                     SetListItem(
                         index = index,
                         setData,
-                        onSetWeightChange
+                        onSetWeightChange,
+//                        onSetTypeSelected = { selectedSetType ->
+//                            onValueChange(
+//                                trainExerciseDetails.copy(
+//                                    measurementUnitId = selectedMeasurementUnitId
+//                                )
+//                            )
+//                        }
                     )
                 }
             }
@@ -346,6 +357,12 @@ fun SetListItem(
                 step = 1
             )
             //
+            // Set type radio buttons
+            //
+//            SetTypeOptions()
+
+
+            //
             // Set order buttons
             //
             // todo: Implement sets order changing functionality.
@@ -372,6 +389,7 @@ fun SetListItem(
         }
     }
 }
+
 
 /**
  * Represents a dropdown menu for selecting measurement units
@@ -425,4 +443,43 @@ fun MeasurementUnitDropdownMenu(
         }
     }
     Text(text = selectedUnit?.name ?: stringResource(R.string.measurement_unit_is_not_selected))
+}
+
+@Composable
+fun SetTypeOptions(
+    modifier: Modifier = Modifier,
+
+) {
+    val radioOptions = listOf("warm", "work")
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+
+    // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
+    Column(modifier.selectableGroup()) {
+        radioOptions.forEach { text ->
+            Row(
+                Modifier
+//                    .fillMaxWidth()
+//                    .height(56.dp)
+                    .selectable(
+                        selected = (text == selectedOption),
+                        onClick = {
+                            onOptionSelected(text)
+                        },
+                        role = Role.RadioButton,
+                    ),
+//                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = (text == selectedOption),
+                    onClick = null, // null recommended for accessibility with screen readers
+                )
+                Text(
+                    text = text,
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    modifier = Modifier.padding(start = 16.dp)
+                )
+            }
+        }
+    }
 }

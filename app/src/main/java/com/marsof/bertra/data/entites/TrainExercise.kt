@@ -22,5 +22,6 @@ data class TrainExercise (
      * Id of the measurement unit.
      * From the table "measurement_units".
      */
+    // NOTE: Consider to create a separate measure unit for each exercise set in the future release.
     val measurementUnitId: Long,
 )

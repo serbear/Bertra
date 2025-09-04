@@ -25,7 +25,7 @@ data class TrainExerciseFormUiState(
         id = 0,
         trainId = 0,
         exerciseId = 0,
-        measurementUnitId = 0
+        measurementUnitId = 0,
     ),
     val isEntryValid: Boolean = true
 )
@@ -87,7 +87,8 @@ class AddTrainExerciseScreenViewModel(
                     setNumber = idx,
                     weightOrNumber = set[0],
                     repetitionsNumber = set[1],
-                    date = null
+                    date = null,
+                    setCategory = null
                 )
                 trainExerciseRepetitionsDao.insert(newRepetition)
             }
@@ -135,9 +136,14 @@ class AddTrainExerciseScreenViewModel(
             val errorMessage = "Index $setIndex is out of bounds for list size ${currentList.size}"
             throw IndexOutOfBoundsException(errorMessage)
         }
+
         viewModelScope.launch {
             currentList[setIndex] = setData
             _setList.value = currentList
         }
+    }
+
+    fun updateSetType(setIndex: Int, setType: Int) {
+
     }
 }

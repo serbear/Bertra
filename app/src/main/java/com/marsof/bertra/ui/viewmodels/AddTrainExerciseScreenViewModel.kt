@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.marsof.bertra.WorkoutSetType
 import com.marsof.bertra.data.dao.ExerciseDao
 import com.marsof.bertra.data.dao.MeasurementUnitDao
 import com.marsof.bertra.data.dao.TrainExerciseDao
@@ -33,7 +34,13 @@ data class TrainExerciseFormUiState(
 data class SetData(
     var weightOrWeightNumber: Int = 0,
     var repetitions: Int = 0,
-    var type: Int = -1
+    /**
+     * Type of the set.
+     * @see com.marsof.bertra.WorkoutSetType.WARM_UP
+     * @see com.marsof.bertra.WorkoutSetType.WORKING
+     * @see com.marsof.bertra.WorkoutSetType.UNSPECIFIED
+     */
+    var type: WorkoutSetType = WorkoutSetType.UNSPECIFIED
 )
 
 class AddTrainExerciseScreenViewModel(
@@ -115,7 +122,7 @@ class AddTrainExerciseScreenViewModel(
     fun addSet(
         weightOrWeightNumber: Int,
         repetitions: Int,
-        setType: Int
+        setType: WorkoutSetType
     ) {
         viewModelScope.launch {
             val currentList = _setList.value.toMutableList()

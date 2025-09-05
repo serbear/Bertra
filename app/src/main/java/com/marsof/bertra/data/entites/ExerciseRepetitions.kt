@@ -3,6 +3,7 @@ package com.marsof.bertra.data.entites
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.marsof.bertra.WorkoutSetType
 import java.util.Date
 
 @Entity(tableName = "train_exercise_repetitions")
@@ -36,5 +37,5 @@ data class TrainExerciseRepetitions(
      * The type of set: warm-up or working.
      */
     @ColumnInfo(name = "set_category")
-    val setCategory: Int
+    val setCategory: WorkoutSetType
 )

@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
+import com.marsof.bertra.WorkoutSetType
 import com.marsof.bertra.data.entites.Exercise
 import com.marsof.bertra.data.entites.MeasurementUnit
 import com.marsof.bertra.data.entites.TrainExercise
@@ -141,9 +142,9 @@ fun TrainExerciseInputForm(
     exerciseSetDetails: List<SetData>, // exerciseSetDetails: List<List<Int>>,
     measurementUnits: List<MeasurementUnit>,
     exercises: List<Exercise>,
-    onSetWeightChange: (Int, SetData ) -> Unit, // onSetWeightChange: (Int, List<Int>) -> Unit,
+    onSetWeightChange: (Int, SetData) -> Unit, // onSetWeightChange: (Int, List<Int>) -> Unit,
     onValueChange: (TrainExercise) -> Unit = {},
-    onSetAdd: (Int, Int, Int) -> Unit,
+    onSetAdd: (Int, Int, WorkoutSetType) -> Unit,
     modifier: Modifier,
 ) {
     var selectedExerciseId by remember { mutableStateOf<String?>(null) }
@@ -239,7 +240,7 @@ fun ExercisesDropdownMenu(
 @Composable
 fun SetList(
     exerciseSetDetails: List<SetData>,
-    onSetAdd: (Int, Int, Int) -> Unit,
+    onSetAdd: (Int, Int, WorkoutSetType) -> Unit,
     onSetWeightChange: (Int, SetData) -> Unit,
 //    exerciseSetDetails: List<List<Int>>,
 //    onSetAdd: (Int, Int) -> Unit,
@@ -288,8 +289,8 @@ fun SetList(
         Button(
             onClick = {
                 // weight, repetitions
-                // Default values: 0, 1, 0
-                onSetAdd(0, 1, -1)
+                // Default values: 0, 1, -1
+                onSetAdd(0, 1, WorkoutSetType.UNSPECIFIED)
             },
             modifier = Modifier,
             shape = RoundedCornerShape(0.dp)
@@ -339,7 +340,11 @@ fun SetListItem(
                 onValueChange = { newWeightValue ->
                     onSetWeightChange(
                         index,
-                        SetData(newWeightValue, setData.repetitions, setData.type) // listOf(newWeightValue, setData[1])
+                        SetData(
+                            newWeightValue,
+                            setData.repetitions,
+                            setData.type
+                        ) // listOf(newWeightValue, setData[1])
                     )
                 },
                 minValue = 1,
@@ -355,7 +360,11 @@ fun SetListItem(
                 onValueChange = { newRepetitionsValue ->
                     onSetWeightChange(
                         index,
-                        SetData(setData.weightOrWeightNumber, newRepetitionsValue, setData.type) // listOf(setData[0], newRepetitionsValue)
+                        SetData(
+                            setData.weightOrWeightNumber,
+                            newRepetitionsValue,
+                            setData.type
+                        ) // listOf(setData[0], newRepetitionsValue)
                     )
                 },
                 minValue = 1,
@@ -365,7 +374,19 @@ fun SetListItem(
             //
             // Set type radio buttons
             //
-//            SetTypeOptions()
+            SetTypeOptions(
+                onValueChange = { selectedSetType ->
+                    onSetWeightChange(
+                        index,
+                        SetData(
+                            setData.weightOrWeightNumber,
+                            setData.repetitions,
+                            selectedSetType
+                        )
+                    )
+                },
+
+                )
 
 
             //
@@ -453,11 +474,11 @@ fun MeasurementUnitDropdownMenu(
 
 @Composable
 fun SetTypeOptions(
+    onValueChange: (WorkoutSetType) -> Unit,
     modifier: Modifier = Modifier,
-
 ) {
     val radioOptions = listOf("warm", "work")
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf<String?>(null) }
 
     // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
     Column(modifier.selectableGroup()) {
@@ -470,6 +491,10 @@ fun SetTypeOptions(
                         selected = (text == selectedOption),
                         onClick = {
                             onOptionSelected(text)
+                            onValueChange(
+                                if (text == "warm") WorkoutSetType.WARM_UP
+                                else WorkoutSetType.WORKING
+                            )
                         },
                         role = Role.RadioButton,
                     ),

@@ -14,6 +14,7 @@ import com.marsof.bertra.ui.viewmodels.NewMeasurementUnitScreenViewModel
 import com.marsof.bertra.ui.viewmodels.NewTrainScreenViewModel
 import com.marsof.bertra.ui.viewmodels.TrainExercisesListScreenViewModel
 import com.marsof.bertra.ui.viewmodels.TrainListScreenViewModel
+import com.marsof.bertra.ui.viewmodels.WorkoutEngageScreenViewModel
 
 fun CreationExtras.bertraApplication(): BertraApplication = (
         this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as BertraApplication
@@ -65,6 +66,11 @@ object ViewModelProvider {
                 bertraApplication().container.exerciseDao,
                 bertraApplication().container.measurementUnitDao,
                 bertraApplication().container.trainExerciseRepetitionsDao
+            )
+        }
+        initializer {
+            WorkoutEngageScreenViewModel(
+                bertraApplication().container.trainExerciseDao
             )
         }
     }

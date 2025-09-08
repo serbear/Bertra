@@ -39,4 +39,6 @@
     <string name="move_repetition_down_button_label">Move Repetition Down</string>
     <string name="measurement_unit_list_button_label">Measurement Unit</string>
     <string name="measurement_unit_is_not_selected">Measurement unit not selected.</string>
+    <string name="workout_engage_button_label">Engage</string>
+    <string name="workout_engage_screen_title">Workout Engage</string>
 </resources>

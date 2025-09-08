@@ -7,9 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,7 +40,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
@@ -61,6 +58,7 @@ object TrainListScreenDestination : INavigationDestination {
 @Composable
 fun TrainListScreen(
     navigateToNewTrainScreen: () -> Unit,
+    navigateToWorkoutEngageScreen: (workoutId: Long) -> Unit,
     viewModel: TrainListScreenViewModel = viewModel(
         factory = ViewModelProvider.AppViewModelProvider
     ),
@@ -81,6 +79,7 @@ fun TrainListScreen(
         ) {
             TrainList(
                 trainList = trainListState.trainList,
+                navigateToWorkoutEngageScreen = navigateToWorkoutEngageScreen,
                 modifier = Modifier.padding(innerPadding),
             )
             Button(
@@ -104,13 +103,12 @@ fun TrainListScreen(
  * Represents the list of workouts.
  */
 @Composable
-fun TrainList(trainList: List<Train>, modifier: Modifier) {
-
-
+fun TrainList(
+    trainList: List<Train>,
+    modifier: Modifier,
+    navigateToWorkoutEngageScreen: (workoutId: Long) -> Unit
+) {
     var selectedTrain by remember { mutableStateOf<Train?>(null) }
-
-
-
 
     Column(
         modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
@@ -133,7 +131,8 @@ fun TrainList(trainList: List<Train>, modifier: Modifier) {
                         onTrainClick = { clickedTrain ->
                             selectedTrain =
                                 if (selectedTrain == clickedTrain) null else clickedTrain
-                        }
+                        },
+                        navigateToWorkoutEngageScreen =  navigateToWorkoutEngageScreen ,
                     )
                 }
             }
@@ -148,10 +147,9 @@ fun TrainList(trainList: List<Train>, modifier: Modifier) {
 fun SingleTrain(
     train: Train,
     isSelected: Boolean = false,
-    onTrainClick: (Train) -> Unit = {}
+    onTrainClick: (Train) -> Unit = {},
+    navigateToWorkoutEngageScreen: (workoutId: Long) -> Unit
 ) {
-
-
     Card(
         modifier = Modifier
             .padding(
@@ -190,6 +188,9 @@ fun SingleTrain(
                 Row(
                     modifier = Modifier,
                 ) {
+                    //
+                    // Edit workout button
+                    //
                     Button(
                         onClick = {},
                         modifier = Modifier,
@@ -203,17 +204,21 @@ fun SingleTrain(
                             text = "Edit",
                         )
                     }
+                    //
+                    // Engage workout button
+                    //
                     Button(
-                        onClick = {},
+                        onClick = { navigateToWorkoutEngageScreen(train.id) },
                         modifier = Modifier,
                         shape = RoundedCornerShape(0.dp),
                     ) {
                         Icon(
                             imageVector = Icons.Default.Rocket,
-                            contentDescription = "Engage",
+                            contentDescription =
+                                stringResource(R.string.workout_engage_button_label),
                         )
                         Text(
-                            text = "Engage",
+                            text = stringResource(R.string.workout_engage_button_label),
                         )
                     }
                 }

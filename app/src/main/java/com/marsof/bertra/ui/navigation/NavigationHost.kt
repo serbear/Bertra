@@ -25,6 +25,8 @@ import com.marsof.bertra.ui.screens.TrainExercisesListScreen
 import com.marsof.bertra.ui.screens.TrainExercisesListScreenDestination
 import com.marsof.bertra.ui.screens.TrainListScreen
 import com.marsof.bertra.ui.screens.TrainListScreenDestination
+import com.marsof.bertra.ui.screens.WorkoutEngageScreen
+import com.marsof.bertra.ui.screens.WorkoutEngageScreenDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -124,11 +126,34 @@ fun NavigationHost(
                 }
             )
         }
+        composable(
+            route = WorkoutEngageScreenDestination.route,
+            arguments = listOf(
+                navArgument("workoutId") {
+                    type = NavType.LongType
+                }
+            )
+        ) { entry ->
+            val workoutId = entry.arguments?.getLong("workoutId") ?: -3
+//            val navigateToActiveWorkoutScreenLambda: (Long) -> Unit = { workoutIdParam ->
+//                val route = WorkoutEngageScreenDestination.createRoute(workoutIdParam)
+//                navController.navigate(route)
+//            }
+            WorkoutEngageScreen(
+                navigateToActiveWorkoutScreen = {},//navigateToActiveWorkoutScreenLambda,
+                openDrawer = { scope.launch { drawerState.open() } },
+                workoutId = workoutId
+            )
+        }
         composable(route = TrainListScreenDestination.route) {
             TrainListScreen(
                 openDrawer = { scope.launch { drawerState.open() } },
                 navigateToNewTrainScreen = {
                     navController.navigate(NewTrainScreenDestination.route)
+                },
+                navigateToWorkoutEngageScreen = { workoutId ->
+                    val route = WorkoutEngageScreenDestination.createRoute(workoutId)
+                    navController.navigate(route)
                 }
             )
         }

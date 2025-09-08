@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.marsof.bertra.data.dao.TrainExerciseDao
 import com.marsof.bertra.data.entites.TrainExercise
+import com.marsof.bertra.data.entites.TrainExerciseWithExerciseName
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,7 +32,7 @@ class TrainExercisesListScreenViewModel(trainExerciseDao: TrainExerciseDao) : Vi
             )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val trainExercisesByIdState: StateFlow<List<TrainExercise>> =
+    val trainExercisesByIdState: StateFlow<List<TrainExerciseWithExerciseName>> =
         _trainId.flatMapLatest { trainId ->
             if (trainId > 0L) {
                 trainExerciseDao.getTrainExercisesById(trainId)

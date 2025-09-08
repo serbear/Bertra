@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
-import com.marsof.bertra.data.entites.TrainExercise
+import com.marsof.bertra.data.entites.TrainExerciseWithExerciseName
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
 import com.marsof.bertra.ui.navigation.INavigationDestination
@@ -109,7 +109,7 @@ fun TrainExercisesListScreen(
 
 @Composable
 fun TrainExerciseList(
-    trainExerciseList: List<TrainExercise>,
+    trainExerciseList: List<TrainExerciseWithExerciseName>,
 //    trainExerciseList: List<TrainExercise>,
     modifier: Modifier = Modifier
 ) {
@@ -125,7 +125,7 @@ fun TrainExerciseList(
             )
         } else {
             LazyColumn {
-                items(items = trainExerciseList, key = { it.id }) { trainExercise ->
+                items(items = trainExerciseList, key = { it.trainExercise.id }) { trainExercise ->
                     SingleTrainExercise(trainExercise = trainExercise)
                 }
             }
@@ -134,7 +134,7 @@ fun TrainExerciseList(
 }
 
 @Composable
-fun SingleTrainExercise(trainExercise: TrainExercise) {
+fun SingleTrainExercise(trainExercise: TrainExerciseWithExerciseName) {
     Card(
         modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small)),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -148,23 +148,24 @@ fun SingleTrainExercise(trainExercise: TrainExercise) {
             )
         ) {
             Text(
-                text = "Train Exercise ID: " + trainExercise.id.toString(),
+                text = "Train Exercise ID: " + trainExercise.trainExercise.id.toString(),
                 style = MaterialTheme.typography.titleLarge
             )
             Spacer(
                 Modifier.weight(1f)
             )
             Text(
-                text = "Train ID: " + trainExercise.trainId,
+                text = "Train ID: " + trainExercise.trainExercise.trainId,
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(
                 Modifier.weight(1f)
             )
             Text(
-                text = "Exercise ID: " + trainExercise.exerciseId,
+                text = "Exercise ID: " + trainExercise.trainExercise.exerciseId,
                 style = MaterialTheme.typography.titleMedium
             )
+
             Spacer(
                 Modifier.weight(1f)
             )
@@ -176,7 +177,7 @@ fun SingleTrainExercise(trainExercise: TrainExercise) {
                 Modifier.weight(1f)
             )
             Text(
-                text = "Measurement Unit ID: " + trainExercise.measurementUnitId,
+                text = "Measurement Unit ID: " + trainExercise.trainExercise.measurementUnitId,
                 style = MaterialTheme.typography.titleMedium
             )
             Spacer(

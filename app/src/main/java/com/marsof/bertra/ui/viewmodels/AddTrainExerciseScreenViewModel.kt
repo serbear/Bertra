@@ -51,14 +51,12 @@ class AddTrainExerciseScreenViewModel(
 ) : ViewModel() {
 
     var trainExerciseUiState by mutableStateOf(TrainExerciseFormUiState())
-    private val _setList =
-        MutableStateFlow<List<SetData>>(emptyList()) //    private val _setList = MutableStateFlow<List<List<Int>>>(emptyList())
+    private val _setList = MutableStateFlow<List<SetData>>(emptyList())
 
     /**
      * The list of the exercise's sets with their weights and repetition number.
      */
-    val setList: StateFlow<List<SetData>> =
-        _setList.asStateFlow() //    val setList: StateFlow<List<List<Int>>> = _setList.asStateFlow()
+    val setList: StateFlow<List<SetData>> = _setList.asStateFlow()
 
 
     // Преобразуем Flow<List<Exercise>> в StateFlow<List<Exercise>>

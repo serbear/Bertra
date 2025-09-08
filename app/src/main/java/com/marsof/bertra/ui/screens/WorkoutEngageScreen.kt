@@ -1,14 +1,20 @@
 package com.marsof.bertra.ui.screens
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
 import com.marsof.bertra.ui.ViewModelProvider
@@ -36,7 +42,12 @@ fun WorkoutEngageScreen(
     openDrawer: () -> Unit,
     workoutId: Long
 ) {
+    LaunchedEffect(workoutId) {
+        viewModel.setWorkoutId(workoutId)
+    }
+
     val workoutTrainListState by viewModel.workoutExercisesByIdState.collectAsState()
+    val workoutState by viewModel.workoutState.collectAsState()
 
     Scaffold(
         topBar = {
@@ -46,9 +57,54 @@ fun WorkoutEngageScreen(
             )
         },
     ) { innerPadding ->
-        Text(
-            text = "Engage Screen for the Workout $workoutId",
+        Column(
             modifier = Modifier.padding(innerPadding),
-        )
+        ) {
+            if (workoutState == null) {
+                Text(text = "There is no workout with this ID: $workoutId")
+            } else {
+                //
+                // Workout Name
+                //
+                Text(
+                    text = "Workout Name: ${workoutState!!.name}"
+                )
+                //
+                // Workout Description
+                //
+                Text(
+                    text = "Workout Description: ${workoutState!!.description}"
+                )
+                //
+                // todo: Workout Exercises
+                //
+                if (workoutTrainListState.isEmpty()) {
+                    Text(
+                        text = "There is no any exercises in the workout.",
+                    )
+                } else {
+                    Text(
+                        text = "Workout Exercises:"
+                    )
+                    LazyColumn {
+                        items(
+                            items = workoutTrainListState,
+                            key = { it.trainExercise.id }) { currentExercise ->
+//                            SingleTrainExercise(trainExercise = currentExercise)
+                            Text(
+                                text = currentExercise.trainExercise.exerciseId.toString()
+                            )
+                            Text(
+                                text = "Exercise Name: ${currentExercise.exerciseName}"
+                            )
+                        }
+                    }
+                }
+                //
+                // todo: Engage Button
+                //
+                // enable = workoutTrainListState.isEmpty()
+            }
+        }
     }
 }

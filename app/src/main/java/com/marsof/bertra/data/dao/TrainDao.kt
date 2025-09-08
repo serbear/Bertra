@@ -15,7 +15,7 @@ interface TrainDao {
     fun getAllTrains(): Flow<List<Train>>
 
     @Query("select * from trains where id = :id")
-    fun getTrain(id: Long): Flow<Train>
+    fun getTrain(id: Long): Flow<Train?>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(item: Train): Long

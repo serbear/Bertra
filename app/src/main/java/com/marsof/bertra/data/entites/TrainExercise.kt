@@ -1,5 +1,7 @@
 package com.marsof.bertra.data.entites
 
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -24,4 +26,12 @@ data class TrainExercise (
      */
     // NOTE: Consider to create a separate measure unit for each exercise set in the future release.
     val measurementUnitId: Long,
+
+//    @ColumnInfo(name = "exercise_name") val exerciseName: String
+
+)
+
+data class TrainExerciseWithExerciseName(
+    @Embedded val trainExercise: TrainExercise,
+    @ColumnInfo(name = "exercise_name") val exerciseName: String
 )

@@ -70,7 +70,8 @@ object ViewModelProvider {
         }
         initializer {
             WorkoutEngageScreenViewModel(
-                bertraApplication().container.trainExerciseDao
+                bertraApplication().container.trainExerciseDao,
+                bertraApplication().container.trainDao
             )
         }
     }

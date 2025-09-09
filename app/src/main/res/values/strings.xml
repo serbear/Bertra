@@ -41,4 +41,5 @@
     <string name="measurement_unit_is_not_selected">Measurement unit not selected.</string>
     <string name="workout_engage_button_label">Engage</string>
     <string name="workout_engage_screen_title">Workout Engage</string>
+    <string name="active_workout_screen_title">Active Workout</string>
 </resources>

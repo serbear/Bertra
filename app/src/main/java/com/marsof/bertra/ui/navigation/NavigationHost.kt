@@ -7,6 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.marsof.bertra.ui.screens.ActiveWorkoutScreen
+import com.marsof.bertra.ui.screens.ActiveWorkoutScreenDestination
 import com.marsof.bertra.ui.screens.AddTrainExerciseScreen
 import com.marsof.bertra.ui.screens.AddTrainExerciseScreenDestination
 import com.marsof.bertra.ui.screens.ExerciseListScreen
@@ -126,6 +128,25 @@ fun NavigationHost(
                 }
             )
         }
+        composable(route = ActiveWorkoutScreenDestination.route,
+            arguments = listOf(
+                navArgument("workoutId") {
+                    type = NavType.LongType
+                }
+            )) {entry ->
+            val workoutId = entry.arguments?.getLong("workoutId") ?: -3
+//            val navigateToActiveWorkoutScreenLambda: (Long) -> Unit = { workoutIdParam ->
+//                val route = ActiveWorkoutScreenDestination.createRoute(workoutIdParam)
+//                navController.navigate(route)
+//            }
+            ActiveWorkoutScreen(
+                openDrawer = { scope.launch { drawerState.open() } },
+//                navigateToMeasurementUnitListScreen = {
+//                    navController.navigate(MeasurementUnitListScreenDestination.route)
+//                },
+                workoutId = workoutId
+            )
+        }
         composable(
             route = WorkoutEngageScreenDestination.route,
             arguments = listOf(
@@ -135,12 +156,12 @@ fun NavigationHost(
             )
         ) { entry ->
             val workoutId = entry.arguments?.getLong("workoutId") ?: -3
-//            val navigateToActiveWorkoutScreenLambda: (Long) -> Unit = { workoutIdParam ->
-//                val route = WorkoutEngageScreenDestination.createRoute(workoutIdParam)
-//                navController.navigate(route)
-//            }
+            val navigateToActiveWorkoutScreenLambda: (Long) -> Unit = { workoutIdParam ->
+                val route = ActiveWorkoutScreenDestination.createRoute(workoutIdParam)
+                navController.navigate(route)
+            }
             WorkoutEngageScreen(
-                navigateToActiveWorkoutScreen = {},//navigateToActiveWorkoutScreenLambda,
+                navigateToActiveWorkoutScreen = navigateToActiveWorkoutScreenLambda,
                 openDrawer = { scope.launch { drawerState.open() } },
                 workoutId = workoutId
             )

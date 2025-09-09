@@ -56,7 +56,7 @@ fun WorkoutEngageScreen(
     Scaffold(
         topBar = {
             ApplicationTopBar(
-                title = stringResource(TrainListScreenDestination.titleRes),
+                title = stringResource(WorkoutEngageScreenDestination.titleRes),
                 onNavigationClick = openDrawer
             )
         },

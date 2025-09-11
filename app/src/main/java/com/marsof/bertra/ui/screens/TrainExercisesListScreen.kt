@@ -51,7 +51,7 @@ object TrainExercisesListScreenDestination : INavigationDestination {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainExercisesListScreen(
-    navigateToAddTrainExerciseScreen: (trainId: Long) -> Unit,
+    navigateToAddTrainExerciseScreen: (trainId: Long, exerciseCount: Int) -> Unit,
     viewModel: TrainExercisesListScreenViewModel = viewModel(
         factory = ViewModelProvider.AppViewModelProvider
     ),
@@ -65,8 +65,6 @@ fun TrainExercisesListScreen(
 
     val trainExerciseListState by viewModel.trainExerciseListUiState.collectAsState()
     val trainExercisesById by viewModel.trainExercisesByIdState.collectAsState()
-
-
 
     Scaffold(
         topBar = {
@@ -89,7 +87,12 @@ fun TrainExercisesListScreen(
                 modifier = Modifier.padding(innerPadding)
             )
             Button(
-                onClick = { navigateToAddTrainExerciseScreen(trainId) },
+                onClick = {
+                    navigateToAddTrainExerciseScreen(
+                        trainId,
+                        trainExercisesById.size
+                    )
+                },
                 modifier = Modifier,
                 shape = RoundedCornerShape(0.dp)
             ) {

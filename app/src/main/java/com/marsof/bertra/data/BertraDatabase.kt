@@ -24,7 +24,7 @@ import com.marsof.bertra.data.entites.TrainExerciseRepetitions
         TrainExercise::class,
         TrainExerciseRepetitions::class,
     ],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 @TypeConverters(DataConverter::class)

@@ -89,15 +89,20 @@ fun NavigationHost(
             arguments = listOf(
                 navArgument("trainId") {
                     type = NavType.LongType
-                }
+                },
+                navArgument("exerciseCount") {
+                    type = NavType.IntType
+                },
             )
         ) { entry ->
             val trainId = entry.arguments?.getLong("trainId") ?: -1
+            val exerciseCount = entry.arguments?.getInt("exerciseCount") ?: -1
 
             AddTrainExerciseScreen(
                 openDrawer = { scope.launch { drawerState.open() } },
                 navigateToScreen = { navController.popBackStack() },
                 trainId = trainId,
+                exerciseCount = exerciseCount
             )
         }
         composable(
@@ -109,10 +114,14 @@ fun NavigationHost(
             )
         ) { entry ->
             val trainId = entry.arguments?.getLong("trainId") ?: -1
-            val navigateToAddTrainExerciseScreenLambda: (Long) -> Unit = { trainIdParam ->
-                val route = AddTrainExerciseScreenDestination.createRoute(trainIdParam)
-                navController.navigate(route)
-            }
+            val navigateToAddTrainExerciseScreenLambda: (Long, Int) -> Unit =
+                { trainIdParam, exerciseCount ->
+                    val route = AddTrainExerciseScreenDestination.createRoute(
+                        trainIdParam,
+                        exerciseCount
+                    )
+                    navController.navigate(route)
+                }
             TrainExercisesListScreen(
                 openDrawer = { scope.launch { drawerState.open() } },
                 navigateToAddTrainExerciseScreen = navigateToAddTrainExerciseScreenLambda,
@@ -128,12 +137,13 @@ fun NavigationHost(
                 }
             )
         }
-        composable(route = ActiveWorkoutScreenDestination.route,
+        composable(
+            route = ActiveWorkoutScreenDestination.route,
             arguments = listOf(
                 navArgument("workoutId") {
                     type = NavType.LongType
                 }
-            )) {entry ->
+            )) { entry ->
             val workoutId = entry.arguments?.getLong("workoutId") ?: -3
 //            val navigateToActiveWorkoutScreenLambda: (Long) -> Unit = { workoutIdParam ->
 //                val route = ActiveWorkoutScreenDestination.createRoute(workoutIdParam)

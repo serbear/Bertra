@@ -18,8 +18,6 @@ interface TrainExerciseDao {
     @Query("select * from train_exercises where id = :id")
     fun getTrainExercise(id: Long): Flow<TrainExercise>
 
-    //    @Query("select * from train_exercises where trainId = :trainId")
-//    fun getTrainExercisesById(trainId: Long):  Flow<List<TrainExercise>>
     @Query(
         "SELECT te.*, e.name AS exercise_name " +
                 "FROM train_exercises te " +
@@ -36,5 +34,6 @@ interface TrainExerciseDao {
 
     @Delete
     suspend fun delete(item: TrainExercise)
-
+    @Query("select count(*) from train_exercises where id = :workoutId")
+    fun getWorkoutExerciseCount(workoutId: Long): Flow<Int>
 }

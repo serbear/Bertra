@@ -27,6 +27,7 @@ data class TrainExerciseFormUiState(
         trainId = 0,
         exerciseId = 0,
         measurementUnitId = 0,
+        exerciseOrder = 0,
     ),
     val isEntryValid: Boolean = true
 )
@@ -81,14 +82,17 @@ class AddTrainExerciseScreenViewModel(
             trainExercise = trainExercise,
             isEntryValid = validateInput(trainExercise)
         )
+
     }
 
-    suspend fun saveTrainExercise() {
+    suspend fun saveTrainExercise(exerciseOrder: Int) {
         if (validateInput()) {
             //
             // exercise info
             //
-            val newExerciseId = trainExerciseDao.insert(trainExerciseUiState.trainExercise)
+            val exerciseToSave = trainExerciseUiState.trainExercise
+            exerciseToSave.exerciseOrder = exerciseOrder
+            val newExerciseId = trainExerciseDao.insert(exerciseToSave)
             //
             // set info
             //
@@ -149,7 +153,10 @@ class AddTrainExerciseScreenViewModel(
      * @throws IndexOutOfBoundsException if `setIndex` is out of bounds for the current list of
      * sets.
      */
-    fun updateSetWeight(setIndex: Int, setData: SetData) { //        fun updateSetWeight(setIndex: Int, setData: List<Int>) {
+    fun updateSetWeight(
+        setIndex: Int,
+        setData: SetData
+    ) { //        fun updateSetWeight(setIndex: Int, setData: List<Int>) {
         val currentList = _setList.value.toMutableList()
 
         if (setIndex < 0 || setIndex >= currentList.size) {

@@ -53,11 +53,11 @@ import kotlinx.coroutines.launch
 
 object AddTrainExerciseScreenDestination : INavigationDestination {
     const val ROUTE_NAME = "add_train_exercise"
-    override val route: String get() = "$ROUTE_NAME/{trainId}"
+    override val route: String get() = "$ROUTE_NAME/{trainId}/{exerciseCount}"
     override val titleRes: Int get() = R.string.new_train_exercise_screen_title
 
-    fun createRoute(trainId: Long): String {
-        return "$ROUTE_NAME/$trainId"
+    fun createRoute(trainId: Long, exerciseCount: Int): String {
+        return "$ROUTE_NAME/$trainId/$exerciseCount"
     }
 }
 
@@ -70,13 +70,16 @@ fun AddTrainExerciseScreen(
     ),
     openDrawer: () -> Unit,
     trainId: Long,
+    exerciseCount: Int
 ) {
     val coroutineScope = rememberCoroutineScope()
     val trainExerciseUiState = viewModel.trainExerciseUiState
     val trainExerciseSetList by viewModel.setList.collectAsStateWithLifecycle()
+
+    val exerciseOrder: Int = exerciseCount + 1
     val onSaveClick: () -> Unit = {
         coroutineScope.launch {
-            viewModel.saveTrainExercise()
+            viewModel.saveTrainExercise(exerciseOrder)
             navigateToScreen()
         }
     }
@@ -139,10 +142,10 @@ fun AddTrainExerciseScreen(
 fun TrainExerciseInputForm(
     trainId: Long,
     trainExerciseDetails: TrainExercise,
-    exerciseSetDetails: List<SetData>, // exerciseSetDetails: List<List<Int>>,
+    exerciseSetDetails: List<SetData>,
     measurementUnits: List<MeasurementUnit>,
     exercises: List<Exercise>,
-    onSetWeightChange: (Int, SetData) -> Unit, // onSetWeightChange: (Int, List<Int>) -> Unit,
+    onSetWeightChange: (Int, SetData) -> Unit,
     onValueChange: (TrainExercise) -> Unit = {},
     onSetAdd: (Int, Int, WorkoutSetType) -> Unit,
     modifier: Modifier,
@@ -242,9 +245,6 @@ fun SetList(
     exerciseSetDetails: List<SetData>,
     onSetAdd: (Int, Int, WorkoutSetType) -> Unit,
     onSetWeightChange: (Int, SetData) -> Unit,
-//    exerciseSetDetails: List<List<Int>>,
-//    onSetAdd: (Int, Int) -> Unit,
-//    onSetWeightChange: (Int, List<Int>) -> Unit,
 ) {
     Column(
         modifier = Modifier,
@@ -265,13 +265,6 @@ fun SetList(
                         index = index,
                         setData,
                         onSetWeightChange,
-//                        onSetTypeSelected = { selectedSetType ->
-//                            onValueChange(
-//                                trainExerciseDetails.copy(
-//                                    measurementUnitId = selectedMeasurementUnitId
-//                                )
-//                            )
-//                        }
                     )
                 }
             }
@@ -312,8 +305,6 @@ fun SetListItem(
     index: Int,
     setData: SetData,
     onSetWeightChange: (Int, SetData) -> Unit
-//    setData: List<Int>,
-//    onSetWeightChange: (Int, List<Int>) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -364,7 +355,7 @@ fun SetListItem(
                             setData.weightOrWeightNumber,
                             newRepetitionsValue,
                             setData.type
-                        ) // listOf(setData[0], newRepetitionsValue)
+                        )
                     )
                 },
                 minValue = 1,
@@ -387,8 +378,6 @@ fun SetListItem(
                 },
 
                 )
-
-
             //
             // Set order buttons
             //

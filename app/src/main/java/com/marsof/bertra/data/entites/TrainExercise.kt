@@ -26,9 +26,10 @@ data class TrainExercise (
      */
     // NOTE: Consider to create a separate measure unit for each exercise set in the future release.
     val measurementUnitId: Long,
-
-//    @ColumnInfo(name = "exercise_name") val exerciseName: String
-
+    /**
+     * Order of the exercise in the workout.
+     */
+    var exerciseOrder: Int,
 )
 
 data class TrainExerciseWithExerciseName(

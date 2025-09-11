@@ -29,6 +29,7 @@ data class TrainExercise (
     /**
      * Order of the exercise in the workout.
      */
+    @ColumnInfo(name = "exercise_order")
     var exerciseOrder: Int,
 )
 

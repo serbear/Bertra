@@ -22,7 +22,8 @@ interface TrainExerciseDao {
         "SELECT te.*, e.name AS exercise_name " +
                 "FROM train_exercises te " +
                 "INNER JOIN exercises e ON te.exerciseId = e.id " +
-                "WHERE te.trainId = :trainId"
+                "WHERE te.trainId = :trainId " +
+                "ORDER BY te.exercise_order"
     )
     fun getTrainExercisesById(trainId: Long): Flow<List<TrainExerciseWithExerciseName>>
 

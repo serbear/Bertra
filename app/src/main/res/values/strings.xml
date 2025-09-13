@@ -42,4 +42,8 @@
     <string name="workout_engage_button_label">Engage</string>
     <string name="workout_engage_screen_title">Workout Engage</string>
     <string name="active_workout_screen_title">Active Workout</string>
+    <string name="pause_timer_button_label">Pause</string>
+    <string name="rest_timer_mode_name">Rest</string>
+    <string name="work_timer_mode_name">Work</string>
+    <string name="timer_mode_name_button_label">Timer mode name</string>
 </resources>

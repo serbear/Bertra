@@ -5,6 +5,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.marsof.bertra.BertraApplication
+import com.marsof.bertra.ui.viewmodels.ActiveWorkoutScreenViewModel
 import com.marsof.bertra.ui.viewmodels.AddTrainExerciseScreenViewModel
 import com.marsof.bertra.ui.viewmodels.ExerciseListScreenViewModel
 import com.marsof.bertra.ui.viewmodels.HomeScreenViewModel
@@ -27,37 +28,37 @@ object ViewModelProvider {
         }
         initializer {
             TrainListScreenViewModel(
-                bertraApplication().container.trainDao
+                bertraApplication().container.trainDao,
             )
         }
         initializer {
             NewTrainScreenViewModel(
-                bertraApplication().container.trainDao
+                bertraApplication().container.trainDao,
             )
         }
         initializer {
             TrainExercisesListScreenViewModel(
-                bertraApplication().container.trainExerciseDao
+                bertraApplication().container.trainExerciseDao,
             )
         }
         initializer {
             NewExerciseScreenViewModel(
-                bertraApplication().container.exerciseDao
+                bertraApplication().container.exerciseDao,
             )
         }
         initializer {
             ExerciseListScreenViewModel(
-                bertraApplication().container.exerciseDao
+                bertraApplication().container.exerciseDao,
             )
         }
         initializer {
             MeasurementUnitListScreenViewModel(
-                bertraApplication().container.measurementUnitDao
+                bertraApplication().container.measurementUnitDao,
             )
         }
         initializer {
             NewMeasurementUnitScreenViewModel(
-                bertraApplication().container.measurementUnitDao
+                bertraApplication().container.measurementUnitDao,
             )
         }
         initializer {
@@ -65,13 +66,19 @@ object ViewModelProvider {
                 bertraApplication().container.trainExerciseDao,
                 bertraApplication().container.exerciseDao,
                 bertraApplication().container.measurementUnitDao,
-                bertraApplication().container.trainExerciseRepetitionsDao
+                bertraApplication().container.trainExerciseRepetitionsDao,
             )
         }
         initializer {
             WorkoutEngageScreenViewModel(
                 bertraApplication().container.trainExerciseDao,
-                bertraApplication().container.trainDao
+                bertraApplication().container.trainDao,
+            )
+        }
+        initializer {
+            ActiveWorkoutScreenViewModel(
+                bertraApplication().container.trainDao,
+                bertraApplication().container.trainExerciseDao,
             )
         }
     }

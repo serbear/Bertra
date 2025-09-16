@@ -79,6 +79,7 @@ object ViewModelProvider {
             ActiveWorkoutScreenViewModel(
                 bertraApplication().container.trainDao,
                 bertraApplication().container.trainExerciseDao,
+                bertraApplication().container.trainExerciseRepetitionsDao,
             )
         }
     }

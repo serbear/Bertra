@@ -15,7 +15,7 @@ data class TrainExerciseRepetitions(
     @ColumnInfo(name = "train_exercise_id")
     val trainExerciseId: Long,
     /**
-     * The sequence number or the set.
+     * The sequence number of the set.
      */
     @ColumnInfo(name = "set_number")
     val setNumber: Int,

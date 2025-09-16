@@ -14,8 +14,8 @@ interface TrainExerciseRepetitionsDao {
     @Query("select * from train_exercise_repetitions")
     fun getAllTrainExerciseRepetitions(): Flow<List<TrainExerciseRepetitions>>
 
-    @Query("select * from train_exercise_repetitions where id = :id")
-    fun getTrainExerciseRepetitions(id: Long): Flow<TrainExerciseRepetitions>
+    @Query("select * from train_exercise_repetitions where train_exercise_id = :id")
+    fun getTrainExerciseRepetitions(id: Long): Flow<List<TrainExerciseRepetitions>?>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(item: TrainExerciseRepetitions): Long

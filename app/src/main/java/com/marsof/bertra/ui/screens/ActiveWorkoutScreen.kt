@@ -15,11 +15,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
+import com.marsof.bertra.data.entites.TrainExerciseRepetitions
 import com.marsof.bertra.data.entites.TrainExerciseWithExerciseName
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
@@ -50,9 +54,10 @@ fun ActiveWorkoutScreen(
 
     val workoutState = viewModel.workoutState.collectAsState()
     val workoutExercisesList = viewModel.workoutExercisesList.collectAsState()
-
+    val timeLeft by viewModel.timeLeft.collectAsState()
     val currentExercise = viewModel.currentExercise.collectAsState()
     val currentTimerModeName = viewModel.currentTimerModeName.collectAsState()
+    val currentExerciseRepetitions by viewModel.currentExerciseRepetitions.collectAsState()
 
     Scaffold(
         topBar = {
@@ -75,12 +80,15 @@ fun ActiveWorkoutScreen(
 
             TimerControl(
                 currentTimerModeName,
-                viewModel::goNextExercise
+                timeLeft,
+                viewModel::goNextExercise,
             )
 
             // todo: Repetitions
 
-            RepetitionsControl()
+            RepetitionsControl(
+                currentExerciseRepetitions,
+            )
         }
     }
 }
@@ -101,13 +109,17 @@ fun ExerciseData(currentExercise: State<TrainExerciseWithExerciseName?>) {
 @Composable
 fun TimerControl(
     currentTimerModeName: State<Int>,
-    onGoNextExercise: () -> Unit = {}
+    timeLeft: Long,
+    onGoNextExercise: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
     ) {
-        Text(text = "99")
-        Text(text = "Current Timer Mode Name")
+        Text(
+            text = "$timeLeft",
+            fontSize = dimensionResource(R.dimen.timer_value_text_size).value.sp)
+        Text(
+            text = "Mode: ${stringResource(currentTimerModeName.value)}")
 
         //
         // Pause Button
@@ -140,6 +152,7 @@ fun TimerControl(
                 ),
             )
             Text(
+                // todo: must be next timer mode name.
                 text = stringResource(currentTimerModeName.value),
             )
         }
@@ -147,7 +160,7 @@ fun TimerControl(
 }
 
 @Composable
-fun RepetitionsControl() {
+fun RepetitionsControl(currentExerciseRepetitions: List<TrainExerciseRepetitions>?) {
     Column(
         modifier = Modifier
     ) {

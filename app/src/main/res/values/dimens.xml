@@ -2,4 +2,5 @@
 <resources>
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_large">20dp</dimen>
+    <dimen name="timer_value_text_size">100sp</dimen>
 </resources>

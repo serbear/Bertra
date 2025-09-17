@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.math.ceil
 
 data class ActiveWorkoutUiState(
     val workout: Train? = null,
@@ -43,10 +44,12 @@ class ActiveWorkoutScreenViewModel(
     private var _currentTimerMode = MutableStateFlow(TIMER_MODE_READY)
     private val _timeLeft = MutableStateFlow(0L)
     val timeLeft: StateFlow<Long> = _timeLeft.asStateFlow()
-
+    private var targetTimeMillis: Long = 0L
+    private var pausedTimeMillis: Long = 0L
     // Timer coroutine control.
     private var timerJob: Job? = null
     var currentTimerMode = _currentTimerMode.asStateFlow()
+    private var timerCompletionCallback: (() -> Unit)? = null
 
     //
     // Exercise related vars & vals
@@ -74,9 +77,11 @@ class ActiveWorkoutScreenViewModel(
         const val READY_TIMER_DURATION = 5L //10L
         const val WORK_TIMER_DURATION = 6L // 180L
         const val REST_TIMER_DURATION = 3L // 120L
+        // UI Update frequency.
+        private const val TIMER_TICK_INTERVAL_MS = 100L
     }
 
-    val currentTimerModeName: StateFlow<Int> = // Возвращаем ID строки
+    val currentTimerModeName: StateFlow<Int> =
         _currentTimerMode.map { mode ->
             when (mode) {
                 TIMER_MODE_REST -> R.string.rest_timer_mode_name
@@ -107,9 +112,8 @@ class ActiveWorkoutScreenViewModel(
     val workoutExercisesList: StateFlow<List<TrainExerciseWithExerciseName>> =
         _trainId.flatMapLatest { trainId ->
             if (trainId > 0L) {
-                // При смене ID тренировки, сбрасываем индекс упражнения на 0
                 _currentExerciseIndex.value = 0
-                _isExerciseAccomplished.value = false // Сбрасываем флаг выполнения
+                _isExerciseAccomplished.value = false
                 trainExerciseDao.getTrainExercisesById(trainId)
             } else {
                 flowOf(emptyList())
@@ -120,42 +124,36 @@ class ActiveWorkoutScreenViewModel(
             initialValue = emptyList()
         )
 
-    // Комбинируем _currentExerciseIndex и workoutExercisesList
     val currentExercise: StateFlow<TrainExerciseWithExerciseName?> =
         combine(_currentExerciseIndex, workoutExercisesList) { index, list ->
-            // list.getOrNull(index) безопасно вернет элемент по индексу или null,
-            // если индекс выходит за пределы списка.
             list.getOrNull(index)
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = null // Начальное значение null, пока список не загружен или индекс не действителен
+            initialValue = null
         )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val currentExerciseRepetitions: StateFlow<List<TrainExerciseRepetitions>?> =
         currentExercise.flatMapLatest { exercise ->
             if (exercise != null) {
-                // Сбрасываем индекс повторения при смене упражнения
                 _currentRepetitionIndex.value = 0
-                _isExerciseAccomplished.value = false // Сбрасываем флаг выполнения
+                _isExerciseAccomplished.value = false
                 trainExerciseRepetitionsDao.getTrainExerciseRepetitions(exercise.trainExercise.id)
             } else {
-                flowOf(emptyList()) // Return an empty list if there's no current exercise
+                flowOf(emptyList())
             }
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = emptyList() // Initial value is an empty list
+            initialValue = emptyList()
         )
 
     fun setWorkoutId(trainId: Long) {
         _trainId.value = trainId
-        // Сброс состояния при смене тренировки
         _currentExerciseIndex.value = 0
         _currentRepetitionIndex.value = 0
         _isExerciseAccomplished.value = false
-
         // Start each workout with the Ready Timer.
         setTimerMode(TIMER_MODE_READY)
         startTimer(READY_TIMER_DURATION) {
@@ -168,13 +166,10 @@ class ActiveWorkoutScreenViewModel(
         val listSize = workoutExercisesList.value.size
         if (listSize > 0 && currentIndex < listSize - 1) {
             _currentExerciseIndex.value = currentIndex + 1
-
-            _isExerciseAccomplished.value = false // Сбрасываем для нового упражнения
+            // Сбрасываем для нового упражнения
+            _isExerciseAccomplished.value = false
             // Сброс индекса повторения и запуск таймера готовности для нового упражнения
             _currentRepetitionIndex.value = 0
-//            setTimerMode(TIMER_MODE_READY)
-//            startTimer(READY_TIMER_DURATION)
-
         } else {
             // Опционально: обработать случай, когда это последнее упражнение
             // Например, перейти в режим "завершено" или зациклить
@@ -183,7 +178,7 @@ class ActiveWorkoutScreenViewModel(
     }
 
     fun setTimerMode(mode: Int) {
-        // Добавим проверку, чтобы убедиться, что mode - это одно из допустимых значений
+        // Let's add a check to ensure that mode is one of the allowed values.
         if (mode == TIMER_MODE_REST || mode == TIMER_MODE_WORK || mode == TIMER_MODE_READY) {
             _currentTimerMode.value = mode
         }
@@ -229,15 +224,6 @@ class ActiveWorkoutScreenViewModel(
 
                     }
                 }
-                // TIMER_MODE_READY -> {
-                // After "Ready" always comes "Work".
-                // The proceedExerciseSequence already handles setting to WORK and starting timer
-                //_isExerciseAccomplished.value = false
-                // proceedExerciseSequence()
-                // }
-                // No action needed if current mode is TIMER_MODE_REST or any other state,
-                // as per "There is no switching from the TIMER_MODE_REST to the TIMER_MODE_REST mode."
-                // and we only explicitly handle transitions from WORK and READY.
             }
         }
     }
@@ -264,58 +250,121 @@ class ActiveWorkoutScreenViewModel(
 
             _isExerciseAccomplished.value = false
 
-            // Можно использовать, если нужно конкретное повторение
-            // val repetition = repetitions[currentRepIndex]
-
             setTimerMode(TIMER_MODE_WORK)
             startTimer(WORK_TIMER_DURATION) {
-                // Логика после завершения таймера работы
-
                 val nextRepetitionIndex = _currentRepetitionIndex.value
                 val latestRepetitions = currentExerciseRepetitions.value
-                /*
-                 Are there more repetitions in the current exercise?
-                 */
+                // Are there more repetitions in the current exercise?
                 if (latestRepetitions != null && nextRepetitionIndex < latestRepetitions.size - 1) {
                     setTimerMode(TIMER_MODE_REST)
                     startTimer(REST_TIMER_DURATION) {
                         _currentRepetitionIndex.value = nextRepetitionIndex + 1
-                        // Рекурсивный вызов для следующего повторения.
                         proceedExerciseSequence()
                     }
                 } else {
-                    // Все подходы текущего упражнения выполнены.
+                    // All repetitions are done.
                     _isExerciseAccomplished.value = true
-                    // goNextExercise() или другая логика
                 }
+            }
+        }
+    }
+
+    fun pauseTimer() {
+        if (!_isTimerPaused.value && (timerJob?.isActive == true)) {
+            timerJob?.cancel()
+            // Remaining time.
+            pausedTimeMillis = targetTimeMillis - System.currentTimeMillis()
+            _isTimerPaused.value = true
+        }
+    }
+
+    fun resumeTimer() {
+        if (_isTimerPaused.value && pausedTimeMillis > 0) {
+            _isTimerPaused.value = false
+            targetTimeMillis = System.currentTimeMillis() + pausedTimeMillis
+
+            // Перезапускаем корутину таймера с обновленным targetTimeMillis
+            // Нам нужно знать, какая функция onFinished была передана изначально.
+            // Для этого ее нужно сохранить или перестроить логику.
+            // Простой вариант - передавать onFinished в resumeTimer,
+            // но это усложнит API.
+            // Пока что предполагаем, что onFinished - это setNextTimerMode или proceedExerciseSequence,
+            // которые вызываются после соответствующего таймера.
+            // Для более чистого решения, возможно, понадобится сохранить лямбду onFinished.
+
+            // ВАЖНО: нужно знать, какой onFinished был у прерванного таймера.
+            // Это ограничение текущего подхода с сохранением pausedTimeMillis.
+            // Один из вариантов - сохранить лямбду onFinished при старте таймера.
+            // Но для примера, давайте предположим, что мы знаем, какой коллбек вызвать.
+            // Это место требует доработки в зависимости от логики вашего приложения.
+
+            // Примерный перезапуск (потребует сохранения исходного onFinished):
+            val originalDurationSeconds = (_timeLeft.value) // Приблизительное время, можно уточнить
+            val originalOnFinished = timerCompletionCallback // Нужно сохранить этот коллбек
+
+            timerJob?.cancel()
+            _isTimerPaused.value = false
+
+            timerJob = viewModelScope.launch {
+                while (true) {
+                    if (_isTimerPaused.value) {
+                        delay(TIMER_TICK_INTERVAL_MS)
+                        continue
+                    }
+
+                    val currentTimeMillis = System.currentTimeMillis()
+                    val remainingMillis = targetTimeMillis - currentTimeMillis
+
+                    if (remainingMillis <= 0) {
+                        _timeLeft.value = 0
+                        break
+                    }
+                    _timeLeft.value = ceil(remainingMillis.toDouble() / 1000.0).toLong()
+                    val delayMillis = if (remainingMillis % 1000L == 0L) {
+                        minOf(TIMER_TICK_INTERVAL_MS, 1000L)
+                    } else {
+                        minOf(TIMER_TICK_INTERVAL_MS, remainingMillis % 1000L)
+                    }
+                    delay(delayMillis)
+                }
+                originalOnFinished?.invoke()
             }
         }
     }
 
     fun startTimer(durationSeconds: Long, onFinished: (() -> Unit)? = null) {
-        // Cancel the previous timer.
         timerJob?.cancel()
-        _timeLeft.value = durationSeconds
-        timerJob = viewModelScope.launch {
-            for (i in durationSeconds downTo 0) {
-                // Check if the time is paused before each iteration.
-                while (_isTimerPaused.value) {
-                    // A small delay not to load the processor in waiting cycle.
-                    delay(100)
-                }
-                _timeLeft.value = i
-                delay(1000)
-            }
-            onFinished?.invoke()
-        }
-    }
-    fun pauseTimer() {
-        _isTimerPaused.value = true
-    }
+        _isTimerPaused.value = false
+        this.timerCompletionCallback = onFinished
 
-    fun resumeTimer() {
-        // Resume the timer only if it is paused or there is still time remaining.
-        if (_isTimerPaused.value && _timeLeft.value > 0) _isTimerPaused.value = false
+        val durationMillis = durationSeconds * 1000L
+        targetTimeMillis = System.currentTimeMillis() + durationMillis
+        _timeLeft.value = durationSeconds
+
+        timerJob = viewModelScope.launch {
+            while (true) {
+                if (_isTimerPaused.value) {
+                    delay(TIMER_TICK_INTERVAL_MS)
+                    continue
+                }
+
+                val currentTimeMillis = System.currentTimeMillis()
+                val remainingMillis = targetTimeMillis - currentTimeMillis
+
+                if (remainingMillis <= 0) {
+                    _timeLeft.value = 0
+                    break
+                }
+                _timeLeft.value = ceil(remainingMillis.toDouble() / 1000.0).toLong()
+                val delayMillis = if (remainingMillis % 1000L == 0L) {
+                    minOf(TIMER_TICK_INTERVAL_MS, 1000L)
+                } else {
+                    minOf(TIMER_TICK_INTERVAL_MS, remainingMillis % 1000L)
+                }
+                delay(delayMillis)
+            }
+            this@ActiveWorkoutScreenViewModel.timerCompletionCallback?.invoke()
+        }
     }
     /**
      * Returns the resource ID for the name of the next timer mode.

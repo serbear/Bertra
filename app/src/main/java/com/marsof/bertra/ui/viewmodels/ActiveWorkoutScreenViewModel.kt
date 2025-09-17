@@ -36,15 +36,18 @@ class ActiveWorkoutScreenViewModel(
     trainExerciseRepetitionsDao: TrainExerciseRepetitionsDao,
 ) : ViewModel() {
     private val _trainId = MutableStateFlow(0L)
+
     //
     // Timer related vars & vals
     //
     private var _currentTimerMode = MutableStateFlow(TIMER_MODE_READY)
     private val _timeLeft = MutableStateFlow(0L)
     val timeLeft: StateFlow<Long> = _timeLeft.asStateFlow()
+
     // Timer coroutine control.
     private var timerJob: Job? = null
     var currentTimerMode = _currentTimerMode.asStateFlow()
+
     //
     // Exercise related vars & vals
     //
@@ -52,6 +55,7 @@ class ActiveWorkoutScreenViewModel(
     private val _isExerciseAccomplished = MutableStateFlow(false)
     private var _currentExerciseIndex = MutableStateFlow(0)
     val isExerciseAccomplished: StateFlow<Boolean> = _isExerciseAccomplished.asStateFlow()
+
     //
     // Consts
     //
@@ -65,10 +69,6 @@ class ActiveWorkoutScreenViewModel(
         const val WORK_TIMER_DURATION = 6L // 180L
         const val REST_TIMER_DURATION = 3L // 120L
     }
-
-//    init {
-//        proceedExerciseSequence()
-//    }
 
     val currentTimerModeName: StateFlow<Int> = // Возвращаем ID строки
         _currentTimerMode.map { mode ->
@@ -152,7 +152,7 @@ class ActiveWorkoutScreenViewModel(
 
         // Start each workout with the Ready Timer.
         setTimerMode(TIMER_MODE_READY)
-        startTimer(READY_TIMER_DURATION){
+        startTimer(READY_TIMER_DURATION) {
             proceedExerciseSequence()
         }
     }
@@ -224,10 +224,10 @@ class ActiveWorkoutScreenViewModel(
                     }
                 }
                 // TIMER_MODE_READY -> {
-                    // After "Ready" always comes "Work".
-                    // The proceedExerciseSequence already handles setting to WORK and starting timer
-                    //_isExerciseAccomplished.value = false
-                    // proceedExerciseSequence()
+                // After "Ready" always comes "Work".
+                // The proceedExerciseSequence already handles setting to WORK and starting timer
+                //_isExerciseAccomplished.value = false
+                // proceedExerciseSequence()
                 // }
                 // No action needed if current mode is TIMER_MODE_REST or any other state,
                 // as per "There is no switching from the TIMER_MODE_REST to the TIMER_MODE_REST mode."
@@ -295,6 +295,29 @@ class ActiveWorkoutScreenViewModel(
                 delay(1000) // Ждем 1 секунду
             }
             onFinished?.invoke() // Вызываем колбэк по завершении таймера
+        }
+    }
+
+    /**
+     * Returns the resource ID for the name of the next timer mode.
+     *
+     * This function determines the name of the next timer mode based on the current timer mode.
+     * - If the current mode is `TIMER_MODE_READY` or `TIMER_MODE_REST`,
+     *   the next mode will be "Work".
+     * - Otherwise (implying the current mode is `TIMER_MODE_WORK`),
+     *   the next mode will be "Rest".
+     *
+     * @return The resource ID (Int) of the string representing the next timer mode's name.
+     */
+    fun getNextTimerModeName(): Int {
+        return when (_currentTimerMode.value) {
+            TIMER_MODE_READY, TIMER_MODE_REST -> {
+                R.string.work_timer_mode_name
+            }
+
+            else -> {
+                R.string.rest_timer_mode_name
+            }
         }
     }
 }

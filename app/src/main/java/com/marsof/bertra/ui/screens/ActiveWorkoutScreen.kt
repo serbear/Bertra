@@ -87,6 +87,7 @@ fun ActiveWorkoutScreen(
                     currentTimerMode,
                     timeLeft,
                     viewModel::setNextTimerMode,
+                    viewModel::getNextTimerModeName,
                 )
 
                 // todo: Repetitions
@@ -123,6 +124,7 @@ fun TimerControl(
     currentTimerMode: Int,
     timeLeft: Long,
     onChangeTimerMode: () -> Unit = {},
+    onGetNextTimeModeName: () -> Int,
 ) {
     Column(
         modifier = Modifier
@@ -166,8 +168,7 @@ fun TimerControl(
                 ),
             )
             Text(
-                // todo: must be next timer mode name.
-                text = stringResource(currentTimerModeName.value),
+                text = stringResource(onGetNextTimeModeName()),
             )
         }
     }

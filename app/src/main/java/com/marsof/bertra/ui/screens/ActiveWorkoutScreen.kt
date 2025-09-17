@@ -22,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -140,18 +142,17 @@ fun TimerControl(
         modifier = Modifier
     ) {
         Row(
-            verticalAlignment = Alignment.Bottom
         ) {
             Text(
                 text = "$timeLeft",
-                fontSize = dimensionResource(R.dimen.timer_value_text_size).value.sp
-            )
-            Text(
-                text = "."
+                fontSize = dimensionResource(R.dimen.timer_value_text_size).value.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.alignByBaseline(),
             )
             Text(
                 text = "$timeLeftHundredths",
-                fontSize = dimensionResource(R.dimen.timer_millsec_value_text_size).value.sp
+                fontSize = dimensionResource(R.dimen.timer_millsec_value_text_size).value.sp,
+                modifier = Modifier.alignByBaseline().padding(start = 4.dp),
             )
         }
         Text(

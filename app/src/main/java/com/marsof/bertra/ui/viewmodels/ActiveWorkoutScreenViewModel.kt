@@ -75,9 +75,9 @@ class ActiveWorkoutScreenViewModel(
         const val TIMER_MODE_WORK = 2
 
         // todo: app settings
-        const val READY_TIMER_DURATION = 5L //10L
-        const val WORK_TIMER_DURATION = 6L // 180L
-        const val REST_TIMER_DURATION = 3L // 120L
+        const val READY_TIMER_DURATION = 10L
+        const val WORK_TIMER_DURATION = 180L
+        const val REST_TIMER_DURATION = 120L
         // UI Update frequency.
         private const val TIMER_TICK_INTERVAL_MS = 100L
     }
@@ -322,7 +322,7 @@ class ActiveWorkoutScreenViewModel(
                         break
                     }
                     _timeLeft.value = ceil(remainingMillis.toDouble() / 1000.0).toLong()
-                    _timeLeftHundredths.value = remainingMillis / 10L
+                    _timeLeftHundredths.value =(remainingMillis % 1000L) / 10L
 
                     val delayMillis = if (remainingMillis % 1000L == 0L) {
                         minOf(TIMER_TICK_INTERVAL_MS, 1000L)
@@ -363,7 +363,7 @@ class ActiveWorkoutScreenViewModel(
                 }
 
                 _timeLeft.value = ceil(remainingMillis.toDouble() / 1000.0).toLong()
-                _timeLeftHundredths.value = remainingMillis / 10L
+                _timeLeftHundredths.value =(remainingMillis % 1000L) / 10L
 
                 val delayMillis = if (remainingMillis % 1000L == 0L) {
                     minOf(TIMER_TICK_INTERVAL_MS, 1000L)

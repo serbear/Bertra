@@ -47,4 +47,5 @@
     <string name="work_timer_mode_name">Work</string>
     <string name="timer_mode_name_button_label">Timer mode name</string>
     <string name="ready_timer_mode_name">Ready</string>
+    <string name="resume_timer_button_label">Resume</string>
 </resources>

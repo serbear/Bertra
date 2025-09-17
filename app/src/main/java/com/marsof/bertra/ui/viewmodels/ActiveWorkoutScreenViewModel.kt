@@ -57,6 +57,12 @@ class ActiveWorkoutScreenViewModel(
     val isExerciseAccomplished: StateFlow<Boolean> = _isExerciseAccomplished.asStateFlow()
 
     //
+    // Pause functionality related vars and vals
+    //
+    private val _isTimerPaused = MutableStateFlow(false)
+    val isTimerPaused: StateFlow<Boolean> = _isTimerPaused.asStateFlow()
+
+    //
     // Consts
     //
     companion object {
@@ -287,17 +293,30 @@ class ActiveWorkoutScreenViewModel(
     }
 
     fun startTimer(durationSeconds: Long, onFinished: (() -> Unit)? = null) {
-        timerJob?.cancel() // Отменяем предыдущий таймер, если он был запущен
+        // Cancel the previous timer.
+        timerJob?.cancel()
         _timeLeft.value = durationSeconds
         timerJob = viewModelScope.launch {
             for (i in durationSeconds downTo 0) {
+                // Check if the time is paused before each iteration.
+                while (_isTimerPaused.value) {
+                    // A small delay not to load the processor in waiting cycle.
+                    delay(100)
+                }
                 _timeLeft.value = i
-                delay(1000) // Ждем 1 секунду
+                delay(1000)
             }
-            onFinished?.invoke() // Вызываем колбэк по завершении таймера
+            onFinished?.invoke()
         }
     }
+    fun pauseTimer() {
+        _isTimerPaused.value = true
+    }
 
+    fun resumeTimer() {
+        // Resume the timer only if it is paused or there is still time remaining.
+        if (_isTimerPaused.value && _timeLeft.value > 0) _isTimerPaused.value = false
+    }
     /**
      * Returns the resource ID for the name of the next timer mode.
      *

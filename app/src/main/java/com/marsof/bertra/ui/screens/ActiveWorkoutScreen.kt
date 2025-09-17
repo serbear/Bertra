@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,6 +61,7 @@ fun ActiveWorkoutScreen(
     val currentExerciseRepetitions by viewModel.currentExerciseRepetitions.collectAsState()
     val isExerciseAccomplished by viewModel.isExerciseAccomplished.collectAsState()
     val currentTimerMode by viewModel.currentTimerMode.collectAsState()
+    val isTimerPaused by viewModel.isTimerPaused.collectAsState()
 
     Scaffold(
         topBar = {
@@ -72,22 +74,22 @@ fun ActiveWorkoutScreen(
         Column(
             modifier = Modifier.padding(innerPadding),
         ) {
-            Text(text = "Active workout ID: $workoutId")
-
-            // todo: Exercise Name
+            Text(
+                text = "Active workout ID: $workoutId"
+            )
 
             ExerciseData(currentExercise)
 
             if (!isExerciseAccomplished) {
-
-                // todo: Timer
-
                 TimerControl(
                     currentTimerModeName,
                     currentTimerMode,
                     timeLeft,
+                    isTimerPaused,
                     viewModel::setNextTimerMode,
                     viewModel::getNextTimerModeName,
+                    viewModel::pauseTimer,
+                    viewModel::resumeTimer,
                 )
 
                 // todo: Repetitions
@@ -113,7 +115,7 @@ fun ExerciseData(currentExercise: State<TrainExerciseWithExerciseName?>) {
         if (currentExercise.value != null) {
             Text(text = "Exercise Name: ${currentExercise.value?.exerciseName}")
         } else {
-            Text(text = "⚠\uFE0F ERROR: no exercise found. ⚠\uFE0F")
+            // Text(text = "⚠\uFE0F ERROR: no exercise found. ⚠\uFE0F")
         }
     }
 }
@@ -123,8 +125,11 @@ fun TimerControl(
     currentTimerModeName: State<Int>,
     currentTimerMode: Int,
     timeLeft: Long,
+    isTimerPaused: Boolean,
     onChangeTimerMode: () -> Unit = {},
     onGetNextTimeModeName: () -> Int,
+    onPauseTimer: () -> Unit,
+    onResumeTimer: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -137,20 +142,36 @@ fun TimerControl(
             text = stringResource(currentTimerModeName.value)
         )
         //
-        // Pause Button
+        // Pause and Resume Buttons
         //
-        Button(
-            onClick = {},
-            modifier = Modifier,
-            shape = RoundedCornerShape(0.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Pause,
-                contentDescription = stringResource(R.string.pause_timer_button_label),
-            )
-            Text(
-                text = stringResource(R.string.pause_timer_button_label),
-            )
+        if (isTimerPaused) {
+            Button(
+                onClick = { onResumeTimer() },
+                modifier = Modifier,
+                shape = RoundedCornerShape(0.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Restore,
+                    contentDescription = stringResource(R.string.resume_timer_button_label),
+                )
+                Text(
+                    text = stringResource(R.string.resume_timer_button_label),
+                )
+            }
+        } else {
+            Button(
+                onClick = { onPauseTimer() },
+                modifier = Modifier,
+                shape = RoundedCornerShape(0.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Pause,
+                    contentDescription = stringResource(R.string.pause_timer_button_label),
+                )
+                Text(
+                    text = stringResource(R.string.pause_timer_button_label),
+                )
+            }
         }
         //
         // Go to Next Mode
@@ -159,16 +180,16 @@ fun TimerControl(
             onClick = { onChangeTimerMode() },
             modifier = Modifier,
             shape = RoundedCornerShape(0.dp),
-            enabled =currentTimerMode == ActiveWorkoutScreenViewModel.TIMER_MODE_WORK
+            enabled = currentTimerMode == ActiveWorkoutScreenViewModel.TIMER_MODE_WORK
         ) {
+            Text(
+                text = stringResource(onGetNextTimeModeName()),
+            )
             Icon(
                 imageVector = Icons.Default.SkipNext,
                 contentDescription = stringResource(
                     R.string.timer_mode_name_button_label
                 ),
-            )
-            Text(
-                text = stringResource(onGetNextTimeModeName()),
             )
         }
     }

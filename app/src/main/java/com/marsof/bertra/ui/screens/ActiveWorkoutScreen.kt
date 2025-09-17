@@ -58,6 +58,7 @@ fun ActiveWorkoutScreen(
     val currentExercise = viewModel.currentExercise.collectAsState()
     val currentTimerModeName = viewModel.currentTimerModeName.collectAsState()
     val currentExerciseRepetitions by viewModel.currentExerciseRepetitions.collectAsState()
+    val isExerciseAccomplished by viewModel.isExerciseAccomplished.collectAsState()
 
     Scaffold(
         topBar = {
@@ -76,19 +77,27 @@ fun ActiveWorkoutScreen(
 
             ExerciseData(currentExercise)
 
-            // todo: Timer
+            if (!isExerciseAccomplished) {
 
-            TimerControl(
-                currentTimerModeName,
-                timeLeft,
-                viewModel::goNextExercise,
-            )
+                // todo: Timer
 
-            // todo: Repetitions
+                TimerControl(
+                    currentTimerModeName,
+                    timeLeft,
+                    viewModel::goNextExercise,
+                )
 
-            RepetitionsControl(
-                currentExerciseRepetitions,
-            )
+                // todo: Repetitions
+
+                RepetitionsControl(
+                    currentExerciseRepetitions,
+                )
+            } else {
+
+                // todo: add a button to go to the next exercise or finish the workout.
+
+                Text(text = "Exercise accomplished!")
+            }
         }
     }
 }
@@ -117,9 +126,11 @@ fun TimerControl(
     ) {
         Text(
             text = "$timeLeft",
-            fontSize = dimensionResource(R.dimen.timer_value_text_size).value.sp)
+            fontSize = dimensionResource(R.dimen.timer_value_text_size).value.sp
+        )
         Text(
-            text = "Mode: ${stringResource(currentTimerModeName.value)}")
+            text = "Mode: ${stringResource(currentTimerModeName.value)}"
+        )
 
         //
         // Pause Button

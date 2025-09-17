@@ -1,6 +1,7 @@
 package com.marsof.bertra.ui.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -17,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -56,6 +58,7 @@ fun ActiveWorkoutScreen(
     val workoutState = viewModel.workoutState.collectAsState()
     val workoutExercisesList = viewModel.workoutExercisesList.collectAsState()
     val timeLeft by viewModel.timeLeft.collectAsState()
+    val timeLeftHundredths by viewModel.timeLeftHundredths.collectAsState()
     val currentExercise = viewModel.currentExercise.collectAsState()
     val currentTimerModeName = viewModel.currentTimerModeName.collectAsState()
     val currentExerciseRepetitions by viewModel.currentExerciseRepetitions.collectAsState()
@@ -85,6 +88,7 @@ fun ActiveWorkoutScreen(
                     currentTimerModeName,
                     currentTimerMode,
                     timeLeft,
+                    timeLeftHundredths,
                     isTimerPaused,
                     viewModel::setNextTimerMode,
                     viewModel::getNextTimerModeName,
@@ -125,6 +129,7 @@ fun TimerControl(
     currentTimerModeName: State<Int>,
     currentTimerMode: Int,
     timeLeft: Long,
+    timeLeftHundredths: Long,
     isTimerPaused: Boolean,
     onChangeTimerMode: () -> Unit = {},
     onGetNextTimeModeName: () -> Int,
@@ -134,10 +139,21 @@ fun TimerControl(
     Column(
         modifier = Modifier
     ) {
-        Text(
-            text = "$timeLeft",
-            fontSize = dimensionResource(R.dimen.timer_value_text_size).value.sp
-        )
+        Row(
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Text(
+                text = "$timeLeft",
+                fontSize = dimensionResource(R.dimen.timer_value_text_size).value.sp
+            )
+            Text(
+                text = "."
+            )
+            Text(
+                text = "$timeLeftHundredths",
+                fontSize = dimensionResource(R.dimen.timer_millsec_value_text_size).value.sp
+            )
+        }
         Text(
             text = stringResource(currentTimerModeName.value)
         )

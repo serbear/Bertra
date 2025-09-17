@@ -50,7 +50,8 @@ class ActiveWorkoutScreenViewModel(
     private var timerJob: Job? = null
     var currentTimerMode = _currentTimerMode.asStateFlow()
     private var timerCompletionCallback: (() -> Unit)? = null
-
+    private val _timeLeftHundredths = MutableStateFlow(0L)
+    val timeLeftHundredths: StateFlow<Long> = _timeLeftHundredths.asStateFlow()
     //
     // Exercise related vars & vals
     //
@@ -317,9 +318,12 @@ class ActiveWorkoutScreenViewModel(
 
                     if (remainingMillis <= 0) {
                         _timeLeft.value = 0
+                        _timeLeftHundredths.value = 0
                         break
                     }
                     _timeLeft.value = ceil(remainingMillis.toDouble() / 1000.0).toLong()
+                    _timeLeftHundredths.value = remainingMillis / 10L
+
                     val delayMillis = if (remainingMillis % 1000L == 0L) {
                         minOf(TIMER_TICK_INTERVAL_MS, 1000L)
                     } else {
@@ -340,6 +344,7 @@ class ActiveWorkoutScreenViewModel(
         val durationMillis = durationSeconds * 1000L
         targetTimeMillis = System.currentTimeMillis() + durationMillis
         _timeLeft.value = durationSeconds
+        _timeLeftHundredths.value = durationMillis
 
         timerJob = viewModelScope.launch {
             while (true) {
@@ -353,9 +358,13 @@ class ActiveWorkoutScreenViewModel(
 
                 if (remainingMillis <= 0) {
                     _timeLeft.value = 0
+                    _timeLeftHundredths.value = 0
                     break
                 }
+
                 _timeLeft.value = ceil(remainingMillis.toDouble() / 1000.0).toLong()
+                _timeLeftHundredths.value = remainingMillis / 10L
+
                 val delayMillis = if (remainingMillis % 1000L == 0L) {
                     minOf(TIMER_TICK_INTERVAL_MS, 1000L)
                 } else {

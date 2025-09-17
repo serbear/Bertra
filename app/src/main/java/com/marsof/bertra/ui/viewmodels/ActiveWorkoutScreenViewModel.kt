@@ -36,23 +36,25 @@ class ActiveWorkoutScreenViewModel(
     trainExerciseRepetitionsDao: TrainExerciseRepetitionsDao,
 ) : ViewModel() {
     private val _trainId = MutableStateFlow(0L)
-    private var _currentTimerMode = MutableStateFlow(TIMER_MODE_READY)
-
-    // Начинается с -1, чтобы после вызова goNextExercise индекс был равен первому упражнению.
-    private var _currentExerciseIndex = MutableStateFlow(0)
-
     //
     // Timer related vars & vals
     //
-    private val _timeLeft = MutableStateFlow(0L) // Время в секундах
+    private var _currentTimerMode = MutableStateFlow(TIMER_MODE_READY)
+    private val _timeLeft = MutableStateFlow(0L)
     val timeLeft: StateFlow<Long> = _timeLeft.asStateFlow()
-    private var timerJob: Job? = null // Для управления корутиной таймера
-    private var _currentRepetitionIndex = MutableStateFlow(0) // Индекс текущего повторения
+    // Timer coroutine control.
+    private var timerJob: Job? = null
+    var currentTimerMode = _currentTimerMode.asStateFlow()
+    //
+    // Exercise related vars & vals
+    //
+    private var _currentRepetitionIndex = MutableStateFlow(0)
     private val _isExerciseAccomplished = MutableStateFlow(false)
+    private var _currentExerciseIndex = MutableStateFlow(0)
     val isExerciseAccomplished: StateFlow<Boolean> = _isExerciseAccomplished.asStateFlow()
-
-
-    // Определяем константы
+    //
+    // Consts
+    //
     companion object {
         const val TIMER_MODE_READY = 0
         const val TIMER_MODE_REST = 1
@@ -180,6 +182,58 @@ class ActiveWorkoutScreenViewModel(
             _currentTimerMode.value = mode
         }
         // Можно добавить обработку ошибки или логгирование, если mode некорректен
+    }
+
+    /**
+     * Sets the next timer mode based on the current timer mode.
+     *
+     * This function is responsible for transitioning between timer modes TIMER_MODE_WORK
+     * and TIMER_MODE_REST during a workout.
+     *
+     * - If the current mode is `TIMER_MODE_WORK`:
+     *   - It checks if there are more repetitions for the current exercise.
+     *     - If yes, it transitions to `TIMER_MODE_REST`, increments the repetition index,
+     *       and starts the rest timer. After the rest timer finishes,
+     *       it calls `proceedExerciseSequence()` to move to the next work cycle.
+     *     - If no (all repetitions for the current exercise are done),
+     *       it sets `_isExerciseAccomplished` to true.
+     * - No action is taken if the current mode is `TIMER_MODE_REST` or any other unhandled state,
+     *   as transitions from these states are either not defined or handled elsewhere.
+     */
+    fun setNextTimerMode() {
+        viewModelScope.launch {
+            when (_currentTimerMode.value) {
+                TIMER_MODE_WORK -> {
+                    // Check if there are more repetitions in the current exercise.
+                    val reps = currentExerciseRepetitions.value
+                    val currentRepIndex = _currentRepetitionIndex.value
+                    if (reps != null && currentRepIndex < reps.size - 1) {
+                        setTimerMode(TIMER_MODE_REST)
+                        // Move to the next repetition.
+                        _currentRepetitionIndex.value = currentRepIndex + 1
+                        // Not accomplished yet, moving to rest.
+                        // _isExerciseAccomplished.value = false
+                        startTimer(REST_TIMER_DURATION) {
+                            // After rest, proceed to the next work cycle.
+                            proceedExerciseSequence()
+                        }
+                    } else {
+                        // All repetitions for the current exercise are done.
+                        _isExerciseAccomplished.value = true
+
+                    }
+                }
+                // TIMER_MODE_READY -> {
+                    // After "Ready" always comes "Work".
+                    // The proceedExerciseSequence already handles setting to WORK and starting timer
+                    //_isExerciseAccomplished.value = false
+                    // proceedExerciseSequence()
+                // }
+                // No action needed if current mode is TIMER_MODE_REST or any other state,
+                // as per "There is no switching from the TIMER_MODE_REST to the TIMER_MODE_REST mode."
+                // and we only explicitly handle transitions from WORK and READY.
+            }
+        }
     }
 
     private fun proceedExerciseSequence() {

@@ -59,6 +59,7 @@ fun ActiveWorkoutScreen(
     val currentTimerModeName = viewModel.currentTimerModeName.collectAsState()
     val currentExerciseRepetitions by viewModel.currentExerciseRepetitions.collectAsState()
     val isExerciseAccomplished by viewModel.isExerciseAccomplished.collectAsState()
+    val currentTimerMode by viewModel.currentTimerMode.collectAsState()
 
     Scaffold(
         topBar = {
@@ -83,8 +84,9 @@ fun ActiveWorkoutScreen(
 
                 TimerControl(
                     currentTimerModeName,
+                    currentTimerMode,
                     timeLeft,
-                    viewModel::goNextExercise,
+                    viewModel::setNextTimerMode,
                 )
 
                 // todo: Repetitions
@@ -118,8 +120,9 @@ fun ExerciseData(currentExercise: State<TrainExerciseWithExerciseName?>) {
 @Composable
 fun TimerControl(
     currentTimerModeName: State<Int>,
+    currentTimerMode: Int,
     timeLeft: Long,
-    onGoNextExercise: () -> Unit = {},
+    onChangeTimerMode: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -129,9 +132,8 @@ fun TimerControl(
             fontSize = dimensionResource(R.dimen.timer_value_text_size).value.sp
         )
         Text(
-            text = "Mode: ${stringResource(currentTimerModeName.value)}"
+            text = stringResource(currentTimerModeName.value)
         )
-
         //
         // Pause Button
         //
@@ -152,9 +154,10 @@ fun TimerControl(
         // Go to Next Mode
         //
         Button(
-            onClick = { onGoNextExercise() },
+            onClick = { onChangeTimerMode() },
             modifier = Modifier,
-            shape = RoundedCornerShape(0.dp)
+            shape = RoundedCornerShape(0.dp),
+            enabled =currentTimerMode == ActiveWorkoutScreenViewModel.TIMER_MODE_WORK
         ) {
             Icon(
                 imageVector = Icons.Default.SkipNext,

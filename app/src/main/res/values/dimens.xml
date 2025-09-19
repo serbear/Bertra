@@ -4,4 +4,7 @@
     <dimen name="padding_large">20dp</dimen>
     <dimen name="timer_value_text_size">100sp</dimen>
     <dimen name="timer_millsec_value_text_size">50sp</dimen>
+    <dimen name="repetition_control_repetition_number">18sp</dimen>
+    <dimen name="repetition_control_set_number">9sp</dimen>
+    <dimen name="repetition_control_value_padding">8dp</dimen>
 </resources>

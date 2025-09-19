@@ -1,11 +1,15 @@
 package com.marsof.bertra.ui.screens
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Pause
@@ -13,6 +17,7 @@ import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,13 +28,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.FirstBaseline
-import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -92,6 +97,10 @@ fun ActiveWorkoutScreen(
             ExerciseData(currentExercise)
 
             if (!isExerciseAccomplished) {
+
+                HorizontalDivider(
+                    thickness = 2.dp
+                )
                 TimerControl(
                     currentTimerModeName,
                     currentTimerMode,
@@ -104,6 +113,9 @@ fun ActiveWorkoutScreen(
                     viewModel::resumeTimer,
                 )
 
+                HorizontalDivider(
+                    thickness = 2.dp
+                )
                 // todo: Repetitions
 
                 RepetitionsControl(
@@ -169,6 +181,30 @@ fun TimerControl(
         //
         // Pause and Resume Buttons
         //
+        TimerControlButtons(
+            currentTimerMode = currentTimerMode,
+            isTimerPaused = isTimerPaused,
+            onPauseTimer = onPauseTimer,
+            onResumeTimer = onResumeTimer,
+            onChangeTimerMode = onChangeTimerMode,
+            onGetNextTimeModeName = onGetNextTimeModeName,
+        )
+    }
+}
+
+@Composable
+fun TimerControlButtons(
+    currentTimerMode: Int,
+    isTimerPaused: Boolean,
+    onPauseTimer: () -> Unit,
+    onResumeTimer: () -> Unit,
+    onChangeTimerMode: () -> Unit,
+    onGetNextTimeModeName: () -> Int,
+) {
+    Row {
+        //
+        // Pause and Resume buttons
+        //
         if (isTimerPaused) {
             Button(
                 onClick = { onResumeTimer() },
@@ -212,20 +248,115 @@ fun TimerControl(
             )
             Icon(
                 imageVector = Icons.Default.SkipNext,
-                contentDescription = stringResource(
-                    R.string.timer_mode_name_button_label
-                ),
+                contentDescription = stringResource(R.string.timer_mode_name_button_label),
             )
         }
+
+
     }
 }
 
 @Composable
 fun RepetitionsControl(currentExerciseRepetitions: List<TrainExerciseRepetitions>?) {
     Column(
-        modifier = Modifier
+        modifier = Modifier,
     ) {
-        Text(text = "Repetitions")
-        Text(text = "Change Weight Value Buttons")
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            if (currentExerciseRepetitions.isNullOrEmpty()) {
+                Text(text = "ERROR: There is no data on the exercise repetitions.")
+            } else {
+                currentExerciseRepetitions.forEach { repetition ->
+                    RepetitionItem(
+                        setNumber = repetition.setNumber,
+                        repNumber = repetition.repetitionsNumber,
+                        weightOrNumber = repetition.weightOrNumber
+                    )
+                }
+            }
+        }
+
+
+        // todo: Change Weight Value Buttons
+        //Text(text = "Change Weight Value Buttons")
+    }
+}
+
+@Composable
+fun RepetitionItem(setNumber: Int, repNumber: Int, weightOrNumber: Int) {
+    Column(
+        modifier = Modifier.width(IntrinsicSize.Min),
+        horizontalAlignment = Alignment.End,
+    ) {
+        //
+        // Set number
+        //
+        Text(
+            text = "$setNumber",
+            fontSize = dimensionResource(R.dimen.repetition_control_set_number).value.sp,
+            textAlign = TextAlign.Right,
+            modifier = Modifier.padding(end = 1.dp),
+        )
+        //
+        // Number of repetitions and weight
+        //
+        Box(
+            modifier = Modifier
+                .border(BorderStroke(1.dp, Color.Magenta)),
+        ) {
+            Column(
+                modifier = Modifier.width(IntrinsicSize.Min),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                //
+                // Number of repetitions
+                //
+                ValueBoxWithLabel(
+                    value = repNumber,
+                    labelText = "REPS"
+                )
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = Color.Black,
+                )
+                //
+                // Weight or number of a weight
+                //
+                ValueBoxWithLabel(
+                    value = weightOrNumber,
+                    labelText = "WGT"
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun ValueBoxWithLabel(value: Int, labelText: String) {
+    Box(
+        modifier = Modifier
+        //.border(BorderStroke(1.dp, Color.Magenta))
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(
+                start = dimensionResource(R.dimen.repetition_control_value_padding).value.dp,
+                end = dimensionResource(R.dimen.repetition_control_value_padding).value.dp,
+                top = dimensionResource(R.dimen.repetition_control_value_padding).value.dp,
+                bottom = 0.dp
+            ),
+        ) {
+            Text(
+                text = value.toString(),
+                fontSize = dimensionResource(R.dimen.repetition_control_repetition_number).value.sp,
+            )
+            Text(
+                text = labelText,
+                fontSize = dimensionResource(R.dimen.repetition_control_set_number).value.sp,
+            )
+        }
     }
 }

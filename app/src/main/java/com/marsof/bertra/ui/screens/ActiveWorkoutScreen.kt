@@ -8,7 +8,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -88,19 +91,24 @@ fun ActiveWorkoutScreen(
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = "Active workout ID: $workoutId"
+                text = "Active workout ID: $workoutId",
+                color = Color.Magenta,
+            ) // debug
+            ExerciseData(
+                currentExercise = currentExercise
             )
-
-            ExerciseData(currentExercise)
-
-            if (!isExerciseAccomplished) {
-
-                HorizontalDivider(
-                    thickness = 2.dp
+            Spacer(
+                Modifier.size(
+                    dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
                 )
+            )
+            if (!isExerciseAccomplished) {
                 TimerControl(
                     currentTimerModeName,
                     currentTimerMode,
@@ -112,12 +120,11 @@ fun ActiveWorkoutScreen(
                     viewModel::pauseTimer,
                     viewModel::resumeTimer,
                 )
-
-                HorizontalDivider(
-                    thickness = 2.dp
+                Spacer(
+                    Modifier.size(
+                        dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
+                    )
                 )
-                // todo: Repetitions
-
                 RepetitionsControl(
                     currentExerciseRepetitions,
                 )
@@ -134,10 +141,17 @@ fun ActiveWorkoutScreen(
 @Composable
 fun ExerciseData(currentExercise: State<TrainExerciseWithExerciseName?>) {
     Column(
-        modifier = Modifier
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (currentExercise.value != null) {
-            Text(text = "Exercise Name: ${currentExercise.value?.exerciseName}")
+            Text(
+                text = "EXERCISE NAME",
+                fontSize = dimensionResource(R.dimen.repetition_control_set_number).value.sp,
+            )
+            Text(
+                text = currentExercise.value?.exerciseName.toString()
+            )
         } else {
             // Text(text = "⚠\uFE0F ERROR: no exercise found. ⚠\uFE0F")
         }
@@ -157,7 +171,8 @@ fun TimerControl(
     onResumeTimer: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
+        modifier = Modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row {
             Text(
@@ -175,8 +190,16 @@ fun TimerControl(
                 modifier = Modifier.alignBy(FirstBaseline),
             )
         }
+        //
+        // Current timer mode name
+        //
         Text(
             text = stringResource(currentTimerModeName.value)
+        )
+        Spacer(
+            Modifier.size(
+                dimensionResource(R.dimen.timer_control_value_bottom_space).value.dp
+            )
         )
         //
         // Pause and Resume Buttons
@@ -251,8 +274,6 @@ fun TimerControlButtons(
                 contentDescription = stringResource(R.string.timer_mode_name_button_label),
             )
         }
-
-
     }
 }
 
@@ -261,7 +282,10 @@ fun RepetitionsControl(currentExerciseRepetitions: List<TrainExerciseRepetitions
     Column(
         modifier = Modifier,
     ) {
-
+        Text(
+            text = "REPETITIONS",
+            fontSize = dimensionResource(R.dimen.repetition_control_set_number).value.sp,
+        )
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
@@ -277,10 +301,7 @@ fun RepetitionsControl(currentExerciseRepetitions: List<TrainExerciseRepetitions
                 }
             }
         }
-
-
         // todo: Change Weight Value Buttons
-        //Text(text = "Change Weight Value Buttons")
     }
 }
 

@@ -1,5 +1,6 @@
 package com.marsof.bertra.ui.viewmodels
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.marsof.bertra.R
@@ -56,9 +57,11 @@ class ActiveWorkoutScreenViewModel(
     // Exercise related vars & vals
     //
     private var _currentRepetitionIndex = MutableStateFlow(0)
+    val currentRepetitionIndex: StateFlow<Int> = _currentRepetitionIndex.asStateFlow()
     private val _isExerciseAccomplished = MutableStateFlow(false)
-    private var _currentExerciseIndex = MutableStateFlow(0)
     val isExerciseAccomplished: StateFlow<Boolean> = _isExerciseAccomplished.asStateFlow()
+    private var _currentExerciseIndex = MutableStateFlow(0)
+
 
     //
     // Pause functionality related vars and vals

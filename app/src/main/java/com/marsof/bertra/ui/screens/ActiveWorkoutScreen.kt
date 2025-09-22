@@ -1,6 +1,7 @@
 package com.marsof.bertra.ui.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,6 +50,9 @@ import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
 import com.marsof.bertra.ui.navigation.INavigationDestination
 import com.marsof.bertra.ui.viewmodels.ActiveWorkoutScreenViewModel
+import com.marsof.bertra.ui.viewmodels.ActiveWorkoutScreenViewModel.Companion.TIMER_MODE_READY
+import com.marsof.bertra.ui.viewmodels.ActiveWorkoutScreenViewModel.Companion.TIMER_MODE_REST
+import com.marsof.bertra.ui.viewmodels.ActiveWorkoutScreenViewModel.Companion.TIMER_MODE_WORK
 
 object ActiveWorkoutScreenDestination : INavigationDestination {
     private const val ROUTE_NAME = "active_workout"
@@ -82,6 +86,7 @@ fun ActiveWorkoutScreen(
     val isExerciseAccomplished by viewModel.isExerciseAccomplished.collectAsState()
     val currentTimerMode by viewModel.currentTimerMode.collectAsState()
     val isTimerPaused by viewModel.isTimerPaused.collectAsState()
+    val currentRepetitionIndex by viewModel.currentRepetitionIndex.collectAsState()
 
     Scaffold(
         topBar = {
@@ -97,10 +102,10 @@ fun ActiveWorkoutScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = "Active workout ID: $workoutId",
-                color = Color.Magenta,
-            ) // debug
+//            Text(
+//                text = "Active workout ID: $workoutId",
+//                color = Color.Magenta,
+//            ) // debug
             ExerciseData(
                 currentExercise = currentExercise
             )
@@ -128,6 +133,8 @@ fun ActiveWorkoutScreen(
                 )
                 RepetitionsControl(
                     currentExerciseRepetitions,
+                    currentRepetitionIndex,
+                    currentTimerMode,
                 )
             } else {
 
@@ -269,7 +276,7 @@ fun TimerControlButtons(
             onClick = { onChangeTimerMode() },
             modifier = Modifier,
             shape = RoundedCornerShape(0.dp),
-            enabled = currentTimerMode == ActiveWorkoutScreenViewModel.TIMER_MODE_WORK
+            enabled = currentTimerMode == TIMER_MODE_WORK
         ) {
             Text(
                 text = stringResource(onGetNextTimeModeName()),
@@ -283,7 +290,11 @@ fun TimerControlButtons(
 }
 
 @Composable
-fun RepetitionsControl(currentExerciseRepetitions: List<TrainExerciseRepetitions>?) {
+fun RepetitionsControl(
+    currentExerciseRepetitions: List<TrainExerciseRepetitions>?,
+    currentRepetitionIndex: Int,
+    currentTimerMode: Int,
+) {
     Column(
         modifier = Modifier,
     ) {
@@ -301,7 +312,9 @@ fun RepetitionsControl(currentExerciseRepetitions: List<TrainExerciseRepetitions
                     RepetitionItem(
                         setNumber = repetition.setNumber,
                         repNumber = repetition.repetitionsNumber,
-                        weightOrNumber = repetition.weightOrNumber
+                        weightOrNumber = repetition.weightOrNumber,
+                        currentRepetitionIndex = currentRepetitionIndex,
+                        currentTimerMode = currentTimerMode,
                     )
                 }
             }
@@ -311,7 +324,13 @@ fun RepetitionsControl(currentExerciseRepetitions: List<TrainExerciseRepetitions
 }
 
 @Composable
-fun RepetitionItem(setNumber: Int, repNumber: Int, weightOrNumber: Int) {
+fun RepetitionItem(
+    setNumber: Int,
+    repNumber: Int,
+    weightOrNumber: Int,
+    currentRepetitionIndex: Int,
+    currentTimerMode: Int,
+) {
     Column(
         modifier = Modifier.width(IntrinsicSize.Min),
         horizontalAlignment = Alignment.End,
@@ -330,7 +349,19 @@ fun RepetitionItem(setNumber: Int, repNumber: Int, weightOrNumber: Int) {
         //
         Box(
             modifier = Modifier
-                .border(BorderStroke(1.dp, Color.Magenta)),
+                .border(
+                    BorderStroke(
+                        1.dp,
+                        Color.Magenta
+                    )
+                )
+                .background(
+                    color = getCurrentRepetitionMarker(
+                        setNumber,
+                        currentRepetitionIndex,
+                        currentTimerMode,
+                    )
+                ),
         ) {
             Column(
                 modifier = Modifier.width(IntrinsicSize.Min),
@@ -359,6 +390,41 @@ fun RepetitionItem(setNumber: Int, repNumber: Int, weightOrNumber: Int) {
     }
 }
 
+/**
+ * Returns the color for the current repetition displaying [Box] background.
+ *
+ * Own colors have the following elements:
+ *
+ * - The current repetition.
+ * - The Future repetitions.
+ * - The Accomplished repetitions.
+ *
+ * @param setNumber The current set number from the [TrainExerciseRepetitions] object.
+ * @param currentRepetitionIndex The index of the current repetition.
+ * In fact, it can be considered as a number of a displaying [Box].
+ * @param currentTimerMode The current timer mode.
+ * @return The color for the current repetition marker.
+ */
+private fun getCurrentRepetitionMarker(
+    setNumber: Int,
+    currentRepetitionIndex: Int,
+    currentTimerMode: Int
+): Color {
+    if (setNumber > currentRepetitionIndex + 1) {
+        // Future repetition.
+        return Color.Transparent
+    } else if (setNumber < currentRepetitionIndex + 1) {
+        // Accomplished repetition.
+        return Color.Gray
+    }
+    // Current repetition.
+    return when (currentTimerMode) {
+        TIMER_MODE_READY -> Color.Yellow
+        TIMER_MODE_WORK -> Color.Red
+        TIMER_MODE_REST -> Color.Green
+        else -> Color.Transparent
+    }
+}
 
 @Composable
 fun ValueBoxWithLabel(value: Int, labelText: String) {
@@ -386,3 +452,4 @@ fun ValueBoxWithLabel(value: Int, labelText: String) {
         }
     }
 }
+

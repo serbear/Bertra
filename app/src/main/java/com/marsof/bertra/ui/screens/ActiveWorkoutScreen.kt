@@ -37,6 +37,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -184,7 +185,11 @@ fun TimerControl(
             )
             Spacer(modifier = Modifier.padding(horizontal = 4.dp))
             Text(
-                text = "$timeLeftHundredths",
+                text = String.format(
+                    Locale.current.platformLocale,
+                    "%02d",
+                    timeLeftHundredths
+                ),
                 fontSize = dimensionResource(R.dimen.timer_millsec_value_text_size).value.sp,
                 fontFamily = FontFamily.Monospace,
                 modifier = Modifier.alignBy(FirstBaseline),

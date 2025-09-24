@@ -76,14 +76,13 @@ fun ActiveWorkoutScreen(
         viewModel.setWorkoutId(workoutId)
     }
 
-    val workoutState = viewModel.workoutState.collectAsState()
-    val workoutExercisesList = viewModel.workoutExercisesList.collectAsState()
     val timeLeft by viewModel.timeLeft.collectAsState()
     val timeLeftHundredths by viewModel.timeLeftHundredths.collectAsState()
     val currentExercise = viewModel.currentExercise.collectAsState()
     val currentTimerModeName = viewModel.currentTimerModeName.collectAsState()
     val currentExerciseRepetitions by viewModel.currentExerciseRepetitions.collectAsState()
     val isExerciseAccomplished by viewModel.isExerciseAccomplished.collectAsState()
+    val isCurrentExerciseLast by viewModel.isCurrentExerciseLast.collectAsState()
     val currentTimerMode by viewModel.currentTimerMode.collectAsState()
     val isTimerPaused by viewModel.isTimerPaused.collectAsState()
     val currentRepetitionIndex by viewModel.currentRepetitionIndex.collectAsState()
@@ -102,48 +101,140 @@ fun ActiveWorkoutScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-//            Text(
-//                text = "Active workout ID: $workoutId",
-//                color = Color.Magenta,
-//            ) // debug
-            ExerciseData(
-                currentExercise = currentExercise
-            )
-            Spacer(
-                Modifier.size(
-                    dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
-                )
-            )
-            if (!isExerciseAccomplished) {
-                TimerControl(
+            if (isExerciseAccomplished && isCurrentExerciseLast) {
+                WorkoutComplete()
+            } else {
+                ExerciseInProgressContent(
+                    currentExercise,
+                    isExerciseAccomplished,
                     currentTimerModeName,
                     currentTimerMode,
                     timeLeft,
                     timeLeftHundredths,
                     isTimerPaused,
+                    currentExerciseRepetitions,
+                    currentRepetitionIndex,
                     viewModel::setNextTimerMode,
                     viewModel::getNextTimerModeName,
                     viewModel::pauseTimer,
                     viewModel::resumeTimer,
+                    viewModel::goNextExercise,
                 )
-                Spacer(
-                    Modifier.size(
-                        dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
-                    )
-                )
-                RepetitionsControl(
-                    currentExerciseRepetitions,
-                    currentRepetitionIndex,
-                    currentTimerMode,
-                )
-            } else {
-
-                // todo: add a button to go to the next exercise or finish the workout.
-
-                Text(text = "Exercise accomplished!")
             }
         }
     }
+}
+
+@Composable
+fun ExerciseInProgressContent(
+    currentExercise: State<TrainExerciseWithExerciseName?>,
+    isExerciseAccomplished: Boolean,
+    currentTimerModeName: State<Int>,
+    currentTimerMode: Int,
+    timeLeft: Long,
+    timeLeftHundredths: Long,
+    isTimerPaused: Boolean,
+    currentExerciseRepetitions: List<TrainExerciseRepetitions>?,
+    currentRepetitionIndex: Int,
+    onSetNextTimerMode: () -> Unit,
+    onGetNextTimerModeName: () -> Int,
+    onPauseTimer: () -> Unit,
+    onResumeTimer: () -> Unit,
+    onGoNextExercise: () -> Unit,
+) {
+    ExerciseData(
+        currentExercise = currentExercise
+    )
+    Spacer(
+        Modifier.size(
+            dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
+        )
+    )
+    if (isExerciseAccomplished) {
+        ExerciseCompleteControls(onGoNextExercise)
+    } else {
+        TimerControlAndRepetitions(
+            currentTimerModeName,
+            currentTimerMode,
+            timeLeft,
+            timeLeftHundredths,
+            isTimerPaused,
+            currentExerciseRepetitions,
+            currentRepetitionIndex,
+            onSetNextTimerMode,
+            onGetNextTimerModeName,
+            onPauseTimer,
+            onResumeTimer,
+        )
+    }
+}
+
+@Composable
+fun TimerControlAndRepetitions(
+    currentTimerModeName: State<Int>,
+    currentTimerMode: Int,
+    timeLeft: Long,
+    timeLeftHundredths: Long,
+    isTimerPaused: Boolean,
+    currentExerciseRepetitions: List<TrainExerciseRepetitions>?,
+    currentRepetitionIndex: Int,
+    onSetNextTimerMode: () -> Unit,
+    onGetNextTimerModeName: () -> Int,
+    onPauseTimer: () -> Unit,
+    onResumeTimer: () -> Unit,
+) {
+    TimerControl(
+        currentTimerModeName,
+        currentTimerMode,
+        timeLeft,
+        timeLeftHundredths,
+        isTimerPaused,
+        onSetNextTimerMode,
+        onGetNextTimerModeName,
+        onPauseTimer,
+        onResumeTimer,
+    )
+    Spacer(
+        Modifier.size(
+            dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
+        )
+    )
+    RepetitionsControl(
+        currentExerciseRepetitions,
+        currentRepetitionIndex,
+        currentTimerMode,
+    )
+}
+
+/**
+ * todo: Если это последнее упражнение в тренировке кнопка "Следующее упражнение" скрыта.
+ *  Появляется надпись "Тренировка закончена".
+ *  После выполения последнего упражнения обновляется дата lastDate в таблице с тренировками.
+ */
+@Composable
+fun ExerciseCompleteControls(
+    onGoNextExercise: () -> Unit
+) {
+    Text(text = "Exercise complete!")
+
+    Button(
+        onClick = { onGoNextExercise() },
+        modifier = Modifier,
+        shape = RoundedCornerShape(0.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.go_next_exercise_button_label),
+        )
+        Icon(
+            imageVector = Icons.Default.SkipNext,
+            contentDescription = stringResource(R.string.go_next_exercise_button_label),
+        )
+    }
+}
+
+@Composable
+fun WorkoutComplete() {
+    Text(text = "Workout complete!")
 }
 
 @Composable

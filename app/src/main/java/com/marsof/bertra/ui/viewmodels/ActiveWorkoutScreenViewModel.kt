@@ -1,6 +1,5 @@
 package com.marsof.bertra.ui.viewmodels
 
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.marsof.bertra.R
@@ -33,7 +32,7 @@ data class ActiveWorkoutUiState(
 )
 
 class ActiveWorkoutScreenViewModel(
-    trainDao: TrainDao,
+    val trainDao: TrainDao,
     trainExerciseDao: TrainExerciseDao,
     trainExerciseRepetitionsDao: TrainExerciseRepetitionsDao,
 ) : ViewModel() {
@@ -47,12 +46,14 @@ class ActiveWorkoutScreenViewModel(
     val timeLeft: StateFlow<Long> = _timeLeft.asStateFlow()
     private var targetTimeMillis: Long = 0L
     private var pausedTimeMillis: Long = 0L
+
     // Timer coroutine control.
     private var timerJob: Job? = null
     var currentTimerMode = _currentTimerMode.asStateFlow()
     private var timerCompletionCallback: (() -> Unit)? = null
     private val _timeLeftHundredths = MutableStateFlow(0L)
     val timeLeftHundredths: StateFlow<Long> = _timeLeftHundredths.asStateFlow()
+
     //
     // Exercise related vars & vals
     //
@@ -61,6 +62,8 @@ class ActiveWorkoutScreenViewModel(
     private val _isExerciseAccomplished = MutableStateFlow(false)
     val isExerciseAccomplished: StateFlow<Boolean> = _isExerciseAccomplished.asStateFlow()
     private var _currentExerciseIndex = MutableStateFlow(0)
+    private var _isCurrentExerciseLast = MutableStateFlow(false)
+    val isCurrentExerciseLast: StateFlow<Boolean> = _isCurrentExerciseLast.asStateFlow()
 
 
     //
@@ -79,8 +82,9 @@ class ActiveWorkoutScreenViewModel(
 
         // todo: app settings
         const val READY_TIMER_DURATION = 10L
-        const val WORK_TIMER_DURATION = 180L
-        const val REST_TIMER_DURATION = 120L
+        const val WORK_TIMER_DURATION = 5L
+        const val REST_TIMER_DURATION = 2L
+
         // UI Update frequency.
         private const val TIMER_TICK_INTERVAL_MS = 100L
     }
@@ -137,6 +141,7 @@ class ActiveWorkoutScreenViewModel(
             initialValue = null
         )
 
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val currentExerciseRepetitions: StateFlow<List<TrainExerciseRepetitions>?> =
         currentExercise.flatMapLatest { exercise ->
@@ -168,17 +173,28 @@ class ActiveWorkoutScreenViewModel(
     fun goNextExercise() {
         val currentIndex = _currentExerciseIndex.value
         val listSize = workoutExercisesList.value.size
+
         if (listSize > 0 && currentIndex < listSize - 1) {
             _currentExerciseIndex.value = currentIndex + 1
-            // Сбрасываем для нового упражнения
             _isExerciseAccomplished.value = false
-            // Сброс индекса повторения и запуск таймера готовности для нового упражнения
             _currentRepetitionIndex.value = 0
+
+            setTimerMode(TIMER_MODE_READY)
+            startTimer(READY_TIMER_DURATION) {
+                proceedExerciseSequence()
+            }
         } else {
-            // Опционально: обработать случай, когда это последнее упражнение
-            // Например, перейти в режим "завершено" или зациклить
-            // Пока просто не даем индексу выйти за пределы
+            // This is the last exercise within the workout.
+
+            finishWorkout()
         }
+    }
+
+    private fun finishWorkout() {
+
+//        viewModelScope.launch {
+//            trainDao.updateLastDate(_trainId.value, System.currentTimeMillis())
+//        }
     }
 
     fun setTimerMode(mode: Int) {
@@ -248,7 +264,6 @@ class ActiveWorkoutScreenViewModel(
             // "repetitions!!" is safe due to the predicate 'first()'.
             if (currentRepetitionIndex >= repetitions!!.size) {
                 _isExerciseAccomplished.value = true
-                // todo: Логика завершения упражнения
                 return@launch
             }
 
@@ -267,6 +282,10 @@ class ActiveWorkoutScreenViewModel(
                     }
                 } else {
                     // All repetitions are done.
+
+                    // Check if the exercise is the last one in the workout.
+                    _isCurrentExerciseLast.value =
+                        (_currentExerciseIndex.value + 1) == workoutExercisesList.value.size
                     _isExerciseAccomplished.value = true
                 }
             }
@@ -325,7 +344,7 @@ class ActiveWorkoutScreenViewModel(
                         break
                     }
                     _timeLeft.value = ceil(remainingMillis.toDouble() / 1000.0).toLong()
-                    _timeLeftHundredths.value =(remainingMillis % 1000L) / 10L
+                    _timeLeftHundredths.value = (remainingMillis % 1000L) / 10L
 
                     val delayMillis = if (remainingMillis % 1000L == 0L) {
                         minOf(TIMER_TICK_INTERVAL_MS, 1000L)
@@ -366,7 +385,7 @@ class ActiveWorkoutScreenViewModel(
                 }
 
                 _timeLeft.value = ceil(remainingMillis.toDouble() / 1000.0).toLong()
-                _timeLeftHundredths.value =(remainingMillis % 1000L) / 10L
+                _timeLeftHundredths.value = (remainingMillis % 1000L) / 10L
 
                 val delayMillis = if (remainingMillis % 1000L == 0L) {
                     minOf(TIMER_TICK_INTERVAL_MS, 1000L)
@@ -378,6 +397,7 @@ class ActiveWorkoutScreenViewModel(
             this@ActiveWorkoutScreenViewModel.timerCompletionCallback?.invoke()
         }
     }
+
     /**
      * Returns the resource ID for the name of the next timer mode.
      *

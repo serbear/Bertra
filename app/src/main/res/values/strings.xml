@@ -48,4 +48,5 @@
     <string name="timer_mode_name_button_label">Timer mode name</string>
     <string name="ready_timer_mode_name">Ready</string>
     <string name="resume_timer_button_label">Resume</string>
+    <string name="go_next_exercise_button_label">Next Exercise</string>
 </resources>

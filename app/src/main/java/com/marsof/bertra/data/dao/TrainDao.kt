@@ -28,4 +28,7 @@ interface TrainDao {
 
     @Query("SELECT * FROM trains WHERE lastDate IS NOT NULL ORDER BY lastDate DESC LIMIT 1")
     fun getLastTrain(): Flow<Train?>
+
+    @Query("UPDATE trains SET lastDate = :lastDate WHERE id = :id")
+    suspend fun updateLastDate(id: Long, lastDate: Long)
 }

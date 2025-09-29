@@ -31,4 +31,7 @@ interface TrainDao {
 
     @Query("UPDATE trains SET lastDate = :lastDate WHERE id = :id")
     suspend fun updateLastDate(id: Long, lastDate: Long)
+
+    @Query("UPDATE trains SET circles = circles - 1 WHERE id = :id")
+    suspend fun decreaseCircles(id: Long)
 }

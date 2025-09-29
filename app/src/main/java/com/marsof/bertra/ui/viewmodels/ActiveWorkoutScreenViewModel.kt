@@ -183,18 +183,21 @@ class ActiveWorkoutScreenViewModel(
             startTimer(READY_TIMER_DURATION) {
                 proceedExerciseSequence()
             }
-        } else {
-            // This is the last exercise within the workout.
-
-            finishWorkout()
         }
     }
 
+    /**
+     * Performs operations on the workout accomplish:
+     * - the date of the workout finish is updated;
+     * - the remaining circles counter is decreased.
+     */
     private fun finishWorkout() {
-
-//        viewModelScope.launch {
-//            trainDao.updateLastDate(_trainId.value, System.currentTimeMillis())
-//        }
+        viewModelScope.launch {
+            trainDao.decreaseCircles(_trainId.value)
+        }
+        viewModelScope.launch {
+            trainDao.updateLastDate(_trainId.value, System.currentTimeMillis())
+        }
     }
 
     fun setTimerMode(mode: Int) {
@@ -283,10 +286,15 @@ class ActiveWorkoutScreenViewModel(
                 } else {
                     // All repetitions are done.
 
+                    _isExerciseAccomplished.value = true
+
                     // Check if the exercise is the last one in the workout.
                     _isCurrentExerciseLast.value =
-                        (_currentExerciseIndex.value + 1) == workoutExercisesList.value.size
-                    _isExerciseAccomplished.value = true
+                        (_currentExerciseIndex.value+1 ) == workoutExercisesList.value.size
+                    if (_isCurrentExerciseLast.value){
+                        finishWorkout()
+                        return@startTimer
+                    }
                 }
             }
         }

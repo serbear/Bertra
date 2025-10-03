@@ -38,12 +38,15 @@ import kotlinx.coroutines.launch
  * The list of the destination points for the Side Menu.
  */
 val sideMenuDestinations = listOf(
-    HomeScreenDestination,
-    TrainListScreenDestination,
-    NewTrainScreenDestination,
-    ExerciseListScreenDestination,
-    MeasurementUnitListScreenDestination,
-    SettingsScreenDestination,
+    DestinationMenuItem(HomeScreenDestination),
+    DividerMenuItem,
+    DestinationMenuItem(TrainListScreenDestination),
+    DividerMenuItem,
+    DestinationMenuItem(NewTrainScreenDestination),
+    DestinationMenuItem(ExerciseListScreenDestination),
+    DestinationMenuItem(MeasurementUnitListScreenDestination),
+    DividerMenuItem,
+    DestinationMenuItem(SettingsScreenDestination),
 )
 
 /**

@@ -24,6 +24,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
+import com.marsof.bertra.ui.navigation.DestinationMenuItem
+import com.marsof.bertra.ui.navigation.DividerMenuItem
 import com.marsof.bertra.ui.navigation.NavigationHost
 import com.marsof.bertra.ui.navigation.sideMenuDestinations
 import com.marsof.bertra.ui.theme.BertraTheme
@@ -70,23 +72,30 @@ fun DrawerWithNavigation() {
                 // Menu elements.
                 //
                 sideMenuDestinations.forEach { item ->
-                    NavigationDrawerItem(
-                        label = {
-                            Text(
-                                stringResource(item.titleRes),
-                                style = MaterialTheme.typography.bodyLarge
+                    when(item){
+                        is DestinationMenuItem -> {
+                            NavigationDrawerItem(
+                                label = {
+                                    Text(
+                                        stringResource(item.destination.titleRes),
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                },
+                                selected = currentRoute == item.destination.route,
+                                onClick = {
+                                    scope.launch { drawerState.close() }
+                                    navController.navigate(item.destination.route) {
+                                        popUpTo(navController.graph.findStartDestination().id)
+                                        launchSingleTop = true
+                                    }
+                                },
+                                shape = RoundedCornerShape(0.dp)
                             )
-                        },
-                        selected = currentRoute == item.route,
-                        onClick = {
-                            scope.launch { drawerState.close() }
-                            navController.navigate(item.route) {
-                                popUpTo(navController.graph.findStartDestination().id)
-                                launchSingleTop = true
-                            }
-                        },
-                        shape = RoundedCornerShape(0.dp)
-                    )
+                        }
+                        is DividerMenuItem -> {
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 0.dp))
+                        }
+                    }
                 }
             }
         }

@@ -16,13 +16,18 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
+import com.marsof.bertra.SettingsDataStore
 import com.marsof.bertra.data.entites.Train
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
@@ -87,6 +92,14 @@ fun TrainInputForm(
     onValueChange: (Train) -> Unit = {},
     modifier: Modifier
 ) {
+    val settingsDataStore = SettingsDataStore(context = LocalContext.current)
+    val defaultCirclesNumber by settingsDataStore.defaultCirclesNumber.collectAsState(initial = -1)
+
+    LaunchedEffect(defaultCirclesNumber) {
+        if (defaultCirclesNumber != -1) {
+            onValueChange(trainDetails.copy(circles = defaultCirclesNumber))
+        }
+    }
 
     Column(
         modifier = modifier,
@@ -119,6 +132,7 @@ fun TrainInputForm(
             singleLine = false,
             maxLines = 5
         )
+
     }
 }
 
@@ -131,10 +145,15 @@ fun NumberStepper(
     maxValue: Int = Int.MAX_VALUE,
     step: Int = 1
 ) {
+
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        Text(
+            text = stringResource(R.string.train_number_of_circles_label),
+        )
         IconButton(
             onClick = { onValueChange((value - step).coerceAtLeast(minValue)) },
             enabled = value > minValue

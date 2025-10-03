@@ -52,4 +52,5 @@
     <string name="settings_screen_title">Settings</string>
     <string name="settings_dark_mode_switch">Use Dark Mode</string>
     <string name="settings_default_circles_number_label">Default circle number:</string>
+    <string name="train_number_of_circles_label">Number of Circles:</string>
 </resources>

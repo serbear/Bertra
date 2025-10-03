@@ -50,4 +50,6 @@
     <string name="resume_timer_button_label">Resume</string>
     <string name="go_next_exercise_button_label">Next Exercise</string>
     <string name="settings_screen_title">Settings</string>
+    <string name="settings_dark_mode_switch">Use Dark Mode</string>
+    <string name="settings_default_circles_number_label">Default circle number:</string>
 </resources>

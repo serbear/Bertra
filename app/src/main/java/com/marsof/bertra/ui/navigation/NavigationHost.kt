@@ -23,6 +23,8 @@ import com.marsof.bertra.ui.screens.NewMeasurementUnitScreen
 import com.marsof.bertra.ui.screens.NewMeasurementUnitScreenDestination
 import com.marsof.bertra.ui.screens.NewTrainScreen
 import com.marsof.bertra.ui.screens.NewTrainScreenDestination
+import com.marsof.bertra.ui.screens.SettingsScreen
+import com.marsof.bertra.ui.screens.SettingsScreenDestination
 import com.marsof.bertra.ui.screens.TrainExercisesListScreen
 import com.marsof.bertra.ui.screens.TrainExercisesListScreenDestination
 import com.marsof.bertra.ui.screens.TrainListScreen
@@ -41,6 +43,7 @@ val sideMenuDestinations = listOf(
     NewTrainScreenDestination,
     ExerciseListScreenDestination,
     MeasurementUnitListScreenDestination,
+    SettingsScreenDestination,
 )
 
 /**
@@ -202,6 +205,14 @@ fun NavigationHost(
                 navigateToNewMeasurementUnitScreen = {
                     navController.navigate(NewMeasurementUnitScreenDestination.route)
                 }
+            )
+        }
+        composable(route = SettingsScreenDestination.route) {
+            SettingsScreen (
+                openDrawer = { scope.launch { drawerState.open() } },
+//                navigateToNewMeasurementUnitScreen = {
+//                    navController.navigate(NewMeasurementUnitScreenDestination.route)
+//                }
             )
         }
     }

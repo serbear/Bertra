@@ -25,4 +25,6 @@ data class Train(
      * Date of the last train.
      */
     val lastDate: Long?
+
+
 )

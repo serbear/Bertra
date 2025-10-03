@@ -13,6 +13,7 @@ import com.marsof.bertra.ui.viewmodels.MeasurementUnitListScreenViewModel
 import com.marsof.bertra.ui.viewmodels.NewExerciseScreenViewModel
 import com.marsof.bertra.ui.viewmodels.NewMeasurementUnitScreenViewModel
 import com.marsof.bertra.ui.viewmodels.NewTrainScreenViewModel
+import com.marsof.bertra.ui.viewmodels.SettingsScreenViewModel
 import com.marsof.bertra.ui.viewmodels.TrainExercisesListScreenViewModel
 import com.marsof.bertra.ui.viewmodels.TrainListScreenViewModel
 import com.marsof.bertra.ui.viewmodels.WorkoutEngageScreenViewModel
@@ -81,6 +82,9 @@ object ViewModelProvider {
                 bertraApplication().container.trainExerciseDao,
                 bertraApplication().container.trainExerciseRepetitionsDao,
             )
+        }
+        initializer {
+            SettingsScreenViewModel()
         }
     }
 }

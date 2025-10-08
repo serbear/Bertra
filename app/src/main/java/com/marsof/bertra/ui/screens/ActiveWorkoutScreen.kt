@@ -23,8 +23,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -91,35 +94,44 @@ fun ActiveWorkoutScreen(
         topBar = {
             ApplicationTopBar(
                 title = stringResource(ActiveWorkoutScreenDestination.titleRes),
-                onNavigationClick = openDrawer
+                onNavigationClick = openDrawer,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ),
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Surface(
+            modifier = Modifier,
+            color = MaterialTheme.colorScheme.tertiary,
         ) {
-            if (isExerciseAccomplished && isCurrentExerciseLast) {
-                WorkoutComplete()
-            } else {
-                ExerciseInProgressContent(
-                    currentExercise,
-                    isExerciseAccomplished,
-                    currentTimerModeName,
-                    currentTimerMode,
-                    timeLeft,
-                    timeLeftHundredths,
-                    isTimerPaused,
-                    currentExerciseRepetitions,
-                    currentRepetitionIndex,
-                    viewModel::setNextTimerMode,
-                    viewModel::getNextTimerModeName,
-                    viewModel::pauseTimer,
-                    viewModel::resumeTimer,
-                    viewModel::goNextExercise,
-                )
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                if (isExerciseAccomplished && isCurrentExerciseLast) {
+                    WorkoutComplete()
+                } else {
+                    ExerciseInProgressContent(
+                        currentExercise,
+                        isExerciseAccomplished,
+                        currentTimerModeName,
+                        currentTimerMode,
+                        timeLeft,
+                        timeLeftHundredths,
+                        isTimerPaused,
+                        currentExerciseRepetitions,
+                        currentRepetitionIndex,
+                        viewModel::setNextTimerMode,
+                        viewModel::getNextTimerModeName,
+                        viewModel::pauseTimer,
+                        viewModel::resumeTimer,
+                        viewModel::goNextExercise,
+                    )
+                }
             }
         }
     }

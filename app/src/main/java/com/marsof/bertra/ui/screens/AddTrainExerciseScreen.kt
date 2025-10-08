@@ -22,10 +22,13 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -93,42 +96,51 @@ fun AddTrainExerciseScreen(
         topBar = {
             ApplicationTopBar(
                 title = stringResource(AddTrainExerciseScreenDestination.titleRes),
-                onNavigationClick = openDrawer
+                onNavigationClick = openDrawer,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ),
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier.padding(innerPadding),
+        Surface(
+            modifier = Modifier,
+            color = MaterialTheme.colorScheme.tertiary,
         ) {
-            TrainExerciseInputForm(
-                trainExerciseDetails = trainExerciseUiState.trainExercise,
-                exerciseSetDetails = trainExerciseSetList,
-                onValueChange = viewModel::updateUiState,
-                trainId = trainId,
-                exercises = exercises,
-                measurementUnits = measurementUnits,
-                onSetAdd = viewModel::addSet,
-                onSetWeightChange = viewModel::updateSetWeight,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            Row {
-                Button(
-                    onClick = navigateToScreen,
-                    enabled = true,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = stringResource(R.string.go_back_button_label)
-                    )
-                }
-                Button(
-                    onClick = onSaveClick,
-                    enabled = trainExerciseUiState.isEntryValid,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = stringResource(R.string.save_train_exercise)
-                    )
+            Column(
+                modifier = Modifier.padding(innerPadding),
+            ) {
+                TrainExerciseInputForm(
+                    trainExerciseDetails = trainExerciseUiState.trainExercise,
+                    exerciseSetDetails = trainExerciseSetList,
+                    onValueChange = viewModel::updateUiState,
+                    trainId = trainId,
+                    exercises = exercises,
+                    measurementUnits = measurementUnits,
+                    onSetAdd = viewModel::addSet,
+                    onSetWeightChange = viewModel::updateSetWeight,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Row {
+                    Button(
+                        onClick = navigateToScreen,
+                        enabled = true,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.go_back_button_label)
+                        )
+                    }
+                    Button(
+                        onClick = onSaveClick,
+                        enabled = trainExerciseUiState.isEntryValid,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.save_train_exercise)
+                        )
+                    }
                 }
             }
         }

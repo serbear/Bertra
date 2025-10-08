@@ -84,7 +84,9 @@ object ViewModelProvider {
             )
         }
         initializer {
-            SettingsScreenViewModel()
+            SettingsScreenViewModel(
+                bertraApplication()
+            )
         }
     }
 }

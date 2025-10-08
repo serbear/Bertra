@@ -13,6 +13,7 @@ import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Text
@@ -35,7 +36,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent { BertraTheme { DrawerWithNavigation() } }
+        setContent {
+            BertraTheme(
+                darkTheme = true,
+            ) {
+                DrawerWithNavigation()
+            }
+        }
     }
 }
 
@@ -49,57 +56,65 @@ fun DrawerWithNavigation() {
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .background(MaterialTheme.colorScheme.surfaceContainer)
-                    .padding(top = 48.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.main_menu_name),
-                    style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.primary
-                )
+            ModalDrawerSheet {
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .background(MaterialTheme.colorScheme.primary)
+                        .padding(top = 48.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.main_menu_name),
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.padding(16.dp),
+                    )
+                    HorizontalDivider(
+                        Modifier,
+                        DividerDefaults.Thickness,
+                        color = MaterialTheme.colorScheme.tertiary,
+                    )
+                    //
+                    // Menu elements.
+                    //
+                    sideMenuDestinations.forEach { item ->
+                        when (item) {
+                            is DestinationMenuItem -> {
+                                NavigationDrawerItem(
+                                    label = {
+                                        Text(
+                                            text = stringResource(item.destination.titleRes),
+                                            style = MaterialTheme.typography.bodyLarge,
+                                        )
+                                    },
+                                    selected = currentRoute == item.destination.route,
+                                    onClick = {
+                                        scope.launch { drawerState.close() }
+                                        navController.navigate(item.destination.route) {
+                                            popUpTo(navController.graph.findStartDestination().id)
+                                            launchSingleTop = true
+                                        }
+                                    },
+                                    shape = RoundedCornerShape(0.dp),
+                                )
+                            }
 
-                HorizontalDivider(
-                    Modifier,
-                    DividerDefaults.Thickness,
-                    color = MaterialTheme.colorScheme.outlineVariant
-                )
-
-                //
-                // Menu elements.
-                //
-                sideMenuDestinations.forEach { item ->
-                    when(item){
-                        is DestinationMenuItem -> {
-                            NavigationDrawerItem(
-                                label = {
-                                    Text(
-                                        stringResource(item.destination.titleRes),
-                                        style = MaterialTheme.typography.bodyLarge
-                                    )
-                                },
-                                selected = currentRoute == item.destination.route,
-                                onClick = {
-                                    scope.launch { drawerState.close() }
-                                    navController.navigate(item.destination.route) {
-                                        popUpTo(navController.graph.findStartDestination().id)
-                                        launchSingleTop = true
-                                    }
-                                },
-                                shape = RoundedCornerShape(0.dp)
-                            )
-                        }
-                        is DividerMenuItem -> {
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 0.dp))
+                            is DividerMenuItem -> {
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(vertical = 0.dp),
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                )
+                            }
                         }
                     }
                 }
             }
         }
     ) {
-        NavigationHost(navController = navController, scope = scope, drawerState = drawerState)
+        NavigationHost(
+            navController = navController,
+            scope = scope,
+            drawerState = drawerState,
+        )
     }
 }

@@ -27,7 +27,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -70,30 +72,39 @@ fun TrainListScreen(
         topBar = {
             ApplicationTopBar(
                 title = stringResource(TrainListScreenDestination.titleRes),
-                onNavigationClick = openDrawer
+                onNavigationClick = openDrawer,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ),
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally
+        Surface(
+            modifier = Modifier,
+            color = MaterialTheme.colorScheme.tertiary,
         ) {
-            TrainList(
-                trainList = trainListState.trainList,
-                navigateToWorkoutEngageScreen = navigateToWorkoutEngageScreen,
-                modifier = Modifier.padding(innerPadding),
-            )
-            Button(
-                onClick = navigateToNewTrainScreen,
-                modifier = Modifier,
-                shape = RoundedCornerShape(0.dp)
+            Column(
+                modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.new_train_button_label),
+                TrainList(
+                    trainList = trainListState.trainList,
+                    navigateToWorkoutEngageScreen = navigateToWorkoutEngageScreen,
+                    modifier = Modifier.padding(innerPadding),
                 )
-                Text(
-                    text = stringResource(R.string.new_train_button_label),
-                )
+                Button(
+                    onClick = navigateToNewTrainScreen,
+                    modifier = Modifier,
+                    shape = RoundedCornerShape(0.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.new_train_button_label),
+                    )
+                    Text(
+                        text = stringResource(R.string.new_train_button_label),
+                    )
+                }
             }
         }
     }
@@ -132,7 +143,7 @@ fun TrainList(
                             selectedTrain =
                                 if (selectedTrain == clickedTrain) null else clickedTrain
                         },
-                        navigateToWorkoutEngageScreen =  navigateToWorkoutEngageScreen ,
+                        navigateToWorkoutEngageScreen = navigateToWorkoutEngageScreen,
                     )
                 }
             }

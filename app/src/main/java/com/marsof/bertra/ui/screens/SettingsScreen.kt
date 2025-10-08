@@ -1,21 +1,22 @@
 package com.marsof.bertra.ui.screens
 
-import androidx.activity.result.launch
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -52,18 +53,30 @@ fun SettingsScreen(
         topBar = {
             ApplicationTopBar(
                 title = stringResource(SettingsScreenDestination.titleRes),
-                onNavigationClick = openDrawer
+                onNavigationClick = openDrawer,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ),
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxWidth(),
+        Surface(
+            modifier = Modifier,
+            color = MaterialTheme.colorScheme.tertiary,
         ) {
-            val settingsDataStore = SettingsDataStore(context = LocalContext.current)
-            SettingsSlider(settingsDataStore = settingsDataStore)
-            ThemeSwitch(settingsDataStore = settingsDataStore)
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxWidth(),
+            ) {
+                val settingsDataStore = SettingsDataStore(context = LocalContext.current)
+                SettingsSlider(settingsDataStore = settingsDataStore)
+                ThemeSwitch(
+                    settingsDataStore = settingsDataStore,
+                    onSwitch = viewModel::changeTheme,
+                )
+            }
         }
     }
 }
@@ -76,7 +89,7 @@ fun SettingsSlider(settingsDataStore: SettingsDataStore) {
         mutableFloatStateOf(defaultCirclesNumber.toFloat())
     }
     val sliderLabelText = stringResource(id = R.string.settings_default_circles_number_label)
-    val sliderPositionText =sliderPosition.toInt()
+    val sliderPositionText = sliderPosition.toInt()
 
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
@@ -101,7 +114,10 @@ fun SettingsSlider(settingsDataStore: SettingsDataStore) {
 }
 
 @Composable
-fun ThemeSwitch(settingsDataStore: SettingsDataStore) {
+fun ThemeSwitch(
+    settingsDataStore: SettingsDataStore,
+    onSwitch: (Boolean) -> Unit,
+) {
     val coroutineScope = rememberCoroutineScope()
     val isDarkTheme by settingsDataStore.isDarkMode.collectAsState(initial = false)
 
@@ -118,9 +134,11 @@ fun ThemeSwitch(settingsDataStore: SettingsDataStore) {
         Switch(
             checked = isDarkTheme,
             onCheckedChange = {
-                coroutineScope.launch {
-                    settingsDataStore.setDarkMode(it)
-                }
+//                coroutineScope.launch {
+                //settingsDataStore.setDarkMode(it)
+                onSwitch(it)
+
+//                }
             }
         )
     }

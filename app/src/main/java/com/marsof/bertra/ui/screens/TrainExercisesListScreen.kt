@@ -17,7 +17,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -70,41 +72,51 @@ fun TrainExercisesListScreen(
         topBar = {
             ApplicationTopBar(
                 title = stringResource(TrainExercisesListScreenDestination.titleRes),
-                onNavigationClick = openDrawer
+                onNavigationClick = openDrawer,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ),
             )
         },
     ) { innerPadding ->
-        Column(
+
+        Surface(
             modifier = Modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
+            color = MaterialTheme.colorScheme.tertiary,
         ) {
-            Text(
-                text = "Train ID: $trainId",
-                modifier = Modifier.padding(innerPadding)
-            )
-            TrainExerciseList(
-                trainExerciseList = trainExercisesById,
-                modifier = Modifier.padding(innerPadding)
-            )
-            Button(
-                onClick = {
-                    navigateToAddTrainExerciseScreen(
-                        trainId,
-                        trainExercisesById.size
-                    )
-                },
+            Column(
                 modifier = Modifier,
-                shape = RoundedCornerShape(0.dp)
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(
-                        R.string.new_train_exercise_button_label
-                    ),
-                )
                 Text(
-                    text = stringResource(R.string.new_train_exercise_button_label),
+                    text = "Train ID: $trainId",
+                    modifier = Modifier.padding(innerPadding)
                 )
+                TrainExerciseList(
+                    trainExerciseList = trainExercisesById,
+                    modifier = Modifier.padding(innerPadding)
+                )
+                Button(
+                    onClick = {
+                        navigateToAddTrainExerciseScreen(
+                            trainId,
+                            trainExercisesById.size
+                        )
+                    },
+                    modifier = Modifier,
+                    shape = RoundedCornerShape(0.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(
+                            R.string.new_train_exercise_button_label
+                        ),
+                    )
+                    Text(
+                        text = stringResource(R.string.new_train_exercise_button_label),
+                    )
+                }
             }
         }
     }

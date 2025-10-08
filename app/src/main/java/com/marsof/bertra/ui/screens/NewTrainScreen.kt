@@ -12,9 +12,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -62,25 +65,35 @@ fun NewTrainScreen(
         topBar = {
             ApplicationTopBar(
                 title = stringResource(NewTrainScreenDestination.titleRes),
-                onNavigationClick = openDrawer
+                onNavigationClick = openDrawer,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ),
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier.padding(innerPadding),
-//            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
+
+        Surface(
+            modifier = Modifier,
+            color = MaterialTheme.colorScheme.tertiary,
         ) {
-            TrainInputForm(
-                trainDetails = trainFormUiState.train,
-                onValueChange = viewModel::updateUiState,
-                modifier = Modifier.fillMaxWidth()
-            )
-            Button(
-                onClick = onSaveClick,
-                enabled = trainFormUiState.isEntryValid,
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                modifier = Modifier.padding(innerPadding),
+//            verticalArrangement = Arrangement.spacedBy(dimensionResource(id = R.dimen.padding_large))
             ) {
-                Text(stringResource(R.string.go_train_exercise))
+                TrainInputForm(
+                    trainDetails = trainFormUiState.train,
+                    onValueChange = viewModel::updateUiState,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Button(
+                    onClick = onSaveClick,
+                    enabled = trainFormUiState.isEntryValid,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(stringResource(R.string.go_train_exercise))
+                }
             }
         }
     }

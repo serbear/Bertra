@@ -10,8 +10,11 @@ import androidx.compose.material.icons.filled.Rocket
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -57,68 +60,77 @@ fun WorkoutEngageScreen(
         topBar = {
             ApplicationTopBar(
                 title = stringResource(WorkoutEngageScreenDestination.titleRes),
-                onNavigationClick = openDrawer
+                onNavigationClick = openDrawer,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ),
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier.padding(innerPadding),
+        Surface(
+            modifier = Modifier,
+            color = MaterialTheme.colorScheme.tertiary,
         ) {
-            if (workoutState == null) {
-                Text(text = "There is no workout with this ID: $workoutId")
-            } else {
-                //
-                // Workout Name
-                //
-                Text(
-                    text = "Workout Name: ${workoutState!!.name}"
-                )
-                //
-                // Workout Description
-                //
-                Text(
-                    text = "Workout Description: ${workoutState!!.description}"
-                )
-                //
-                // todo: Workout Exercises
-                //
-                if (workoutTrainListState.isEmpty()) {
-                    Text(
-                        text = "There is no any exercises in the workout.",
-                    )
+            Column(
+                modifier = Modifier.padding(innerPadding),
+            ) {
+                if (workoutState == null) {
+                    Text(text = "There is no workout with this ID: $workoutId")
                 } else {
+                    //
+                    // Workout Name
+                    //
                     Text(
-                        text = "Workout Exercises:"
+                        text = "Workout Name: ${workoutState!!.name}"
                     )
-                    LazyColumn {
-                        items(
-                            items = workoutTrainListState,
-                            key = { it.trainExercise.id }) { currentExercise ->
-                            Text(
-                                text = currentExercise.trainExercise.exerciseId.toString()
-                            )
-                            Text(
-                                text = "Exercise Name: ${currentExercise.exerciseName}"
-                            )
+                    //
+                    // Workout Description
+                    //
+                    Text(
+                        text = "Workout Description: ${workoutState!!.description}"
+                    )
+                    //
+                    // todo: Workout Exercises
+                    //
+                    if (workoutTrainListState.isEmpty()) {
+                        Text(
+                            text = "There is no any exercises in the workout.",
+                        )
+                    } else {
+                        Text(
+                            text = "Workout Exercises:"
+                        )
+                        LazyColumn {
+                            items(
+                                items = workoutTrainListState,
+                                key = { it.trainExercise.id }) { currentExercise ->
+                                Text(
+                                    text = currentExercise.trainExercise.exerciseId.toString()
+                                )
+                                Text(
+                                    text = "Exercise Name: ${currentExercise.exerciseName}"
+                                )
+                            }
                         }
                     }
-                }
-                //
-                // Engage Button
-                //
-                Button(
-                    onClick = { navigateToActiveWorkoutScreen(workoutId) },
-                    modifier = Modifier,
-                    shape = RoundedCornerShape(0.dp),
-                    enabled = workoutTrainListState.isNotEmpty()
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Rocket,
-                        contentDescription = stringResource(R.string.workout_engage_button_label),
-                    )
-                    Text(
-                        text = stringResource(R.string.workout_engage_button_label),
-                    )
+                    //
+                    // Engage Button
+                    //
+                    Button(
+                        onClick = { navigateToActiveWorkoutScreen(workoutId) },
+                        modifier = Modifier,
+                        shape = RoundedCornerShape(0.dp),
+                        enabled = workoutTrainListState.isNotEmpty()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Rocket,
+                            contentDescription = stringResource(R.string.workout_engage_button_label),
+                        )
+                        Text(
+                            text = stringResource(R.string.workout_engage_button_label),
+                        )
+                    }
                 }
             }
         }

@@ -17,7 +17,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -55,30 +57,39 @@ fun ExerciseListScreen(
         topBar = {
             ApplicationTopBar(
                 title = stringResource(ExerciseListScreenDestination.titleRes),
-                onNavigationClick = openDrawer
+                onNavigationClick = openDrawer,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                ),
             )
         },
     ) { innerPadding ->
-        Column(
+        Surface(
             modifier = Modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
+            color = MaterialTheme.colorScheme.tertiary,
         ) {
-            ExerciseList(
-                exerciseList = exerciseListState.exerciseList,
-                modifier = Modifier.padding(innerPadding),
-            )
-            Button(
-                onClick = navigateToNewExerciseScreen,
+            Column(
                 modifier = Modifier,
-                shape = RoundedCornerShape(0.dp)
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.new_exercise_button_label),
+                ExerciseList(
+                    exerciseList = exerciseListState.exerciseList,
+                    modifier = Modifier.padding(innerPadding),
                 )
-                Text(
-                    text = stringResource(R.string.new_exercise_button_label),
-                )
+                Button(
+                    onClick = navigateToNewExerciseScreen,
+                    modifier = Modifier,
+                    shape = RoundedCornerShape(0.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.new_exercise_button_label),
+                    )
+                    Text(
+                        text = stringResource(R.string.new_exercise_button_label),
+                    )
+                }
             }
         }
     }

@@ -6,12 +6,14 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.marsof.bertra.ui.theme.LocalCustomColors
 
 /**
  * The general top bar using in the application screens.
@@ -24,7 +26,6 @@ fun ApplicationTopBar(
     navigationIcon: ImageVector = Icons.Default.Menu,
     navigationContentDescription: String? = "Open the Main Menu",
     actions: @Composable RowScope.() -> Unit = {},
-    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
 ) {
     TopAppBar(
         title = {
@@ -39,6 +40,9 @@ fun ApplicationTopBar(
             }
         },
         actions = actions,
-        colors = colors,
+        colors =  TopAppBarDefaults.topAppBarColors(
+            containerColor = LocalCustomColors.current.primary,
+            titleContentColor = LocalCustomColors.current.textPrimary,
+        ),
     )
 }

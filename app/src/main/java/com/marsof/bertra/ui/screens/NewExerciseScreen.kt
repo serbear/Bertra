@@ -52,10 +52,6 @@ fun NewExerciseScreen(
             ApplicationTopBar(
                 title = stringResource(NewExerciseScreenDestination.titleRes),
                 onNavigationClick = openDrawer,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                ),
             )
         },
     ) { innerPadding ->

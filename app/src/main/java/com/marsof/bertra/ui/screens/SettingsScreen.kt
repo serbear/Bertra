@@ -54,10 +54,6 @@ fun SettingsScreen(
             ApplicationTopBar(
                 title = stringResource(SettingsScreenDestination.titleRes),
                 onNavigationClick = openDrawer,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                ),
             )
         },
     ) { innerPadding ->

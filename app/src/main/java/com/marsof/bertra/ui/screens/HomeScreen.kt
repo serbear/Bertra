@@ -25,6 +25,7 @@ import com.marsof.bertra.R
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
 import com.marsof.bertra.ui.navigation.INavigationDestination
+import com.marsof.bertra.ui.theme.LocalCustomColors
 import com.marsof.bertra.ui.viewmodels.HomeScreenViewModel
 import com.marsof.bertra.ui.viewmodels.IActiveTrainStrategy
 import com.marsof.bertra.ui.viewmodels.activetrainstrategies.CurrentTrainStrategy
@@ -65,16 +66,12 @@ fun HomeScreen(
             ApplicationTopBar(
                 title = stringResource(HomeScreenDestination.titleRes),
                 onNavigationClick = openDrawer,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                ),
             )
         },
     ) { innerPadding ->
         Surface(
             modifier = Modifier,
-            color = MaterialTheme.colorScheme.tertiary,
+            color = LocalCustomColors.current.tertiary,
         ) {
             LastTrainComponent(
                 currentDisplayStrategy,

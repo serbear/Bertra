@@ -8,27 +8,28 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryDark,
-    secondary = SecondaryDark,
-    tertiary = TertiaryDark,
-    onTertiary = onTertiaryBlack,
-    surface = AdditionalDark,
-    outlineVariant = AdditionalDark,
-    primaryContainer = PrimaryDark,
-    onPrimaryContainer = AdditionalDark,
+//    primary = PrimaryDark,
+//    secondary = SecondaryDark,
+//    tertiary = TertiaryDark,
+//    onTertiary = onTertiaryBlack,
+//    surface = AdditionalDark,
+//    outlineVariant = AdditionalDark,
+//    primaryContainer = PrimaryDark,
+//    onPrimaryContainer = AdditionalDark,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = PrimaryLight,
-    secondary = SecondaryLight,
-    tertiary = TertiaryLight,
-    onTertiary = onTertiaryLight,
-    surface = AdditionalLight,
-    primaryContainer = AdditionalLight,
-    onPrimaryContainer = onTertiaryLight,
+//    primary = PrimaryLight,
+//    secondary = SecondaryLight,
+//    tertiary = TertiaryLight,
+//    onTertiary = onTertiaryLight,
+//    surface = AdditionalLight,
+//    primaryContainer = AdditionalLight,
+//    onPrimaryContainer = onTertiaryLight,
 )
 
 @Composable
@@ -48,9 +49,13 @@ fun BertraTheme(
         else -> LightColorScheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    val customColors = if (darkTheme) DarkCustomColors else LightCustomColors
+
+    CompositionLocalProvider(LocalCustomColors provides customColors) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content,
+        )
+    }
 }

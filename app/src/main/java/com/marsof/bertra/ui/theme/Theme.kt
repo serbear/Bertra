@@ -12,11 +12,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-
 )
 
 private val LightColorScheme = lightColorScheme(
-
 )
 
 @Composable

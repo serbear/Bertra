@@ -16,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -29,7 +28,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.marsof.bertra.ui.navigation.DestinationMenuItem
 import com.marsof.bertra.ui.navigation.DividerMenuItem
-import com.marsof.bertra.ui.navigation.MenuItem
 import com.marsof.bertra.ui.navigation.NavigationHost
 import com.marsof.bertra.ui.navigation.sideMenuDestinations
 import com.marsof.bertra.ui.theme.BertraTheme

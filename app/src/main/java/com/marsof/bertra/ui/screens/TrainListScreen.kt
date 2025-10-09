@@ -8,11 +8,16 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,7 +25,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Rocket
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -30,7 +38,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,6 +58,7 @@ import com.marsof.bertra.data.entites.Train
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
 import com.marsof.bertra.ui.navigation.INavigationDestination
+import com.marsof.bertra.ui.theme.LocalCustomColors
 import com.marsof.bertra.ui.viewmodels.TrainListScreenViewModel
 
 object TrainListScreenDestination : INavigationDestination {
@@ -76,24 +85,25 @@ fun TrainListScreen(
                 onNavigationClick = openDrawer,
             )
         },
-    ) { innerPadding ->
-        Surface(
-            modifier = Modifier,
-            color = MaterialTheme.colorScheme.tertiary,
-        ) {
-            Column(
-                modifier = Modifier, horizontalAlignment = Alignment.CenterHorizontally
+        bottomBar = {
+            BottomAppBar(
+                containerColor =Color.Transparent, // Color.Magenta,
+                contentPadding = PaddingValues(0.dp),
+                modifier = Modifier.height(dimensionResource(R.dimen.button_height)),
             ) {
-                TrainList(
-                    trainList = trainListState.trainList,
-                    navigateToWorkoutEngageScreen = navigateToWorkoutEngageScreen,
-                    modifier = Modifier.padding(innerPadding),
-                )
-                Spacer(Modifier.fillMaxWidth())
                 Button(
                     onClick = navigateToNewTrainScreen,
-                    modifier = Modifier,
                     shape = RoundedCornerShape(0.dp),
+                    colors = ButtonColors(
+                        containerColor = LocalCustomColors.current.blueButton,
+                        contentColor = LocalCustomColors.current.textTertiary,
+                        disabledContainerColor = Color.Magenta,
+                        disabledContentColor = Color.Magenta,
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(dimensionResource(R.dimen.button_height))
+                        .padding(0.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -104,6 +114,18 @@ fun TrainListScreen(
                     )
                 }
             }
+        }
+    ) { innerPadding ->
+        Surface(
+            color = LocalCustomColors.current.tertiary,
+        ) {
+            TrainList(
+                trainList = trainListState.trainList,
+                navigateToWorkoutEngageScreen = navigateToWorkoutEngageScreen,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+            )
         }
     }
 }
@@ -120,16 +142,19 @@ fun TrainList(
     var selectedTrain by remember { mutableStateOf<Train?>(null) }
 
     Column(
-        modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (trainList.isEmpty()) {
             Text(
                 text = stringResource(R.string.train_list_is_empty),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(top = 16.dp),
             )
         } else {
-            LazyColumn {
+            LazyColumn(
+                modifier = modifier.weight(1f)
+            ) {
                 items(
                     items = trainList,
                     key = { it.id }
@@ -138,8 +163,7 @@ fun TrainList(
                         train = train,
                         isSelected = selectedTrain == train,
                         onTrainClick = { clickedTrain ->
-                            selectedTrain =
-                                if (selectedTrain == clickedTrain) null else clickedTrain
+                            selectedTrain = getSelectedTrain(selectedTrain, clickedTrain)
                         },
                         navigateToWorkoutEngageScreen = navigateToWorkoutEngageScreen,
                     )
@@ -147,6 +171,10 @@ fun TrainList(
             }
         }
     }
+}
+
+private fun getSelectedTrain(selectedTrain: Train?, clickedTrain: Train): Train? {
+    return if (selectedTrain == clickedTrain) null else clickedTrain
 }
 
 /**
@@ -161,28 +189,22 @@ fun SingleTrain(
 ) {
     Card(
         modifier = Modifier
-            .padding(
-                dimensionResource(id = R.dimen.padding_small)
-            )
             .clickable {
                 onTrainClick(train)
             }
-            .border(
-                width = if (isSelected) 2.dp else 0.dp,
-                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
-                shape = RoundedCornerShape(0.dp)
-            ),
+            .height(dimensionResource(R.dimen.button_height)),
         colors = getWorkoutListItemBackgroundColor(isSelected),
-        // elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        shape = RoundedCornerShape(0.dp),
     ) {
         Row(
             modifier = Modifier
-                //.padding(dimensionResource(id = R.dimen.padding_large))
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(start = dimensionResource(R.dimen.padding_small) * 2),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "${train.id}: ${train.name}",
+                text = train.name,
                 style = MaterialTheme.typography.titleMedium,
                 color = getWorkoutListItemTextColor(isSelected),
             )
@@ -195,15 +217,22 @@ fun SingleTrain(
                 exit = fadeOut() + shrinkHorizontally()
             ) {
                 Row(
-                    modifier = Modifier,
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     //
                     // Edit workout button
                     //
-                    Button(
+                    TextButton(
                         onClick = {},
-                        modifier = Modifier,
+                        modifier = Modifier.fillMaxHeight(),
                         shape = RoundedCornerShape(0.dp),
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = LocalCustomColors.current.additional,
+                            contentColor = LocalCustomColors.current.primary,
+                            disabledContainerColor = Color.Magenta,
+                            disabledContentColor = Color.Magenta,
+                        )
                     ) {
                         Icon(
                             imageVector = Icons.Default.Edit,
@@ -216,10 +245,16 @@ fun SingleTrain(
                     //
                     // Engage workout button
                     //
-                    Button(
+                    TextButton(
                         onClick = { navigateToWorkoutEngageScreen(train.id) },
-                        modifier = Modifier,
+                        modifier = Modifier.fillMaxHeight(),
                         shape = RoundedCornerShape(0.dp),
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = LocalCustomColors.current.additional,
+                            contentColor = LocalCustomColors.current.primary,
+                            disabledContainerColor = Color.Magenta,
+                            disabledContentColor = Color.Magenta,
+                        )
                     ) {
                         Icon(
                             imageVector = Icons.Default.Rocket,
@@ -238,16 +273,16 @@ fun SingleTrain(
 
 @Composable
 private fun getWorkoutListItemTextColor(isCardSelected: Boolean): Color {
-    return if (isCardSelected) MaterialTheme.colorScheme.primary
-    else MaterialTheme.colorScheme.onSurface
+    return if (isCardSelected) LocalCustomColors.current.primary
+    else LocalCustomColors.current.textPrimary
 }
 
 @Composable
 private fun getWorkoutListItemBackgroundColor(isCardSelected: Boolean): CardColors {
     return CardDefaults.cardColors(
         containerColor = if (isCardSelected)
-            MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+            LocalCustomColors.current.additional
         else
-            MaterialTheme.colorScheme.background
+            LocalCustomColors.current.tertiary,
     )
 }

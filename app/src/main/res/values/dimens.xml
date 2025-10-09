@@ -9,5 +9,5 @@
     <dimen name="repetition_control_value_padding">8dp</dimen>
     <dimen name="active_workout_screen_elements_space">32dp</dimen>
     <dimen name="timer_control_value_bottom_space">16dp</dimen>
-
+    <dimen name="button_height">42dp</dimen>
 </resources>

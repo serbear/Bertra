@@ -1,6 +1,7 @@
 package com.marsof.bertra.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -214,7 +215,7 @@ fun SingleTrain(
             AnimatedVisibility(
                 visible = isSelected,
                 enter = fadeIn() + expandHorizontally(),
-                exit = fadeOut() + shrinkHorizontally()
+                exit = ExitTransition.None,
             ) {
                 Row(
                     modifier = Modifier.fillMaxHeight(),

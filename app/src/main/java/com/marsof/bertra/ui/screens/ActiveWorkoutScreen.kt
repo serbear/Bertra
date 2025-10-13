@@ -1,8 +1,6 @@
 package com.marsof.bertra.ui.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,14 +18,13 @@ import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -51,7 +48,9 @@ import com.marsof.bertra.data.entites.TrainExerciseRepetitions
 import com.marsof.bertra.data.entites.TrainExerciseWithExerciseName
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
+import com.marsof.bertra.ui.elements.TimerControlButton
 import com.marsof.bertra.ui.navigation.INavigationDestination
+import com.marsof.bertra.ui.theme.LocalCustomColors
 import com.marsof.bertra.ui.viewmodels.ActiveWorkoutScreenViewModel
 import com.marsof.bertra.ui.viewmodels.ActiveWorkoutScreenViewModel.Companion.TIMER_MODE_READY
 import com.marsof.bertra.ui.viewmodels.ActiveWorkoutScreenViewModel.Companion.TIMER_MODE_REST
@@ -100,7 +99,7 @@ fun ActiveWorkoutScreen(
     ) { innerPadding ->
         Surface(
             modifier = Modifier,
-            color = MaterialTheme.colorScheme.tertiary,
+            color = LocalCustomColors.current.tertiary,
         ) {
             Column(
                 modifier = Modifier
@@ -108,26 +107,33 @@ fun ActiveWorkoutScreen(
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                if (isExerciseAccomplished && isCurrentExerciseLast) {
-                    WorkoutComplete()
-                } else {
-                    ExerciseInProgressContent(
-                        currentExercise,
-                        isExerciseAccomplished,
-                        currentTimerModeName,
-                        currentTimerMode,
-                        timeLeft,
-                        timeLeftHundredths,
-                        isTimerPaused,
-                        currentExerciseRepetitions,
-                        currentRepetitionIndex,
-                        viewModel::setNextTimerMode,
-                        viewModel::getNextTimerModeName,
-                        viewModel::pauseTimer,
-                        viewModel::resumeTimer,
-                        viewModel::goNextExercise,
-                    )
+                Spacer(Modifier.weight(1f))
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    if (isExerciseAccomplished && isCurrentExerciseLast) {
+                        WorkoutComplete()
+                    } else {
+                        ExerciseInProgressContent(
+                            currentExercise,
+                            isExerciseAccomplished,
+                            currentTimerModeName,
+                            currentTimerMode,
+                            timeLeft,
+                            timeLeftHundredths,
+                            isTimerPaused,
+                            currentExerciseRepetitions,
+                            currentRepetitionIndex,
+                            viewModel::setNextTimerMode,
+                            viewModel::getNextTimerModeName,
+                            viewModel::pauseTimer,
+                            viewModel::resumeTimer,
+                            viewModel::goNextExercise,
+                        )
+                    }
                 }
+                Spacer(Modifier.weight(1.618f))
             }
         }
     }
@@ -223,12 +229,27 @@ fun TimerControlAndRepetitions(
 fun ExerciseCompleteControls(
     onGoNextExercise: () -> Unit
 ) {
+    Spacer(
+        Modifier.size(
+            dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
+        )
+    )
     Text(text = "Exercise complete!")
-
+    Spacer(
+        Modifier.size(
+            dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
+        )
+    )
     Button(
         onClick = { onGoNextExercise() },
-        modifier = Modifier,
-        shape = RoundedCornerShape(0.dp)
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(0.dp),
+        colors = ButtonColors(
+            containerColor = LocalCustomColors.current.blueButton,
+            contentColor = LocalCustomColors.current.textTertiary,
+            disabledContainerColor = Color.Magenta,
+            disabledContentColor = Color.Magenta,
+        ),
     ) {
         Text(
             text = stringResource(R.string.go_next_exercise_button_label),
@@ -278,7 +299,7 @@ fun TimerControl(
     onResumeTimer: () -> Unit,
 ) {
     Column(
-        modifier = Modifier,
+        modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row {
@@ -309,7 +330,7 @@ fun TimerControl(
         )
         Spacer(
             Modifier.size(
-                dimensionResource(R.dimen.timer_control_value_bottom_space).value.dp
+                dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
             )
         )
         //
@@ -335,56 +356,37 @@ fun TimerControlButtons(
     onChangeTimerMode: () -> Unit,
     onGetNextTimeModeName: () -> Int,
 ) {
-    Row {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+    ) {
         //
         // Pause and Resume buttons
         //
         if (isTimerPaused) {
-            Button(
-                onClick = { onResumeTimer() },
-                modifier = Modifier,
-                shape = RoundedCornerShape(0.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Restore,
-                    contentDescription = stringResource(R.string.resume_timer_button_label),
-                )
-                Text(
-                    text = stringResource(R.string.resume_timer_button_label),
-                )
-            }
+            TimerControlButton(
+                onClickMethod = onResumeTimer,
+                text = stringResource(R.string.resume_timer_button_label),
+                icon = Icons.Default.Restore,
+                modifier = Modifier.weight(1f),
+            )
         } else {
-            Button(
-                onClick = { onPauseTimer() },
-                modifier = Modifier,
-                shape = RoundedCornerShape(0.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Pause,
-                    contentDescription = stringResource(R.string.pause_timer_button_label),
-                )
-                Text(
-                    text = stringResource(R.string.pause_timer_button_label),
-                )
-            }
+            TimerControlButton(
+                onClickMethod = onPauseTimer,
+                text = stringResource(R.string.pause_timer_button_label),
+                icon = Icons.Default.Pause,
+                modifier = Modifier.weight(1f),
+            )
         }
         //
         // Go to Next Mode
         //
-        Button(
-            onClick = { onChangeTimerMode() },
-            modifier = Modifier,
-            shape = RoundedCornerShape(0.dp),
-            enabled = currentTimerMode == TIMER_MODE_WORK
-        ) {
-            Text(
-                text = stringResource(onGetNextTimeModeName()),
-            )
-            Icon(
-                imageVector = Icons.Default.SkipNext,
-                contentDescription = stringResource(R.string.timer_mode_name_button_label),
-            )
-        }
+        TimerControlButton(
+            onClickMethod = onChangeTimerMode,
+            text = stringResource(onGetNextTimeModeName()),
+            icon = Icons.Default.SkipNext,
+            contentDescription = stringResource(R.string.timer_mode_name_button_label),
+            modifier = Modifier.weight(1f),
+        )
     }
 }
 
@@ -396,6 +398,7 @@ fun RepetitionsControl(
 ) {
     Column(
         modifier = Modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = "REPETITIONS",
@@ -430,9 +433,15 @@ fun RepetitionItem(
     currentRepetitionIndex: Int,
     currentTimerMode: Int,
 ) {
+    val (valueColor, valueNameColor) = getCurrentRepetitionTextColors(
+        setNumber,
+        currentRepetitionIndex,
+        currentTimerMode
+    )
+
     Column(
         modifier = Modifier.width(IntrinsicSize.Min),
-        horizontalAlignment = Alignment.End,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         //
         // Set number
@@ -442,18 +451,13 @@ fun RepetitionItem(
             fontSize = dimensionResource(R.dimen.repetition_control_set_number).value.sp,
             textAlign = TextAlign.Right,
             modifier = Modifier.padding(end = 1.dp),
+            color = LocalCustomColors.current.textPrimary,
         )
         //
         // Number of repetitions and weight
         //
         Box(
             modifier = Modifier
-                .border(
-                    BorderStroke(
-                        1.dp,
-                        Color.Magenta
-                    )
-                )
                 .background(
                     color = getCurrentRepetitionMarker(
                         setNumber,
@@ -471,18 +475,23 @@ fun RepetitionItem(
                 //
                 ValueBoxWithLabel(
                     value = repNumber,
-                    labelText = "REPS"
+                    labelText = "REPS",
+                    valueTextColor = valueColor,
+                    valueNameTextColor = valueNameColor,
                 )
                 HorizontalDivider(
+                    modifier = Modifier.fillMaxWidth(0.75f),
                     thickness = 1.dp,
-                    color = Color.Black,
+                    color = LocalCustomColors.current.secondary,
                 )
                 //
                 // Weight or number of a weight
                 //
                 ValueBoxWithLabel(
                     value = weightOrNumber,
-                    labelText = "WGT"
+                    labelText = "WGT",
+                    valueTextColor = valueColor,
+                    valueNameTextColor = valueNameColor,
                 )
             }
         }
@@ -504,6 +513,7 @@ fun RepetitionItem(
  * @param currentTimerMode The current timer mode.
  * @return The color for the current repetition marker.
  */
+@Composable
 private fun getCurrentRepetitionMarker(
     setNumber: Int,
     currentRepetitionIndex: Int,
@@ -514,19 +524,24 @@ private fun getCurrentRepetitionMarker(
         return Color.Transparent
     } else if (setNumber < currentRepetitionIndex + 1) {
         // Accomplished repetition.
-        return Color.Gray
+        return LocalCustomColors.current.primary
     }
     // Current repetition.
     return when (currentTimerMode) {
-        TIMER_MODE_READY -> Color.Yellow
-        TIMER_MODE_WORK -> Color.Red
-        TIMER_MODE_REST -> Color.Green
+        TIMER_MODE_READY -> LocalCustomColors.current.secondary
+        TIMER_MODE_WORK -> LocalCustomColors.current.additional
+        TIMER_MODE_REST -> LocalCustomColors.current.primary
         else -> Color.Transparent
     }
 }
 
 @Composable
-fun ValueBoxWithLabel(value: Int, labelText: String) {
+fun ValueBoxWithLabel(
+    value: Int,
+    labelText: String,
+    valueTextColor: Color,
+    valueNameTextColor: Color
+) {
     Box(
         modifier = Modifier
         //.border(BorderStroke(1.dp, Color.Magenta))
@@ -543,12 +558,44 @@ fun ValueBoxWithLabel(value: Int, labelText: String) {
             Text(
                 text = value.toString(),
                 fontSize = dimensionResource(R.dimen.repetition_control_repetition_number).value.sp,
+                color = valueTextColor,
             )
             Text(
                 text = labelText,
                 fontSize = dimensionResource(R.dimen.repetition_control_set_number).value.sp,
+                color = valueNameTextColor,
             )
         }
     }
 }
 
+/**
+ * Определяет цвета для текста значения и его подписи в зависимости от состояния подхода.
+ *
+ * @param setNumber Номер текущего подхода.
+ * @param currentRepetitionIndex Индекс текущего выполняемого подхода.
+ * @param currentTimerMode Текущий режим таймера (готовность, работа, отдых).
+ * @return Pair<Color, Color>, где first - цвет для значения (числа),
+ * а second - цвет для подписи (REPS/WGT).
+ */
+@Composable
+private fun getCurrentRepetitionTextColors(
+    setNumber: Int,
+    currentRepetitionIndex: Int,
+    currentTimerMode: Int
+): Pair<Color, Color> {
+    val textSecondary = LocalCustomColors.current.textSecondary
+
+    // Логика для будущих и выполненных подходов одинакова для обоих цветов
+    if (setNumber != currentRepetitionIndex + 1) {
+        return textSecondary to textSecondary
+    }
+
+    // Логика для текущего подхода
+    return when (currentTimerMode) {
+        TIMER_MODE_READY -> textSecondary to textSecondary
+        TIMER_MODE_WORK -> LocalCustomColors.current.primary to LocalCustomColors.current.tertiary
+        TIMER_MODE_REST -> textSecondary to textSecondary
+        else -> Color.Magenta to Color.Magenta // Для отладки
+    }
+}

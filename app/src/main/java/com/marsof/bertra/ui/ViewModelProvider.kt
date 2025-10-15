@@ -5,6 +5,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.marsof.bertra.BertraApplication
+import com.marsof.bertra.data.repository.MusclesRepository
 import com.marsof.bertra.ui.viewmodels.ActiveWorkoutScreenViewModel
 import com.marsof.bertra.ui.viewmodels.AddTrainExerciseScreenViewModel
 import com.marsof.bertra.ui.viewmodels.ExerciseListScreenViewModel
@@ -90,7 +91,10 @@ object ViewModelProvider {
             )
         }
         initializer {
-            ExercisesApiScreenViewModel()
+            // Создаем репозиторий с вашим ключом
+            val musclesRepository =
+                MusclesRepository(apiKey = "")
+            ExercisesApiScreenViewModel(musclesRepository = musclesRepository)
         }
     }
 }

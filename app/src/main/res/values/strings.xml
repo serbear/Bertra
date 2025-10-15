@@ -53,4 +53,5 @@
     <string name="settings_dark_mode_switch">Use Dark Mode</string>
     <string name="settings_default_circles_number_label">Default circle number:</string>
     <string name="train_number_of_circles_label">Number of Circles:</string>
+    <string name="exercises_api_screen_title">Exercises API</string>
 </resources>

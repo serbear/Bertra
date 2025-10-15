@@ -8,6 +8,7 @@ import com.marsof.bertra.BertraApplication
 import com.marsof.bertra.ui.viewmodels.ActiveWorkoutScreenViewModel
 import com.marsof.bertra.ui.viewmodels.AddTrainExerciseScreenViewModel
 import com.marsof.bertra.ui.viewmodels.ExerciseListScreenViewModel
+import com.marsof.bertra.ui.viewmodels.ExercisesApiScreenViewModel
 import com.marsof.bertra.ui.viewmodels.HomeScreenViewModel
 import com.marsof.bertra.ui.viewmodels.MeasurementUnitListScreenViewModel
 import com.marsof.bertra.ui.viewmodels.NewExerciseScreenViewModel
@@ -87,6 +88,9 @@ object ViewModelProvider {
             SettingsScreenViewModel(
                 bertraApplication()
             )
+        }
+        initializer {
+            ExercisesApiScreenViewModel()
         }
     }
 }

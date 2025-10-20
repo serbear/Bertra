@@ -80,4 +80,31 @@ class MusclesRepository(private val apiKey: String) : IMusclesRepository {
     override suspend fun refreshMuscles() {
         // Логика для принудительного обновления (если потребуется кеширование)
     }
+
+    override  fun getExerciseForMuscleStream(muscle: Muscle): Flow<List<Exercise>> = flow{
+        val repName = "MusclesRepository"
+
+        if (apiKey.isEmpty()) {
+            val logMessage = "API key is missing."
+            val errorMessage = "API key is missing."
+
+            Log.e(repName, logMessage)
+            throw IllegalArgumentException(errorMessage)
+        }
+        try {
+            /* DEBUG: UNCOMMENT IN RELEASE */
+
+            val exercises: List<Exercise> = ExercisesApi.retrofitService.getExercises(apiKey)
+                .filter { it.muscle == muscle.name }
+
+            // Send the list of muscles.
+            emit(exercises)
+        } catch (e: Exception) {
+            val logMessage = "Error fetching muscles: ${e.message}"
+            val errorMessage = "Failed to fetch data from network"
+
+            Log.e(repName, logMessage)
+            throw IOException(errorMessage, e)
+        }
+    }
 }

@@ -147,9 +147,9 @@ fun MuscleList(
             }
         }
 
-        is ExercisesApiScreenUiState.Success -> {
+        is ExercisesApiScreenUiState.Success<*> -> {
             MuscleItems(
-                muscles = state.muscles,
+                muscles = state.data as List<Muscle>,
                 onMuscleSelected = onMuscleSelected,
             )
         }

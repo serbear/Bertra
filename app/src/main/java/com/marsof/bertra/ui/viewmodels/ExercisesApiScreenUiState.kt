@@ -1,5 +1,6 @@
 package com.marsof.bertra.ui.viewmodels
 
+import com.marsof.bertra.api.Exercise
 import com.marsof.bertra.data.Muscle
 
 /**
@@ -10,7 +11,7 @@ sealed interface ExercisesApiScreenUiState {
      * Состояние успешной загрузки данных.
      * @param muscles Список мышц для отображения.
      */
-    data class Success(val muscles: List<Muscle>) : ExercisesApiScreenUiState
+    data class Success<T>(val data: List<T>) : ExercisesApiScreenUiState
 
     /**
      * Состояние ошибки.

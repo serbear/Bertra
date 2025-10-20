@@ -1,5 +1,6 @@
 package com.marsof.bertra.data.repository
 
+import com.marsof.bertra.api.Exercise
 import com.marsof.bertra.data.Muscle
 import kotlinx.coroutines.flow.Flow
 
@@ -9,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 interface IMusclesRepository {
     /**
      * Возвращает поток (Flow) со списком названий мышц.
-     * Flow позволяет автоматически получать обновления, когда данные изменяются.
      */
     fun getMusclesStream(): Flow<List<Muscle>>
 
@@ -17,5 +17,6 @@ interface IMusclesRepository {
      * Принудительно обновляет кеш мышц с удаленного сервера.
      */
     suspend fun refreshMuscles()
+    fun getExerciseForMuscleStream(muscle: Muscle): Flow<List<Exercise>>
 
 }

@@ -1,9 +1,9 @@
 package com.marsof.bertra.data
 
 /**
- * Класс данных, представляющий мышцу.
+ * Represents a muscle data type.
  *
- * @param name Название мышцы.
+ * @param name The muscle name.
  */
 data class Muscle(
     val name: String

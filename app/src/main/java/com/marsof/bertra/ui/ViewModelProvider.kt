@@ -93,7 +93,7 @@ object ViewModelProvider {
         initializer {
             // Создаем репозиторий с вашим ключом
             val musclesRepository =
-                MusclesRepository(apiKey = "")
+                MusclesRepository(apiKey = "::paste api key::")
             ExercisesApiScreenViewModel(musclesRepository = musclesRepository)
         }
     }

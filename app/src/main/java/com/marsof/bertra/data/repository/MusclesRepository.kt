@@ -20,23 +20,56 @@ class MusclesRepository(private val apiKey: String) : IMusclesRepository {
      * Этот метод выполняет сетевой запрос каждый раз при сборе потока.
      */
     override fun getMusclesStream(): Flow<List<Muscle>> = flow {
+        val repName = "MusclesRepository"
+
         if (apiKey.isEmpty()) {
-            Log.e("MusclesRepository", "API key is missing.")
-            throw IllegalArgumentException("API key is missing.")
+            val logMessage = "API key is missing."
+            val errorMessage = "API key is missing."
+
+            Log.e(repName, logMessage)
+            throw IllegalArgumentException(errorMessage)
         }
         try {
+            /* DEBUG: UNCOMMENT IN RELEASE
+
             val exercises: List<Exercise> = ExercisesApi.retrofitService.getExercises(apiKey)
-            // Извлекаем уникальные названия мышц и преобразуем их в объекты Muscle
+            // Get unique muscle names and transform them into Muscle objects.
             val muscles = exercises.map { it.muscle }
                 .distinct()
                 .map { muscleName -> Muscle(name=muscleName) }
-            emit(muscles) // Отправляем список объектов Muscle
+            */
+
+            // TODO: DEBUG: emit pre-prepared list so as not to call API.
+            val muscles = listOf(
+                Muscle("abdominals"),
+                Muscle("abductors"),
+                Muscle("adductors"),
+                Muscle("biceps"),
+                Muscle("calves"),
+                Muscle("chest"),
+                Muscle("forearms"),
+                Muscle("glutes"),
+                Muscle("hamstrings"),
+                Muscle("lats"),
+                Muscle("lower_back"),
+                Muscle("middle_back"),
+                Muscle("neck"),
+                Muscle("quadriceps"),
+                Muscle("traps"),
+                Muscle("triceps"),
+            )
+            // Send the list of muscles.
+            emit(muscles)
         } catch (e: Exception) {
-            Log.e("MusclesRepository", "Error fetching muscles: ${e.message}")
-            // Преобразуем исключение в более специфичное для слоя данных, если нужно
-            throw IOException("Failed to fetch data from network", e)
+            val logMessage = "Error fetching muscles: ${e.message}"
+            val errorMessage = "Failed to fetch data from network"
+
+            Log.e(repName, logMessage)
+            throw IOException(errorMessage, e)
         }
-    }.flowOn(Dispatchers.IO) // Убеждаемся, что сетевой запрос выполняется в фоновом потоке.
+    }
+        // Make sure that the network request is executed in a background thread.
+        .flowOn(Dispatchers.IO)
 
     /**
      * В текущей простой реализации этот метод не делает ничего,

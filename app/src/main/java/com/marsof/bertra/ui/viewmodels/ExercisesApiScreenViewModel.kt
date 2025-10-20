@@ -1,7 +1,9 @@
 package com.marsof.bertra.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.marsof.bertra.data.Muscle
 import com.marsof.bertra.data.repository.IMusclesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +29,7 @@ class ExercisesApiScreenViewModel(
             _uiState.value = ExercisesApiScreenUiState.Loading
             musclesRepository.getMusclesStream()
                 .catch { exception ->
-                    // Перехватываем ошибки из Flow
+                    // Get an error from Flow.
                     val errorMessage = when (exception) {
                         is IOException -> "Network error occurred."
                         else -> "An unexpected error occurred."
@@ -35,9 +37,13 @@ class ExercisesApiScreenViewModel(
                     _uiState.value = ExercisesApiScreenUiState.Error(errorMessage)
                 }
                 .collect { muscles ->
-                    // При успешном получении данных обновляем состояние
+                    // Update state on successful data retrieval.
                     _uiState.value = ExercisesApiScreenUiState.Success(muscles)
                 }
         }
+    }
+
+    fun getExercisesFor(muscle: Muscle){
+        Log.d("BERTRA", "getExercisesFor: ${muscle.name}")
     }
 }

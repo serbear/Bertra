@@ -1,22 +1,34 @@
 package com.marsof.bertra.ui.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,7 +41,7 @@ import com.marsof.bertra.ui.theme.LocalCustomColors
 import com.marsof.bertra.ui.viewmodels.ExercisesApiScreenUiState
 import com.marsof.bertra.ui.viewmodels.ExercisesApiScreenViewModel
 
-object ExercisesApiScreenDestination: INavigationDestination{
+object ExercisesApiScreenDestination : INavigationDestination {
     private const val ROUTE_NAME = "exercises_api"
     override val route: String get() = ROUTE_NAME
     override val titleRes: Int get() = R.string.exercises_api_screen_title
@@ -60,20 +72,72 @@ fun ExercisesApiScreen(
                     .padding(innerPadding)
                     .fillMaxSize(),
             ) {
-                Text(text="API info")
+                Text(text = "API info")
 
-                MuscleList(viewModel = viewModel)
+                // todo: "Muscles" button for choosing a muscle for the list.
 
+                MuscleSelector(
+                    viewModel = viewModel,
+                    onMuscleSelected = { muscle ->
+                        viewModel.getExercisesFor(muscle)
+                    }
+                )
+
+                // todo: "Get Exercises" button for getting a list of additional exercises
+                //       for the selected muscle.
             }
         }
     }
 }
 
 @Composable
-fun MuscleList(viewModel: ExercisesApiScreenViewModel) {
+fun MuscleSelector(
+    viewModel: ExercisesApiScreenViewModel,
+    onMuscleSelected: (Muscle) -> Unit,
+) {
+    var isListShow by remember { mutableStateOf(false) }
+
+    Column {
+        if (isListShow) {
+            // Show when the muscle list is displayed.
+            MuscleList(
+                viewModel = viewModel,
+                onMuscleSelected = { muscle ->
+                    onMuscleSelected(muscle)
+                }
+            )
+        } else {
+            // Show when the muscle list is hidden.
+            Text(text = "Select a muscle:")
+            Button(
+                onClick = {
+                    // Toggle the list displaying.
+                    isListShow = !isListShow
+                },
+                modifier = Modifier,
+                shape = RoundedCornerShape(0.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = stringResource(R.string.muscle_list),
+                )
+                Text(
+                    text = stringResource(R.string.muscle_list),
+                )
+            }
+
+        }
+    }
+}
+
+@Composable
+fun MuscleList(
+    viewModel: ExercisesApiScreenViewModel,
+    onMuscleSelected: (Muscle) -> Unit
+) {
     val uiState by viewModel.uiState.collectAsState()
 
-    when(val state = uiState) {
+    when (val state = uiState) {
         is ExercisesApiScreenUiState.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -82,9 +146,14 @@ fun MuscleList(viewModel: ExercisesApiScreenViewModel) {
                 CircularProgressIndicator()
             }
         }
+
         is ExercisesApiScreenUiState.Success -> {
-            MuscleItems(muscles = state.muscles)
+            MuscleItems(
+                muscles = state.muscles,
+                onMuscleSelected = onMuscleSelected,
+            )
         }
+
         is ExercisesApiScreenUiState.Error -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -95,14 +164,38 @@ fun MuscleList(viewModel: ExercisesApiScreenViewModel) {
         }
     }
 }
+
 @Composable
-fun MuscleItems(muscles: List<Muscle>, modifier: Modifier = Modifier) {
+fun MuscleItems(
+    muscles: List<Muscle>,
+    modifier: Modifier = Modifier,
+    onMuscleSelected: (Muscle) -> Unit
+) {
     LazyColumn(
         modifier = modifier.padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(muscles) { muscle ->
-            Text(text = muscle.name)
+            Box(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .height(dimensionResource(R.dimen.button_height))
+                    .clickable {
+                        onMuscleSelected(muscle)
+                    },
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = muscle.name,
+                )
+            }
         }
+    }
+}
+
+@Composable
+fun ExerciseInfo() {
+    Column {
+        Text(text = "EXERCISE INFO")
     }
 }

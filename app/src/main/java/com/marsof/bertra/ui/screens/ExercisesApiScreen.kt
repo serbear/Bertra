@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
+import com.marsof.bertra.api.Exercise
 import com.marsof.bertra.data.Muscle
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
@@ -55,6 +56,9 @@ fun ExercisesApiScreen(
     ),
     openDrawer: () -> Unit,
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    var muscleSelected by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             ApplicationTopBar(
@@ -72,19 +76,50 @@ fun ExercisesApiScreen(
                     .padding(innerPadding)
                     .fillMaxSize(),
             ) {
-                Text(text = "API info")
 
-                // todo: "Muscles" button for choosing a muscle for the list.
-
-                MuscleSelector(
-                    viewModel = viewModel,
-                    onMuscleSelected = { muscle ->
-                        viewModel.getExercisesFor(muscle)
+                if (muscleSelected) {
+                    when (val state = uiState) {
+                        is ExercisesApiScreenUiState.Success<*> -> {
+                            val exercises = state.data as? List<Exercise>
+                            if (exercises != null) {
+                                ExerciseList(exercises = exercises)
+                            } else {
+                                // Обработка случая, когда данные не являются списком упражнений
+//                                Text("Error: Invalid data for exercises")
+                            }
+                        }
+                        is ExercisesApiScreenUiState.Loading -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                                Text(text = state.message)
+                            }
+                        }
+                        is ExercisesApiScreenUiState.Error -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(text = "Error: ${state.message}")
+                            }
+                        }
                     }
-                )
+                } else {
+                    Text(text = "API info")
+                    MuscleSelector(
+                        viewModel = viewModel,
+                        onMuscleSelected = { muscle ->
+                            viewModel.getExercisesFor(muscle)
+                            muscleSelected = true
+                        }
+                    )
+                }
 
-                // todo: "Get Exercises" button for getting a list of additional exercises
-                //       for the selected muscle.
+
+
+
             }
         }
     }
@@ -144,6 +179,7 @@ fun MuscleList(
                 contentAlignment = Alignment.Center
             ) {
                 CircularProgressIndicator()
+                Text(text = state.message)
             }
         }
 
@@ -194,8 +230,21 @@ fun MuscleItems(
 }
 
 @Composable
-fun ExerciseInfo() {
+fun ExerciseInfo(exercise: Exercise) {
     Column {
-        Text(text = "EXERCISE INFO")
+        Text(text = "NAME: ${exercise.name}")
+        Text(text = "TYPE: ${exercise.type}")
+        Text(text = "MUSCLE: ${exercise.muscle}")
+        Text(text = "EQUIPMENT: ${exercise.equipment}")
+        Text(text = "DIFFICULTY: ${exercise.difficulty}")
+        Text(text = "INSTRUCTIONS: ${exercise.instructions}")
+    }
+}
+@Composable
+fun ExerciseList(exercises: List<Exercise>, modifier: Modifier = Modifier) {
+    LazyColumn(modifier = modifier) {
+        items(exercises) { exercise ->
+            ExerciseInfo(exercise = exercise)
+        }
     }
 }

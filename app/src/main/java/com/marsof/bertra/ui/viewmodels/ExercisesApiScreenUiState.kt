@@ -20,7 +20,8 @@ sealed interface ExercisesApiScreenUiState {
     data class Error(val message: String) : ExercisesApiScreenUiState
 
     /**
-     * Состояние загрузки.
+     * Loading state.
+     * @param message Message displayed while loading.
      */
-    object Loading : ExercisesApiScreenUiState
+    data class Loading(val message: String) : ExercisesApiScreenUiState
 }

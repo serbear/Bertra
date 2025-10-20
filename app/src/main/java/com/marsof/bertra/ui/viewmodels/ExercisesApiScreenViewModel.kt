@@ -18,7 +18,7 @@ class ExercisesApiScreenViewModel(
     private val musclesRepository: IMusclesRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<ExercisesApiScreenUiState>(
-        ExercisesApiScreenUiState.Loading
+        ExercisesApiScreenUiState.Loading(message = "")
     )
     val uiState: StateFlow<ExercisesApiScreenUiState> = _uiState.asStateFlow()
 
@@ -28,7 +28,7 @@ class ExercisesApiScreenViewModel(
 
     fun getMuscles() {
         viewModelScope.launch {
-            _uiState.value = ExercisesApiScreenUiState.Loading
+            _uiState.value = ExercisesApiScreenUiState.Loading(message = "Loading muscle list")
             musclesRepository.getMusclesStream()
                 .catch { exception ->
                     // Get an error from Flow.
@@ -49,7 +49,9 @@ class ExercisesApiScreenViewModel(
         Log.d("BERTRA", "getExercisesFor: ${muscle.name}")
 
         viewModelScope.launch {
-            _uiState.value = ExercisesApiScreenUiState.Loading
+            _uiState.value = ExercisesApiScreenUiState.Loading(
+                message = "Loading exercises for muscle ${muscle.name}"
+            )
             musclesRepository.getExerciseForMuscleStream(muscle)
                 .catch { exception ->
                     // Get an error from Flow.

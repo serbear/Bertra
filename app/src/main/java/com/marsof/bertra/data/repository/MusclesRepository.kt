@@ -11,24 +11,29 @@ import kotlinx.coroutines.flow.flowOn
 import java.io.IOException
 
 /**
- * Реализация репозитория для получения данных о мышцах из сети.
+ * Repository for fetching muscle data from the network.
  */
 class MusclesRepository(private val apiKey: String) : IMusclesRepository {
+
+    private val repName = "MusclesRepository"
+
+    init {
+        handleApiKeyError()
+    }
+
+    private fun handleApiKeyError() {
+        if (apiKey.isEmpty()) {
+            val errorMessage = "API key is missing."
+            Log.e(repName, errorMessage)
+            throw IllegalArgumentException(errorMessage)
+        }
+    }
 
     /**
      * Получает список мышц из API и отдает его в виде потока.
      * Этот метод выполняет сетевой запрос каждый раз при сборе потока.
      */
     override fun getMusclesStream(): Flow<List<Muscle>> = flow {
-        val repName = "MusclesRepository"
-
-        if (apiKey.isEmpty()) {
-            val logMessage = "API key is missing."
-            val errorMessage = "API key is missing."
-
-            Log.e(repName, logMessage)
-            throw IllegalArgumentException(errorMessage)
-        }
         try {
             /* DEBUG: UNCOMMENT IN RELEASE
 
@@ -61,11 +66,7 @@ class MusclesRepository(private val apiKey: String) : IMusclesRepository {
             // Send the list of muscles.
             emit(muscles)
         } catch (e: Exception) {
-            val logMessage = "Error fetching muscles: ${e.message}"
-            val errorMessage = "Failed to fetch data from network"
-
-            Log.e(repName, logMessage)
-            throw IOException(errorMessage, e)
+            handleApiError(e)
         }
     }
         // Make sure that the network request is executed in a background thread.
@@ -81,30 +82,30 @@ class MusclesRepository(private val apiKey: String) : IMusclesRepository {
         // Логика для принудительного обновления (если потребуется кеширование)
     }
 
-    override  fun getExerciseForMuscleStream(muscle: Muscle): Flow<List<Exercise>> = flow{
-        val repName = "MusclesRepository"
+    override fun getExerciseForMuscleStream(muscle: Muscle): Flow<List<Exercise>> = flow {
 
-        if (apiKey.isEmpty()) {
-            val logMessage = "API key is missing."
-            val errorMessage = "API key is missing."
-
-            Log.e(repName, logMessage)
-            throw IllegalArgumentException(errorMessage)
-        }
         try {
             /* DEBUG: UNCOMMENT IN RELEASE */
 
-            val exercises: List<Exercise> = ExercisesApi.retrofitService.getExercises(apiKey)
-                .filter { it.muscle == muscle.name }
+            val exercises: List<Exercise> = ExercisesApi.retrofitService.getExercises(
+                apiKey = apiKey,
+                muscle = muscle.name,
+            )
 
             // Send the list of muscles.
             emit(exercises)
         } catch (e: Exception) {
-            val logMessage = "Error fetching muscles: ${e.message}"
-            val errorMessage = "Failed to fetch data from network"
-
-            Log.e(repName, logMessage)
-            throw IOException(errorMessage, e)
+            handleApiError(e)
         }
+    }
+        // Make sure that the network request is executed in a background thread.
+        .flowOn(Dispatchers.IO)
+
+    private fun handleApiError(e: Exception) {
+        val logMessage = "Error during API call: ${e.message}"
+        val errorMessage = "Failed to fetch data from network"
+
+        Log.e(repName, logMessage)
+        throw IOException(errorMessage, e)
     }
 }

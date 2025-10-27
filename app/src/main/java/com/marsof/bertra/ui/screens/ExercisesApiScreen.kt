@@ -25,6 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -73,6 +74,7 @@ fun ExercisesApiScreen(
     val uiState by viewModel.uiStateExercises.collectAsState()
     var muscleSelected by remember { mutableStateOf(false) }
     var isMuscleListShow by remember { mutableStateOf(false) }
+    var selectedMuscleName by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -90,7 +92,7 @@ fun ExercisesApiScreen(
                 Button(
                     onClick = {
                         isMuscleListShow = true//!isMuscleListShow
-                      muscleSelected=false
+                        muscleSelected = false
                     },
                     shape = RoundedCornerShape(0.dp),
                     colors = ButtonColors(
@@ -108,9 +110,16 @@ fun ExercisesApiScreen(
                         imageVector = Icons.Default.Add,
                         contentDescription = stringResource(R.string.muscle_list),
                     )
-                    Text(
-                        text = stringResource(R.string.muscle_list),
-                    )
+
+                    if (muscleSelected) {
+                        Text(
+                            text = "${stringResource(R.string.muscle_list)} (${selectedMuscleName})"
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.muscle_list),
+                        )
+                    }
                 }
             }
         }
@@ -125,48 +134,48 @@ fun ExercisesApiScreen(
                     .fillMaxSize(),
             ) {
                 if (muscleSelected) {
-//                    when (val state = uiState) {
-//                        is ExercisesApiScreenUiState.Success<*> -> {
-//                            val exercises = state.data as? List<Exercise>
-//                            if (exercises != null) {
-//                                ExerciseList(exercises = exercises)
-//                            } else {
-//                                // Обработка случая, когда данные не являются списком упражнений
-////                                Text("Error: Invalid data for exercises")
-//                            }
-//                        }
-//
-//                        is ExercisesApiScreenUiState.Loading -> {
-//                            Box(
-//                                modifier = Modifier.fillMaxSize(),
-//                                contentAlignment = Alignment.Center
-//                            ) {
-//                                CircularProgressIndicator()
-//                                Text(text = state.message)
-//                            }
-//                        }
-//
-//                        is ExercisesApiScreenUiState.Error -> {
-//                            Box(
-//                                modifier = Modifier.fillMaxSize(),
-//                                contentAlignment = Alignment.Center
-//                            ) {
-//                                Text(text = "Error: ${state.message}")
-//                            }
-//                        }
-//                    }
-                } else if (!isMuscleListShow){
+                    when (val state = uiState) {
+                        is ExercisesApiScreenUiState.Success<*> -> {
+                            val exercises = state.data as? List<Exercise>
+                            if (exercises != null) {
+                                ExerciseList(exercises = exercises)
+                            } else {
+                                // Обработка случая, когда данные не являются списком упражнений
+//                                Text("Error: Invalid data for exercises")
+                            }
+                        }
 
+                        is ExercisesApiScreenUiState.Loading -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column {
+                                    CircularProgressIndicator()
+                                    Text(text = state.message)
+                                }
+                            }
+                        }
+
+                        is ExercisesApiScreenUiState.Error -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(text = "Error: ${state.message}")
+                            }
+                        }
+                    }
+                } else if (!isMuscleListShow) {
                     Text(text = "API info. Написать информацию про api")
-                }
-                else {
+                } else {
                     MuscleSelector(
                         viewModel = viewModel,
                         onMuscleSelected = { muscle ->
                             viewModel.getExercisesFor(muscle)
                             muscleSelected = true
+                            selectedMuscleName = muscle.name
                         },
-                        isListShow = true,
                     )
                 }
             }
@@ -177,40 +186,16 @@ fun ExercisesApiScreen(
 @Composable
 fun MuscleSelector(
     viewModel: ExercisesApiScreenViewModel,
-    onMuscleSelected: (Muscle) -> Unit,
-    isListShow: Boolean = false
+    onMuscleSelected: (Muscle) -> Unit
 ) {
-
     Column {
-        if (isListShow) {
-            // Show when the muscle list is displayed.
-            MuscleList(
-                viewModel = viewModel,
-                onMuscleSelected = { muscle ->
-                    onMuscleSelected(muscle)
-                }
-            )
-        } else {
-            // Show when the muscle list is hidden.
-//            Text(text = "Select a muscle:")
-//            Button(
-//                onClick = {
-//                    // Toggle the list displaying.
-//                    isListShow = !isListShow
-//                },
-//                modifier = Modifier,
-//                shape = RoundedCornerShape(0.dp)
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Default.Menu,
-//                    contentDescription = stringResource(R.string.muscle_list),
-//                )
-//                Text(
-//                    text = stringResource(R.string.muscle_list),
-//                )
-//            }
-
-        }
+        // Show when the muscle list is displayed.
+        MuscleList(
+            viewModel = viewModel,
+            onMuscleSelected = { muscle ->
+                onMuscleSelected(muscle)
+            }
+        )
     }
 }
 
@@ -227,8 +212,10 @@ fun MuscleList(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
-                Text(text = state.message)
+                Column {
+                    CircularProgressIndicator()
+                    Text(text = state.message)
+                }
             }
         }
 
@@ -326,11 +313,6 @@ fun ExerciseInfo(exercise: Exercise) {
                 color = LocalCustomColors.current.textPrimary,
                 modifier = Modifier.weight(1f),
             )
-//            Spacer(
-//                Modifier
-//                    .height(dimensionResource(R.dimen.padding_small))
-//                    .weight(1f)
-//            )
             // Difficulty.
             Box(
                 Modifier
@@ -358,9 +340,8 @@ fun ExerciseInfo(exercise: Exercise) {
 
         AnimatedVisibility(visible = expanded) {
             Column {
-
-//        Text(text = "TYPE: ${exercise.type}")
-//        Text(text = "MUSCLE: ${exercise.muscle}")
+                // Text(text = "TYPE: ${exercise.type}")
+                // Text(text = "MUSCLE: ${exercise.muscle}")
                 Text(
                     text = "EQUIPMENT:",
                     fontWeight = FontWeight.Bold,
@@ -383,5 +364,6 @@ fun ExerciseInfo(exercise: Exercise) {
             }
 
         }
+        HorizontalDivider()
     }
 }

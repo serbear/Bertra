@@ -1,9 +1,15 @@
 package com.marsof.bertra.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -12,11 +18,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,10 +36,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.room.util.TableInfo
 import com.marsof.bertra.R
 import com.marsof.bertra.api.Exercise
 import com.marsof.bertra.data.Muscle
@@ -88,6 +101,7 @@ fun ExercisesApiScreen(
 //                                Text("Error: Invalid data for exercises")
                             }
                         }
+
                         is ExercisesApiScreenUiState.Loading -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
@@ -97,6 +111,7 @@ fun ExercisesApiScreen(
                                 Text(text = state.message)
                             }
                         }
+
                         is ExercisesApiScreenUiState.Error -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
@@ -116,8 +131,6 @@ fun ExercisesApiScreen(
                         }
                     )
                 }
-
-
 
 
             }
@@ -230,21 +243,109 @@ fun MuscleItems(
 }
 
 @Composable
-fun ExerciseInfo(exercise: Exercise) {
-    Column {
-        Text(text = "NAME: ${exercise.name}")
-        Text(text = "TYPE: ${exercise.type}")
-        Text(text = "MUSCLE: ${exercise.muscle}")
-        Text(text = "EQUIPMENT: ${exercise.equipment}")
-        Text(text = "DIFFICULTY: ${exercise.difficulty}")
-        Text(text = "INSTRUCTIONS: ${exercise.instructions}")
-    }
-}
-@Composable
 fun ExerciseList(exercises: List<Exercise>, modifier: Modifier = Modifier) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(
+        modifier = modifier.padding(horizontal = dimensionResource(R.dimen.padding_small)),
+        // Space between cards.
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
+    ) {
         items(exercises) { exercise ->
             ExerciseInfo(exercise = exercise)
+        }
+    }
+}
+
+@Composable
+fun ExerciseInfo(exercise: Exercise) {
+
+    // The state for tracking whether the card is expanded.
+    var expanded by remember { mutableStateOf(false) }
+
+    // Animation for the arrow icon to rotate smoothly.
+    val rotationAngle by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        label = "rotation"
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(LocalCustomColors.current.tertiary)
+            .padding(dimensionResource(R.dimen.padding_small))
+    )
+    {
+        // The card header.
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = !expanded },
+        ) {
+            // Exercise name.
+            Text(
+                text = exercise.name,
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
+                color = LocalCustomColors.current.textPrimary,
+                modifier = Modifier.weight(1f),
+            )
+//            Spacer(
+//                Modifier
+//                    .height(dimensionResource(R.dimen.padding_small))
+//                    .weight(1f)
+//            )
+            // Difficulty.
+            Box(
+                Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(color = LocalCustomColors.current.blueButton)
+                    .padding(
+                        start = dimensionResource(R.dimen.padding_small),
+                        end = dimensionResource(R.dimen.padding_small),
+                    ),
+            ) {
+                Text(
+                    text = exercise.difficulty,
+                    color = LocalCustomColors.current.textTertiary,
+                )
+            }
+            // Arrow icon.
+            Icon(
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = stringResource(R.string.expand_exercise_details),
+                modifier = Modifier.rotate(rotationAngle),
+            )
+        }
+
+        Spacer(Modifier.height(dimensionResource(R.dimen.padding_large)))
+
+        AnimatedVisibility(visible = expanded) {
+            Column {
+
+//        Text(text = "TYPE: ${exercise.type}")
+//        Text(text = "MUSCLE: ${exercise.muscle}")
+                Text(
+                    text = "EQUIPMENT:",
+                    fontWeight = FontWeight.Bold,
+                    color = LocalCustomColors.current.textSecondary,
+                )
+                Text(
+                    text = exercise.equipment,
+                    color = LocalCustomColors.current.textPrimary,
+                )
+                Spacer(Modifier.height(dimensionResource(R.dimen.padding_small)))
+                Text(
+                    text = "INSTRUCTIONS:",
+                    fontWeight = FontWeight.Bold,
+                    color = LocalCustomColors.current.textSecondary,
+                )
+                Text(
+                    text = exercise.instructions,
+                    color = LocalCustomColors.current.textPrimary,
+                )
+            }
+
         }
     }
 }

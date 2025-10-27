@@ -55,4 +55,5 @@
     <string name="train_number_of_circles_label">Number of Circles:</string>
     <string name="exercises_api_screen_title">Exercises API</string>
     <string name="muscle_list">Muscle List</string>
+    <string name="expand_exercise_details">Expand the exercise\'s details.</string>
 </resources>

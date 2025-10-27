@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -52,6 +51,8 @@ import com.marsof.bertra.api.Exercise
 import com.marsof.bertra.data.Muscle
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
+import com.marsof.bertra.ui.elements.BertraErrorMessage
+import com.marsof.bertra.ui.elements.BertraProgressIndicator
 import com.marsof.bertra.ui.navigation.INavigationDestination
 import com.marsof.bertra.ui.theme.LocalCustomColors
 import com.marsof.bertra.ui.viewmodels.ExercisesApiScreenUiState
@@ -141,29 +142,16 @@ fun ExercisesApiScreen(
                                 ExerciseList(exercises = exercises)
                             } else {
                                 // Обработка случая, когда данные не являются списком упражнений
-//                                Text("Error: Invalid data for exercises")
+                                // Text("Error: Invalid data for exercises")
                             }
                         }
 
                         is ExercisesApiScreenUiState.Loading -> {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Column {
-                                    CircularProgressIndicator()
-                                    Text(text = state.message)
-                                }
-                            }
+                            BertraProgressIndicator(message = state.message)
                         }
 
                         is ExercisesApiScreenUiState.Error -> {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(text = "Error: ${state.message}")
-                            }
+                            BertraErrorMessage(message = state.message)
                         }
                     }
                 } else if (!isMuscleListShow) {
@@ -208,15 +196,7 @@ fun MuscleList(
 
     when (val state = uiStateMuscles) {
         is ExercisesApiScreenUiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column {
-                    CircularProgressIndicator()
-                    Text(text = state.message)
-                }
-            }
+            BertraProgressIndicator(message = state.message)
         }
 
         is ExercisesApiScreenUiState.Success<*> -> {
@@ -227,12 +207,7 @@ fun MuscleList(
         }
 
         is ExercisesApiScreenUiState.Error -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "Error: ${state.message}")
-            }
+            BertraErrorMessage(message = state.message)
         }
     }
 }

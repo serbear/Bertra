@@ -1,8 +1,5 @@
 package com.marsof.bertra.ui.viewmodels
 
-import com.marsof.bertra.api.Exercise
-import com.marsof.bertra.data.Muscle
-
 /**
  * Определяет состояния для ExercisesApiScreen.
  */

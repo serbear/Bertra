@@ -23,6 +23,7 @@ fun BertraProgressIndicator(message: String) {
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(dimensionResource(R.dimen.padding_large))
         ) {
             CircularProgressIndicator()

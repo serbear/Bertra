@@ -56,4 +56,5 @@
     <string name="exercises_api_screen_title">Exercises API</string>
     <string name="muscle_list">Muscle List</string>
     <string name="expand_exercise_details">Expand the exercise\'s details.</string>
+    <string name="api_description">Click on the button below and choose which muscle you want to strengthen today. \nAfter selecting a muscle, a list of effective exercises will be displayed.</string>
 </resources>

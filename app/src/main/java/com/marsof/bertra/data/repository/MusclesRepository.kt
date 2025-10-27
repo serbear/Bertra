@@ -1,6 +1,7 @@
 package com.marsof.bertra.data.repository
 
 import android.util.Log
+import androidx.room.ext.capitalize
 import com.marsof.bertra.api.Exercise
 import com.marsof.bertra.api.ExercisesApi
 import com.marsof.bertra.data.Muscle
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import java.io.IOException
+import java.util.Locale
 
 /**
  * Repository for fetching muscle data from the network.
@@ -41,27 +43,27 @@ class MusclesRepository(private val apiKey: String) : IMusclesRepository {
             // Get unique muscle names and transform them into Muscle objects.
             val muscles = exercises.map { it.muscle }
                 .distinct()
-                .map { muscleName -> Muscle(name=muscleName) }
+                .map { muscleName -> Muscle(name=muscleName.capitalize(Locale.ROOT)) }
             */
 
             // TODO: DEBUG: emit pre-prepared list so as not to call API.
             val muscles = listOf(
-                Muscle("abdominals"),
-                Muscle("abductors"),
-                Muscle("adductors"),
-                Muscle("biceps"),
-                Muscle("calves"),
-                Muscle("chest"),
-                Muscle("forearms"),
-                Muscle("glutes"),
-                Muscle("hamstrings"),
-                Muscle("lats"),
-                Muscle("lower_back"),
-                Muscle("middle_back"),
-                Muscle("neck"),
-                Muscle("quadriceps"),
-                Muscle("traps"),
-                Muscle("triceps"),
+                Muscle("Abdominals"),
+                Muscle("Abductors"),
+                Muscle("Adductors"),
+                Muscle("Biceps"),
+                Muscle("Calves"),
+                Muscle("Chest"),
+                Muscle("Forearms"),
+                Muscle("Glutes"),
+                Muscle("Hamstrings"),
+                Muscle("Lats"),
+                Muscle("Lower_back"),
+                Muscle("Middle_back"),
+                Muscle("Neck"),
+                Muscle("Quadriceps"),
+                Muscle("Traps"),
+                Muscle("Triceps"),
             )
             // Send the list of muscles.
             emit(muscles)

@@ -83,7 +83,7 @@ fun TrainListScreen(
         },
         bottomBar = {
             BottomAppBar(
-                containerColor =Color.Transparent, // Color.Magenta,
+                containerColor =Color.Transparent,
                 contentPadding = PaddingValues(0.dp),
                 modifier = Modifier.height(dimensionResource(R.dimen.button_height)),
             ) {

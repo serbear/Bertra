@@ -1,13 +1,13 @@
 package com.marsof.bertra.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,9 +18,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,13 +40,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.room.util.TableInfo
 import com.marsof.bertra.R
 import com.marsof.bertra.api.Exercise
 import com.marsof.bertra.data.Muscle
@@ -69,8 +70,9 @@ fun ExercisesApiScreen(
     ),
     openDrawer: () -> Unit,
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiStateExercises.collectAsState()
     var muscleSelected by remember { mutableStateOf(false) }
+    var isMuscleListShow by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -79,6 +81,39 @@ fun ExercisesApiScreen(
                 onNavigationClick = openDrawer,
             )
         },
+        bottomBar = {
+            BottomAppBar(
+                containerColor = Color.Transparent,
+                contentPadding = PaddingValues(0.dp),
+                modifier = Modifier.height(dimensionResource(R.dimen.button_height)),
+            ) {
+                Button(
+                    onClick = {
+                        isMuscleListShow = true//!isMuscleListShow
+                      muscleSelected=false
+                    },
+                    shape = RoundedCornerShape(0.dp),
+                    colors = ButtonColors(
+                        containerColor = LocalCustomColors.current.blueButton,
+                        contentColor = LocalCustomColors.current.textTertiary,
+                        disabledContainerColor = Color.Magenta,
+                        disabledContentColor = Color.Magenta,
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(dimensionResource(R.dimen.button_height))
+                        .padding(0.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.muscle_list),
+                    )
+                    Text(
+                        text = stringResource(R.string.muscle_list),
+                    )
+                }
+            }
+        }
     ) { innerPadding ->
         Surface(
             modifier = Modifier,
@@ -89,50 +124,51 @@ fun ExercisesApiScreen(
                     .padding(innerPadding)
                     .fillMaxSize(),
             ) {
-
                 if (muscleSelected) {
-                    when (val state = uiState) {
-                        is ExercisesApiScreenUiState.Success<*> -> {
-                            val exercises = state.data as? List<Exercise>
-                            if (exercises != null) {
-                                ExerciseList(exercises = exercises)
-                            } else {
-                                // Обработка случая, когда данные не являются списком упражнений
-//                                Text("Error: Invalid data for exercises")
-                            }
-                        }
+//                    when (val state = uiState) {
+//                        is ExercisesApiScreenUiState.Success<*> -> {
+//                            val exercises = state.data as? List<Exercise>
+//                            if (exercises != null) {
+//                                ExerciseList(exercises = exercises)
+//                            } else {
+//                                // Обработка случая, когда данные не являются списком упражнений
+////                                Text("Error: Invalid data for exercises")
+//                            }
+//                        }
+//
+//                        is ExercisesApiScreenUiState.Loading -> {
+//                            Box(
+//                                modifier = Modifier.fillMaxSize(),
+//                                contentAlignment = Alignment.Center
+//                            ) {
+//                                CircularProgressIndicator()
+//                                Text(text = state.message)
+//                            }
+//                        }
+//
+//                        is ExercisesApiScreenUiState.Error -> {
+//                            Box(
+//                                modifier = Modifier.fillMaxSize(),
+//                                contentAlignment = Alignment.Center
+//                            ) {
+//                                Text(text = "Error: ${state.message}")
+//                            }
+//                        }
+//                    }
+                } else if (!isMuscleListShow){
 
-                        is ExercisesApiScreenUiState.Loading -> {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
-                                Text(text = state.message)
-                            }
-                        }
-
-                        is ExercisesApiScreenUiState.Error -> {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(text = "Error: ${state.message}")
-                            }
-                        }
-                    }
-                } else {
-                    Text(text = "API info")
+                    Text(text = "API info. Написать информацию про api")
+                }
+                else {
                     MuscleSelector(
                         viewModel = viewModel,
                         onMuscleSelected = { muscle ->
                             viewModel.getExercisesFor(muscle)
                             muscleSelected = true
-                        }
+                        },
+                        isListShow = true,
                     )
                 }
-
-
             }
         }
     }
@@ -142,8 +178,8 @@ fun ExercisesApiScreen(
 fun MuscleSelector(
     viewModel: ExercisesApiScreenViewModel,
     onMuscleSelected: (Muscle) -> Unit,
+    isListShow: Boolean = false
 ) {
-    var isListShow by remember { mutableStateOf(false) }
 
     Column {
         if (isListShow) {
@@ -156,23 +192,23 @@ fun MuscleSelector(
             )
         } else {
             // Show when the muscle list is hidden.
-            Text(text = "Select a muscle:")
-            Button(
-                onClick = {
-                    // Toggle the list displaying.
-                    isListShow = !isListShow
-                },
-                modifier = Modifier,
-                shape = RoundedCornerShape(0.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    contentDescription = stringResource(R.string.muscle_list),
-                )
-                Text(
-                    text = stringResource(R.string.muscle_list),
-                )
-            }
+//            Text(text = "Select a muscle:")
+//            Button(
+//                onClick = {
+//                    // Toggle the list displaying.
+//                    isListShow = !isListShow
+//                },
+//                modifier = Modifier,
+//                shape = RoundedCornerShape(0.dp)
+//            ) {
+//                Icon(
+//                    imageVector = Icons.Default.Menu,
+//                    contentDescription = stringResource(R.string.muscle_list),
+//                )
+//                Text(
+//                    text = stringResource(R.string.muscle_list),
+//                )
+//            }
 
         }
     }
@@ -183,9 +219,9 @@ fun MuscleList(
     viewModel: ExercisesApiScreenViewModel,
     onMuscleSelected: (Muscle) -> Unit
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val uiStateMuscles by viewModel.uiStateMuscles.collectAsState()
 
-    when (val state = uiState) {
+    when (val state = uiStateMuscles) {
         is ExercisesApiScreenUiState.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),

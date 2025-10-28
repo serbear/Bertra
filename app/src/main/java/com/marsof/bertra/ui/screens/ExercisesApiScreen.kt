@@ -2,6 +2,7 @@ package com.marsof.bertra.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -42,8 +44,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -159,18 +161,29 @@ fun ExercisesApiScreen(
                     Column(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize()
                     ) {
+                        Spacer(modifier = Modifier.weight(1f))
+                        Image(
+                            painter = painterResource(id = R.drawable.bear),
+                            contentDescription = stringResource(R.string.api_description),
+                            modifier = Modifier
+                                .fillMaxWidth(0.25f)
+                                .padding(dimensionResource(R.dimen.padding_large))
+                        )
                         Text(
                             text = "List of additional exercises",
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                             fontSize = MaterialTheme.typography.titleLarge.fontSize,
                             fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
+                            modifier = Modifier
+                                .padding(dimensionResource(R.dimen.padding_large))
                         )
                         Text(
                             text = stringResource(R.string.api_description),
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         )
+                        Spacer(modifier = Modifier.weight(1.618f))
                     }
                 } else {
                     MuscleSelector(

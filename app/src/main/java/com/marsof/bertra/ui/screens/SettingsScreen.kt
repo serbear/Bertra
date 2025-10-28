@@ -75,6 +75,7 @@ fun SettingsScreen(
                     settingsDataStore = settingsDataStore,
                     onSwitch = viewModel::changeTheme,
                 )
+                // todo: Skip the engage screen.
             }
         }
     }

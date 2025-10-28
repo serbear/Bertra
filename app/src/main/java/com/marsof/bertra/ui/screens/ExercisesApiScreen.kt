@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,6 +46,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.marsof.bertra.R
@@ -173,7 +173,7 @@ fun ExercisesApiScreen(
                         )
                         Text(
                             text = "List of additional exercises",
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            textAlign = TextAlign.Center,
                             fontSize = MaterialTheme.typography.titleLarge.fontSize,
                             fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
                             modifier = Modifier
@@ -181,7 +181,7 @@ fun ExercisesApiScreen(
                         )
                         Text(
                             text = stringResource(R.string.api_description),
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            textAlign = TextAlign.Center,
                         )
                         Spacer(modifier = Modifier.weight(1.618f))
                     }

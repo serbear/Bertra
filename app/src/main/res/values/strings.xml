@@ -58,4 +58,5 @@
     <string name="expand_exercise_details">Expand the exercise\'s details.</string>
     <string name="api_description">Click on the button below and choose which muscle you want to strengthen today. \nAfter selecting a muscle, a list of effective exercises will be displayed.</string>
     <string name="copyright">2025 \\uD83D\\uDC7E Sergei Markov</string>
+    <string name="exercise_complete_text">Exercise complete!</string>
 </resources>

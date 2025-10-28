@@ -1,5 +1,6 @@
 package com.marsof.bertra.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -156,6 +159,7 @@ fun ExerciseInProgressContent(
     onResumeTimer: () -> Unit,
     onGoNextExercise: () -> Unit,
 ) {
+    /*
     ExerciseData(
         currentExercise = currentExercise
     )
@@ -164,9 +168,20 @@ fun ExerciseInProgressContent(
             dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
         )
     )
+    */
     if (isExerciseAccomplished) {
         ExerciseCompleteControls(onGoNextExercise)
     } else {
+
+        ExerciseData(
+            currentExercise = currentExercise
+        )
+        Spacer(
+            Modifier.size(
+                dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
+            )
+        )
+
         TimerControlAndRepetitions(
             currentTimerModeName,
             currentTimerMode,
@@ -229,41 +244,76 @@ fun TimerControlAndRepetitions(
 fun ExerciseCompleteControls(
     onGoNextExercise: () -> Unit
 ) {
-    Spacer(
-        Modifier.size(
-            dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
-        )
-    )
-    Text(text = "Exercise complete!")
-    Spacer(
-        Modifier.size(
-            dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
-        )
-    )
-    Button(
-        onClick = { onGoNextExercise() },
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(0.dp),
-        colors = ButtonColors(
-            containerColor = LocalCustomColors.current.blueButton,
-            contentColor = LocalCustomColors.current.textTertiary,
-            disabledContainerColor = Color.Magenta,
-            disabledContentColor = Color.Magenta,
-        ),
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
     ) {
+        Spacer(modifier = Modifier.weight(1f))
+        Image(
+            painter = painterResource(id = R.drawable.bear),
+            contentDescription = stringResource(R.string.api_description),
+            modifier = Modifier
+                .fillMaxWidth(0.25f)
+                .padding(dimensionResource(R.dimen.padding_large))
+        )
         Text(
-            text = stringResource(R.string.go_next_exercise_button_label),
+            text = stringResource(R.string.exercise_complete_text),
+            textAlign = TextAlign.Center,
+            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+            fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
+            modifier = Modifier
+                .padding(dimensionResource(R.dimen.padding_large))
         )
-        Icon(
-            imageVector = Icons.Default.SkipNext,
-            contentDescription = stringResource(R.string.go_next_exercise_button_label),
-        )
+        Spacer(Modifier.size(dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp))
+        Button(
+            onClick = { onGoNextExercise() },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(0.dp),
+            colors = ButtonColors(
+                containerColor = LocalCustomColors.current.blueButton,
+                contentColor = LocalCustomColors.current.textTertiary,
+                disabledContainerColor = Color.Magenta,
+                disabledContentColor = Color.Magenta,
+            ),
+        ) {
+            Text(
+                text = stringResource(R.string.go_next_exercise_button_label),
+            )
+            Icon(
+                imageVector = Icons.Default.SkipNext,
+                contentDescription = stringResource(R.string.go_next_exercise_button_label),
+            )
+        }
+        Spacer(modifier = Modifier.weight(1.618f))
     }
 }
 
 @Composable
 fun WorkoutComplete() {
-    Text(text = "Workout complete!")
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Spacer(modifier = Modifier.weight(1f))
+        Image(
+            painter = painterResource(id = R.drawable.bear),
+            contentDescription = stringResource(R.string.api_description),
+            modifier = Modifier
+                .fillMaxWidth(0.25f)
+                .padding(dimensionResource(R.dimen.padding_large))
+        )
+        Text(
+            text = "Workout complete!",
+            textAlign = TextAlign.Center,
+            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+            fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
+            modifier = Modifier
+                .padding(dimensionResource(R.dimen.padding_large))
+        )
+        Spacer(modifier = Modifier.weight(1.618f))
+    }
 }
 
 @Composable

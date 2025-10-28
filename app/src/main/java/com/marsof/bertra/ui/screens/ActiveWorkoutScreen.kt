@@ -159,29 +159,13 @@ fun ExerciseInProgressContent(
     onResumeTimer: () -> Unit,
     onGoNextExercise: () -> Unit,
 ) {
-    /*
-    ExerciseData(
-        currentExercise = currentExercise
-    )
-    Spacer(
-        Modifier.size(
-            dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
-        )
-    )
-    */
     if (isExerciseAccomplished) {
         ExerciseCompleteControls(onGoNextExercise)
     } else {
-
         ExerciseData(
-            currentExercise = currentExercise
+            currentExercise = currentExercise,
         )
-        Spacer(
-            Modifier.size(
-                dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp
-            )
-        )
-
+        Spacer(Modifier.size(dimensionResource(R.dimen.active_workout_screen_elements_space).value.dp))
         TimerControlAndRepetitions(
             currentTimerModeName,
             currentTimerMode,

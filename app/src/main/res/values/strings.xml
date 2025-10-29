@@ -59,4 +59,9 @@
     <string name="api_description">Click on the button below and choose which muscle you want to strengthen today. \nAfter selecting a muscle, a list of effective exercises will be displayed.</string>
     <string name="copyright">2025 \\uD83D\\uDC7E Sergei Markov</string>
     <string name="exercise_complete_text">Exercise complete!</string>
+    <string name="error_message_workout_not_found">There is no workout with this ID:</string>
+    <string name="workout_engage_workout_label">Workout Name:</string>
+    <string name="workout_engage_workout_description">Workout Description:</string>
+    <string name="error_message_workout_exercises_not_found">There is no any exercises in the workout.</string>
+    <string name="workout_engage_workout_exercises_label">Workout Exercises:</string>
 </resources>

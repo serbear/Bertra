@@ -2,15 +2,19 @@ package com.marsof.bertra.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -35,6 +40,7 @@ import com.marsof.bertra.data.entites.Exercise
 import com.marsof.bertra.ui.ViewModelProvider
 import com.marsof.bertra.ui.elements.ApplicationTopBar
 import com.marsof.bertra.ui.navigation.INavigationDestination
+import com.marsof.bertra.ui.theme.LocalCustomColors
 import com.marsof.bertra.ui.viewmodels.ExerciseListScreenViewModel
 
 object ExerciseListScreenDestination : INavigationDestination {
@@ -60,6 +66,36 @@ fun ExerciseListScreen(
                 onNavigationClick = openDrawer,
             )
         },
+        bottomBar = {
+            BottomAppBar(
+                containerColor = Color.Transparent,
+                contentPadding = PaddingValues(0.dp),
+                modifier = Modifier.height(dimensionResource(R.dimen.button_height)),
+            ) {
+                Button(
+                    onClick = navigateToNewExerciseScreen,
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(dimensionResource(R.dimen.button_height))
+                        .padding(0.dp),
+                    shape = RoundedCornerShape(0.dp),
+                    colors = ButtonColors(
+                        containerColor = LocalCustomColors.current.blueButton,
+                        contentColor = LocalCustomColors.current.textTertiary,
+                        disabledContainerColor = Color.Magenta,
+                        disabledContentColor = Color.Magenta,
+                    ),
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.new_exercise_button_label),
+                    )
+                    Text(
+                        text = stringResource(R.string.new_exercise_button_label),
+                    )
+                }
+            }
+        }
     ) { innerPadding ->
         Surface(
             modifier = Modifier,
@@ -73,19 +109,6 @@ fun ExerciseListScreen(
                     exerciseList = exerciseListState.exerciseList,
                     modifier = Modifier.padding(innerPadding),
                 )
-                Button(
-                    onClick = navigateToNewExerciseScreen,
-                    modifier = Modifier,
-                    shape = RoundedCornerShape(0.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.new_exercise_button_label),
-                    )
-                    Text(
-                        text = stringResource(R.string.new_exercise_button_label),
-                    )
-                }
             }
         }
     }
@@ -127,11 +150,11 @@ fun SingleExercise(exercise: Exercise) {
                 dimensionResource(id = R.dimen.padding_small)
             )
         ) {
-            Text(
-                text = exercise.id.toString(),
-                style = MaterialTheme.typography.titleLarge
-            )
-            Spacer(Modifier.weight(1f))
+//            Text(
+//                text = exercise.id.toString(),
+//                style = MaterialTheme.typography.titleLarge
+//            )
+//            Spacer(Modifier.weight(1f))
             Text(
                 text = exercise.name,
                 style = MaterialTheme.typography.titleMedium

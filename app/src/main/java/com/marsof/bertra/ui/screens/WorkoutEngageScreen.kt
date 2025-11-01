@@ -107,7 +107,7 @@ fun WorkoutEngageScreen(
 
         Surface(
             modifier = Modifier,
-            color =  LocalCustomColors.current.tertiary,
+            color = LocalCustomColors.current.tertiary,
         ) {
             Column(
                 modifier = Modifier
@@ -132,7 +132,7 @@ fun WorkoutEngageScreen(
                         color = LocalCustomColors.current.textSecondary,
                     )
                     Text(
-                        text = workoutState!!.description,
+                        text = workoutState!!.name,
                         fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                         fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
                         color = LocalCustomColors.current.textPrimary,
@@ -143,8 +143,11 @@ fun WorkoutEngageScreen(
                         fontWeight = MaterialTheme.typography.titleSmall.fontWeight,
                         color = LocalCustomColors.current.textSecondary,
                     )
+
                     Text(
-                        text = workoutState!!.description,
+                        text = workoutState!!.description.ifEmpty {
+                            stringResource(R.string.data_not_available_label)
+                        },
                         fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                         fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
                         color = LocalCustomColors.current.textPrimary,

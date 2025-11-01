@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Rocket
 import androidx.compose.material3.BottomAppBar
@@ -83,31 +84,58 @@ fun TrainListScreen(
         },
         bottomBar = {
             BottomAppBar(
-                containerColor =Color.Transparent,
+                containerColor = Color.Transparent,
                 contentPadding = PaddingValues(0.dp),
                 modifier = Modifier.height(dimensionResource(R.dimen.button_height)),
             ) {
-                Button(
-                    onClick = navigateToNewTrainScreen,
-                    shape = RoundedCornerShape(0.dp),
-                    colors = ButtonColors(
-                        containerColor = LocalCustomColors.current.blueButton,
-                        contentColor = LocalCustomColors.current.textTertiary,
-                        disabledContainerColor = Color.Magenta,
-                        disabledContentColor = Color.Magenta,
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(dimensionResource(R.dimen.button_height))
-                        .padding(0.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(R.string.new_train_button_label),
-                    )
-                    Text(
-                        text = stringResource(R.string.new_train_button_label),
-                    )
+                Row {
+                    Button(
+                        onClick = {
+                            viewModel.deleteAllTrains()
+                        },
+                        shape = RoundedCornerShape(0.dp),
+                        colors = ButtonColors(
+                            containerColor = LocalCustomColors.current.redButton,
+                            contentColor = LocalCustomColors.current.textTertiary,
+                            disabledContainerColor = Color.Magenta,
+                            disabledContentColor = Color.Magenta,
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(dimensionResource(R.dimen.button_height))
+                            .padding(0.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription =
+                                stringResource(R.string.clear_train_list_button_label),
+                        )
+                        Text(
+                            text = stringResource(R.string.clear_train_list_button_label),
+                        )
+                    }
+                    Button(
+                        onClick = navigateToNewTrainScreen,
+                        shape = RoundedCornerShape(0.dp),
+                        colors = ButtonColors(
+                            containerColor = LocalCustomColors.current.blueButton,
+                            contentColor = LocalCustomColors.current.textTertiary,
+                            disabledContainerColor = Color.Magenta,
+                            disabledContentColor = Color.Magenta,
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(dimensionResource(R.dimen.button_height))
+                            .padding(0.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(R.string.new_train_button_label),
+                        )
+                        Text(
+                            text = stringResource(R.string.new_train_button_label),
+                        )
+                    }
                 }
             }
         }

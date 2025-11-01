@@ -25,4 +25,8 @@ interface TrainExerciseRepetitionsDao {
 
     @Delete
     suspend fun delete(item: TrainExerciseRepetitions)
+
+    @Query("DELETE FROM train_exercise_repetitions")
+    suspend fun deleteAll()
+
 }

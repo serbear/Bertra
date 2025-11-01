@@ -26,6 +26,9 @@ interface TrainDao {
     @Delete
     suspend fun delete(item: Train)
 
+    @Query("DELETE FROM trains")
+    suspend fun deleteAll()
+
     @Query("SELECT * FROM trains WHERE lastDate IS NOT NULL ORDER BY lastDate DESC LIMIT 1")
     fun getLastTrain(): Flow<Train?>
 

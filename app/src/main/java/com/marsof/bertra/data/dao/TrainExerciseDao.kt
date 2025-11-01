@@ -35,6 +35,10 @@ interface TrainExerciseDao {
 
     @Delete
     suspend fun delete(item: TrainExercise)
+
+    @Query("DELETE FROM train_exercises")
+    suspend fun deleteAll()
+
     @Query("select count(*) from train_exercises where id = :workoutId")
     fun getWorkoutExerciseCount(workoutId: Long): Flow<Int>
 }

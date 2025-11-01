@@ -32,6 +32,8 @@ object ViewModelProvider {
         initializer {
             TrainListScreenViewModel(
                 bertraApplication().container.trainDao,
+                bertraApplication().container.trainExerciseDao,
+                bertraApplication().container.trainExerciseRepetitionsDao,
             )
         }
         initializer {

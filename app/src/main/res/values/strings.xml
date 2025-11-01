@@ -64,4 +64,5 @@
     <string name="workout_engage_workout_description">Workout Description:</string>
     <string name="error_message_workout_exercises_not_found">There is no any exercises in the workout.</string>
     <string name="workout_engage_workout_exercises_label">Workout Exercises:</string>
+    <string name="clear_train_list_button_label">Clear List</string>
 </resources>

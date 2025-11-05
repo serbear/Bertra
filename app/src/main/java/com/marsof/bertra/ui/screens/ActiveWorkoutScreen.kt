@@ -82,7 +82,7 @@ fun ActiveWorkoutScreen(
     }
 
     val timeLeft by viewModel.timeLeft.collectAsState()
-    val timeLeftHundredths by viewModel.timeLeftHundredths.collectAsState()
+    val timeLeftTenths by viewModel.timeLeftTenths.collectAsState()
     val currentExercise = viewModel.currentExercise.collectAsState()
     val currentTimerModeName = viewModel.currentTimerModeName.collectAsState()
     val currentExerciseRepetitions by viewModel.currentExerciseRepetitions.collectAsState()
@@ -124,7 +124,7 @@ fun ActiveWorkoutScreen(
                             currentTimerModeName,
                             currentTimerMode,
                             timeLeft,
-                            timeLeftHundredths,
+                            timeLeftTenths,
                             isTimerPaused,
                             currentExerciseRepetitions,
                             currentRepetitionIndex,
@@ -149,7 +149,7 @@ fun ExerciseInProgressContent(
     currentTimerModeName: State<Int>,
     currentTimerMode: Int,
     timeLeft: Long,
-    timeLeftHundredths: Long,
+    timeLeftTenths: Long,
     isTimerPaused: Boolean,
     currentExerciseRepetitions: List<TrainExerciseRepetitions>?,
     currentRepetitionIndex: Int,
@@ -170,7 +170,7 @@ fun ExerciseInProgressContent(
             currentTimerModeName,
             currentTimerMode,
             timeLeft,
-            timeLeftHundredths,
+            timeLeftTenths,
             isTimerPaused,
             currentExerciseRepetitions,
             currentRepetitionIndex,
@@ -187,7 +187,7 @@ fun TimerControlAndRepetitions(
     currentTimerModeName: State<Int>,
     currentTimerMode: Int,
     timeLeft: Long,
-    timeLeftHundredths: Long,
+    timeLeftTenths: Long,
     isTimerPaused: Boolean,
     currentExerciseRepetitions: List<TrainExerciseRepetitions>?,
     currentRepetitionIndex: Int,
@@ -200,7 +200,7 @@ fun TimerControlAndRepetitions(
         currentTimerModeName,
         currentTimerMode,
         timeLeft,
-        timeLeftHundredths,
+        timeLeftTenths,
         isTimerPaused,
         onSetNextTimerMode,
         onGetNextTimerModeName,
@@ -325,7 +325,7 @@ fun TimerControl(
     currentTimerModeName: State<Int>,
     currentTimerMode: Int,
     timeLeft: Long,
-    timeLeftHundredths: Long,
+    timeLeftTenths: Long,
     isTimerPaused: Boolean,
     onChangeTimerMode: () -> Unit = {},
     onGetNextTimeModeName: () -> Int,
@@ -348,8 +348,8 @@ fun TimerControl(
             Text(
                 text = String.format(
                     Locale.current.platformLocale,
-                    "%02d",
-                    timeLeftHundredths
+                    "%01d",
+                    timeLeftTenths,
                 ),
                 fontSize = dimensionResource(R.dimen.timer_millsec_value_text_size).value.sp,
                 fontFamily = FontFamily.Monospace,
